@@ -1,0 +1,32 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Gradle files
+.gradle/
+build/
+*/build/
+
+# Local configuration
+local.properties
+.idea/
+*.iml
+*.hprof
+
+# Log files
+*.log
+
+# Kotlin
+*.kotlin_module
+
+# Android Studio
+captures/
+.externalNativeBuild/
+
+# IntelliJ
+out/
+
+# OS files
+.DS_Store
+Thumbs.db
