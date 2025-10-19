@@ -22,8 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val themePreference = remember { mutableStateOf(AppThemeMode.SYSTEM) }
-            HiddenDaNangTheme(themeApp = themePreference.value ) {
+            HiddenDaNangTheme(themeApp = AppThemeMode.SYSTEM) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { paddingValues ->
@@ -37,3 +36,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+@Preview(showBackground = true)
+@Composable
+fun MainActivityPreview() {
+    HiddenDaNangTheme(themeApp = AppThemeMode.SYSTEM) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AppNavHost(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            )
+        }
+    }
+}
+
