@@ -22,7 +22,7 @@ class   MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val themePreference = remember { mutableStateOf(AppThemeMode.SYSTEM) }
+            val themePreference = remember { mutableStateOf(AppThemeMode.SUNSET) }
             HiddenDaNangTheme(themeApp = themePreference.value ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
