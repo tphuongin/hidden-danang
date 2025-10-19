@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hiddendanang.app.ui.screen.home.HomeScreen
+import com.hiddendanang.app.ui.screen.home.HomepageScreen
 
 @Composable
 fun AppNavHost(
@@ -20,6 +21,7 @@ fun AppNavHost(
     ) {
         composable(Screen.HomePage.route) {
             HomeScreen(navController = navController)
+//            HomepageScreen(); Này để test run
         }
     }
 }
