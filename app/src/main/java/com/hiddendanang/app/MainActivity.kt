@@ -37,3 +37,19 @@ class   MainActivity : ComponentActivity() {
         }
     }
 }
+@Preview(showBackground = true)
+@Composable
+fun MainActivityPreview() {
+    HiddenDaNangTheme(themeApp = AppThemeMode.SYSTEM) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AppNavHost(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            )
+        }
+    }
+}
+

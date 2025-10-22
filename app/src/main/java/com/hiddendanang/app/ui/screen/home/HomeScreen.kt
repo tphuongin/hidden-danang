@@ -17,7 +17,7 @@ fun HomeScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background,),
         contentAlignment = Alignment.Center
     ) {
         Column(
