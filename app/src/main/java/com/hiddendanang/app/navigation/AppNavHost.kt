@@ -12,7 +12,7 @@ import com.hiddendanang.app.ui.screen.home.HomepageScreen
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController
 ) {
 //    NavHost(
 //        navController = navController,
