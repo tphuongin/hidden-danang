@@ -41,8 +41,9 @@ android {
 }
 
 dependencies {
-    implementation("com.github.bumptech.glide:compose:1.0.0-beta08")
-    implementation("androidx.compose.foundation:foundation:1.4.3")
+    implementation(libs.lottie.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.icons.lucide)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

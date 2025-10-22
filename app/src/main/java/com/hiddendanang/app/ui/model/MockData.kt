@@ -24,7 +24,6 @@ data class Review(
     val timestamp: String,
     val rating: Float,
     val comment: String,
-
 )
 class PlaceViewModel : ViewModel() {
     val topPlace = listOf(

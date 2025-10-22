@@ -16,13 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -40,6 +35,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import com.composables.icons.lucide.Heart
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Star
+import com.hiddendanang.app.R
+import com.hiddendanang.app.ui.model.Place
+import androidx.compose.foundation.lazy.items
+
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -94,13 +102,14 @@ fun PlaceCard(place: Place) {
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             ) {
                 // Ảnh load bằng Glide
-                GlideImage(
+                AsyncImage(
                     model = place.image,
                     contentDescription = place.name,
                     modifier = Modifier
                         .height(140.dp)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    contentScale = ContentScale.Crop // để ảnh vừa khung
                 )
                 IconButton(
                     onClick = { isFavorite = !isFavorite },
@@ -114,8 +123,8 @@ fun PlaceCard(place: Place) {
                         .size(36.dp)
                 ) {
                     Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = "Yêu thích",
+                        imageVector = Lucide.Heart,
+                        contentDescription = stringResource(R.string.favorite),
                         tint = if (isFavorite) Color.Red else Color.Gray
                     )
                 }
@@ -137,7 +146,7 @@ fun PlaceCard(place: Place) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(
-                    Icons.Default.Star,
+                    Lucide.Star,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
