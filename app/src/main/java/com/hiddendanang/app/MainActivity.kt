@@ -17,12 +17,12 @@ import com.hiddendanang.app.navigation.AppNavHost
 import com.hiddendanang.app.ui.theme.HiddenDaNangTheme
 import com.hiddendanang.app.utils.constants.AppThemeMode
 
-class MainActivity : ComponentActivity() {
+class   MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val themePreference = remember { mutableStateOf(AppThemeMode.SYSTEM) }
+            val themePreference = remember { mutableStateOf(AppThemeMode.SUNSET) }
             HiddenDaNangTheme(themeApp = themePreference.value ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
