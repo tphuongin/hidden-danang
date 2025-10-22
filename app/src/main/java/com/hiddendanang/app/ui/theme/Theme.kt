@@ -18,7 +18,7 @@ private val LightColorScheme = lightColorScheme(
     surface = LightSurface,
     onSurface = LightOnSurface,
     error = LightError,
-    onError = LightOnError
+    onError = LightOnError,
 )
 
 // Dark

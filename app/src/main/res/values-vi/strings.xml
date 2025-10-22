@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Hidden Da Nang</string>
+    <string name="display_mode">Chế độ hiển thị</string>
+    <string name="welcome">Chào mừng bạn đến với Hidden Đà Nẵng!</string>
+    <string name="welcome_description">Đăng nhập để khám phá thêm địa điểm thú vị nhé!</string>
+    <string name="login_now">Đăng nhập ngay</string>
+    <string name="post_new_location">Đăng địa điểm mới</string>
+    <string name="review_management">Quản lý review</string>
+    <string name="account_setting">Cài đặt tài khoản</string>
+    <string name="logout">Đăng xuất</string>
 </resources>
