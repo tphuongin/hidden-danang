@@ -2,17 +2,21 @@ package com.hiddendanang.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Theme
-val LightPrimary = Color(0xFF7ED6C1)
-val LightOnPrimary = Color(0xFF1F2A30)
-val LightSecondary = Color(0xFF363741)
-val LightOnSecondary = Color(0xFFEDEEEF)
-val LightBackground = Color(0xFF1E1F25)
-val LightOnBackground = Color(0xFFEDEEEF)
-val LightSurface = Color(0xFF24252B)
-val LightOnSurface = Color(0xFFEDEEEF)
-val LightError = Color(0xFFD44B4B)
-val LightOnError = Color(0xFFEDEEEF)
+//Light theme
+val LightPrimary = Color(0xFF7ED6C1)      // Xanh mint - màu chủ đạo
+val LightOnPrimary = Color(0xFFFFFFFF)    // Chữ trên nền primary: trắng
+
+val LightSecondary = Color(0xFFF0F0F0)    // Xám trắng nhẹ, dùng cho card, button phụ
+val LightOnSecondary = Color(0xFF1F2A30)  // Chữ trên nền secondary: đen/xám đậm
+
+val LightBackground = Color(0xFFF9FBFC)   // Nền tổng thể sáng, nhẹ hơn xíu so với trắng
+val LightOnBackground = Color(0xFF1F2A30) // Màu chữ chính
+
+val LightSurface = Color(0xFFFFFFFF)      // Nền của card, text field
+val LightOnSurface = Color(0xFF1F2A30)    // Chữ trên card
+
+val LightError = Color(0xFFD44B4B)        // Đỏ cảnh báo
+val LightOnError = Color(0xFFFFFFFF)      // Chữ trắng trên nền đỏ
 
 //  Dark Theme
 val DarkPrimary = Color(0xFF7ED6C1)
