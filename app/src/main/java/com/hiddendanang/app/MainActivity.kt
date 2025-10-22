@@ -22,7 +22,7 @@ import com.hiddendanang.app.ui.theme.HiddenDaNangTheme
 import com.hiddendanang.app.utils.LocalThemePreference
 import com.hiddendanang.app.utils.constants.AppThemeMode
 
-class MainActivity : ComponentActivity() {
+class   MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,3 +49,19 @@ fun HiddenDaNangApp(){
         }
     }
 }
+@Preview(showBackground = true)
+@Composable
+fun MainActivityPreview() {
+    HiddenDaNangTheme(themeApp = AppThemeMode.SYSTEM) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AppNavHost(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            )
+        }
+    }
+}
+
