@@ -48,6 +48,14 @@ import com.hiddendanang.app.ui.model.Place
 import androidx.compose.foundation.lazy.items
 
 
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.hiddendanang.app.ui.model.Place
+
+
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun PlaceCard(place: Place) {
     var isFavorite by remember { mutableStateOf(false) }
