@@ -6,8 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.hiddendanang.app.ui.model.Place
-import com.hiddendanang.app.ui.screen.detail.DetailScreen
+import com.hiddendanang.app.ui.screen.home.HomeScreen
+import com.hiddendanang.app.ui.screen.home.HomepageScreen
 
 @Composable
 fun AppNavHost(
@@ -48,13 +48,8 @@ fun AppNavHost(
 
     ) {
         composable(Screen.HomePage.route) {
-            DetailScreen(
-                navController = navController,
-                place = dummyPlace,               // <-- Truyền Place cụ thể // <-- Ví dụ mặc định
-                onToggleFavortie = { /* TODO */ },     // <-- Callback
-                onCLose = { navController.popBackStack() }, // <-- Đóng màn // <-- Hoặc danh sách thực tế
-                modifier = Modifier
-            )
+            HomeScreen(navController = navController)
+//            HomepageScreen(); Này để test run
         }
     }
 }
