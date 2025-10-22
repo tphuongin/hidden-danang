@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Hidden Da Nang</string>
+    <string name="display_mode">Display mode</string>
+    <string name="welcome">Welcome to Hidden Da Nang!</string>
+    <string name="welcome_description">Log in to discover more interesting places!</string>
+    <string name="login_now">Login now</string>
+    <string name="post_new_location">Post a new location</string>
+    <string name="review_management">Review management</string>
+    <string name="account_setting">Account settings</string>
+    <string name="logout">Logout</string>
 </resources>
