@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Hidden Da Nang</string>
 
+    //HomePage Screen
+    <string name="featured_location">Địa điểm nổi bật</string>
+    <string name="discover_more">Khám phá thêm</string>
+    <string name="app_description">Khám phá những góc ẩn tuyệt đẹp của thành phố</string>
+    <string name="search">Tìm kiếm địa điểm…</string>
+    <string name="search_des">Tìm kiếm</string>
+
     //Profile Screen
     <string name="display_mode">Chế độ hiển thị</string>
     <string name="welcome">Chào mừng bạn đến với Hidden Đà Nẵng!</string>
@@ -9,14 +16,40 @@
     <string name="post_new_location">Đăng địa điểm mới</string>
     <string name="review_management">Quản lý review</string>
     <string name="account_setting">Cài đặt tài khoản</string>
-    <string name="logout">Đăng xuất</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="or">Hoặc</string>
+    <string name="register">Tạo tài khoản mới</string>
+    <string name="register_new_account">Đăng ký tài khoản mới</string>
+    <string name="register_des">Đăng ký để lưu lại địa điểm yêu thích và đánh giá của bạn</string>
+    <string name="register_des2">Khám phá Đà Nẵng với trải nghiệm cá nhân hóa</string>
+    <string name="favorites">Yêu thích</string>
+    <string name="reviews">Đánh giá</string>
+    <string name="visited">Đã đến</string>
+    <string name="logout_title">Đăng xuất</string>
+    <string name="logout_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</string>
+    <string name="cancel">Hủy</string>
 
     //Favorite Screen
     <string name="my_favorite">Địa điểm yêu thích của tôi</string>
     <string name="favorite">Yêu thích</string>
     <string name="no_favorite">Chưa có địa điểm yêu thích</string>
     <string name="no_favorite_description">Bạn chưa lưu địa điểm nào. Hãy khám phá và thêm những nơi bạn yêu thích!</string>
+    
+    //Detail Screen
+    <string name="explore_nearby_place">Khám phá gần đây</string>
+    <string name="address">Địa chỉ</string>
+    <string name="opening_hours">Giờ mở cửa</string>
+    <string name="price_range">Giá trung bình</string>
+    <string name="distance">Khoảng scách</string>
+    <string name="introduce">Giới thiệu</string>
+    <string name="view_directions">Xem đường đi</string>
+    <string name="see_all_reviews">Xem tất cả đánh giá</string>
+    <string name="write_your_comment">Viết đánh giá của bạn</string>
+    <string name="review">Đánh giá</string>
 
-
-
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">Trang chủ</string>
+    <string name="bottom_nav_map">Bản đồ</string>
+    <string name="bottom_nav_favorite">Yêu thích</string>
+    <string name="bottom_nav_profile">Cá nhân</string>
 </resources>
