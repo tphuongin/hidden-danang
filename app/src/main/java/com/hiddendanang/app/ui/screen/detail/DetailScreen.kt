@@ -20,6 +20,7 @@ fun DetailScreen(
     // Fetch place details and favorite status from ViewModel
     LaunchedEffect(placeId) {
         viewModel.getPlaceById(placeId)
+
     }
     val place by viewModel.selectedPlace.collectAsState()
     val isFavorite by viewModel.isFavorite(placeId).collectAsState(initial = false)
