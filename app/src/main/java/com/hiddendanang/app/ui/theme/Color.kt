@@ -9,7 +9,7 @@ val LightOnPrimary = Color(0xFF262626)    // Dark gray
 val LightSecondary = Color(0xFFF2F2F2)    // Very light gray
 val LightOnSecondary = Color(0xFF404040)  // Medium dark gray
 
-val LightBackground = Color(0xFFFAFDFC)   // Very light bluish white
+val LightBackground = Color(0xFFF6FDFB)   // Very light bluish white
 val LightOnBackground = Color(0xFF404040) // Medium dark gray
 
 val LightSurface = Color(0xFFFFFFFF)      // Pure white

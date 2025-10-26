@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Hidden Da Nang</string>
 
+    //HomePage Screen
+    <string name="featured_location">Featured places</string>
+    <string name="discover_more">Explore more hidden gems</string>
+    <string name="app_description">Explore the city’s most beautiful hidden corners.</string>
+    <string name="search">Search places…</string>
+    <string name="search_des">Search</string>
+
     //Profile screen
     <string name="display_mode">Display mode</string>
     <string name="welcome">Welcome to Hidden Da Nang!</string>
@@ -9,11 +16,40 @@
     <string name="post_new_location">Post a new location</string>
     <string name="review_management">Review management</string>
     <string name="account_setting">Account settings</string>
-    <string name="logout">Logout</string>
+    <string name="language">Language</string>
+    <string name="or">Or</string>
+    <string name="register_new_account">Create a new account</string>
+    <string name="register_des">Sign up to save your favorite places and share your reviews</string>
+    <string name="register">Register</string>
+    <string name="register_des2">Explore Da Nang with a personalized experience</string>
+    <string name="favorites">Favorites</string>
+    <string name="reviews">Reviews</string>
+    <string name="visited">Visited</string>
+    <string name="logout_title">Log out</string>
+    <string name="logout_message">Are you sure you want to log out of your account?</string>
+    <string name="cancel">Cancel</string>
 
     // Favorite Screen
     <string name="my_favorite">My Favorite Places</string>
     <string name="favorite">Favorite</string>
     <string name="no_favorite">No favorite places</string>
     <string name="no_favorite_description">You haven\'t saved any places yet. Explore and add your favorites!</string>
+
+    //Detail Screen
+    <string name="explore_nearby_place">Recent discoveries</string>
+    <string name="address">Address</string>
+    <string name="opening_hours">Opening hours</string>
+    <string name="price_range">Price range</string>
+    <string name="distance">Distance</string>
+    <string name="introduce">Introduce</string>
+    <string name="view_directions">View Directions</string>
+    <string name="see_all_reviews">See all reviews</string>
+    <string name="write_your_comment">Write your comment</string>
+    <string name="review">Review</string>
+
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_map">Map</string>
+    <string name="bottom_nav_favorite">Favorite</string>
+    <string name="bottom_nav_profile">Profile</string>
 </resources>
