@@ -2,11 +2,12 @@ package com.hiddendanang.app.data.model
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.ServerTimestamp
 
 data class Favorite(
 
     @DocumentId
-    val favoriteId: String? = null,
+    val id: String = "",
 
     val location_id: String = "",
 
@@ -18,5 +19,6 @@ data class Favorite(
 
     val user_id: String = "",
 
+    @ServerTimestamp
     val created_at: Timestamp? = null
 )

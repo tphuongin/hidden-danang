@@ -23,8 +23,8 @@ data class UserStats(
 
 data class User(
     val uid: String = "",
-    val email: String? = null,
-    val display_name: String? = null,
+    val email: String = "",
+    val display_name: String = "",
     val photo_url: String? = null,
     val bio: String? = null,
 

@@ -1,5 +1,6 @@
 package com.hiddendanang.app.data.remote
 
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -27,6 +28,9 @@ class FirestoreDataSource {
 
     fun getUserDocumentReference(uid: String): DocumentReference {
         return usersRef.document(uid)
+    }
+    fun getPlacesCollection(): CollectionReference {
+        return firestore.collection("places") // ✅ tên collection trong Firestore
     }
 
     fun getFavoritesCollection(uid: String) =
