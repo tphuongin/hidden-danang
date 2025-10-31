@@ -186,7 +186,6 @@ private fun ThemeOption(
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
         )
-
         // Indicator nhỏ phía dưới
         Box(
             modifier = Modifier

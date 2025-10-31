@@ -62,7 +62,7 @@ object Dimens {
     val ButtonMedium = 48.dp
     val ButtonLarge = 56.dp
 
-    // --- Divider / Border ---
+    // --- Divider / Border --
     val DividerThin = 1.dp
     val DividerNormal = 2.dp
     val DividerThick = 5.dp
@@ -76,6 +76,7 @@ object Dimens {
     val CardMinHeight = 140.dp
     val BottomBarHeight = 56.dp
     val BottomBarMaxHeight = 80.dp
+    val ProgressBarSize = 50.dp
 
     val ContainerLarge = 290.dp
     val ContainerMedium = 250.dp
