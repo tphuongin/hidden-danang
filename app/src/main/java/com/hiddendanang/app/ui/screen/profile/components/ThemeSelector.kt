@@ -17,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.constants.AppThemeMode
 import com.hiddendanang.app.utils.helpers.capitalizeFirstOnly
+import com.hiddendanang.app.R
 
 @Composable
 fun ThemeSelector(
@@ -47,7 +49,7 @@ fun ThemeSelector(
             modifier = Modifier.padding(Dimens.PaddingLarge)
         ) {
             Text(
-                text = "Chế độ hiển thị",
+                text = stringResource(R.string.display_mode),
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -64,7 +66,7 @@ fun ThemeSelector(
                         mode = mode,
                         isSelected = currentTheme == mode,
                         onClick = { onThemeChange(mode) },
-                        modifier = Modifier.weight(1f) // Thêm weight ở đây
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
@@ -79,7 +81,6 @@ private fun ThemeOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier // Thêm modifier parameter
 ) {
-    // Hiệu ứng động
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected)
             MaterialTheme.colorScheme.primaryContainer
