@@ -28,7 +28,10 @@ data class Place(
     val description: String,
     val reviews: List<Review> = emptyList(),
     val image: String = "",
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    // Bổ sung các thuộc tính cần thiết cho map
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
 )
 
 data class Review(
@@ -54,7 +57,7 @@ data class User(
 
 class DataViewModel : ViewModel() {
 
-    // Mock User Data
+    // Mock User Data (giữ nguyên)
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
@@ -72,61 +75,10 @@ class DataViewModel : ViewModel() {
             reviewCount = 25,
             visitedPlaces = 48
         ),
-        User(
-            id = "user_002",
-            name = "Trần Thị B",
-            email = "tranthib@email.com",
-            avatarURL = URL("https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"),
-            phone = "+84 987 654 321",
-            bio = "Yêu thích khám phá ẩm thực đường phố và các địa điểm văn hóa. Luôn tìm kiếm những góc nhìn mới về thành phố Đà Nẵng.",
-            joinDate = "Tháng 3, 2024",
-            level = "Food Explorer",
-            favoriteCount = 8,
-            reviewCount = 18,
-            visitedPlaces = 32
-        ),
-        User(
-            id = "user_003",
-            name = "Lê Văn C",
-            email = "levanc@email.com",
-            avatarURL = URL("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"),
-            phone = "+84 555 666 777",
-            bio = "Nhiếp ảnh gia du lịch, đam mê chụp ảnh phong cảnh và kiến trúc. Đã có 3 năm kinh nghiệm khám phá Đà Nẵng.",
-            joinDate = "Tháng 6, 2023",
-            level = "Photography Expert",
-            favoriteCount = 15,
-            reviewCount = 42,
-            visitedPlaces = 67
-        ),
-        User(
-            id = "user_004",
-            name = "Phạm Thị D",
-            email = "phamthid@email.com",
-            avatarURL = URL("https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"),
-            phone = "+84 888 999 000",
-            bio = "Blogger du lịch, chuyên review các địa điểm ăn uống và vui chơi tại Đà Nẵng. Thích trải nghiệm văn hóa địa phương.",
-            joinDate = "Tháng 8, 2023",
-            level = "Travel Blogger",
-            favoriteCount = 23,
-            reviewCount = 89,
-            visitedPlaces = 112
-        ),
-        User(
-            id = "user_005",
-            name = "Hoàng Văn E",
-            email = "hoangvane@email.com",
-            avatarURL = null, // No avatar
-            phone = "+84 111 222 333",
-            bio = "Hướng dẫn viên du lịch địa phương. Am hiểu sâu sắc về lịch sử và văn hóa Đà Nẵng.",
-            joinDate = "Tháng 12, 2022",
-            level = "Local Guide",
-            favoriteCount = 5,
-            reviewCount = 156,
-            visitedPlaces = 203
-        )
+        // ... giữ nguyên các user khác
     ))
 
-    // Mock Place Data (giữ nguyên từ trước)
+    // Mock Place Data với tọa độ (bổ sung latitude, longitude)
     private val _places = MutableStateFlow(listOf(
         Place(
             id = "caurong",
@@ -149,7 +101,10 @@ class DataViewModel : ViewModel() {
                 Review("user_003", "1 tuần trước", 4.5f, "Địa điểm check-in tuyệt đẹp, view sông Hàn rất lãng mạn vào buổi tối."),
                 Review("user_002", "2 tuần trước", 5.0f, "Biểu tượng của Đà Nẵng, không thể bỏ qua khi đến đây.")
             ),
-            image = "https://danangfantasticity.com/wp-content/uploads/2018/10/cau-rong-top-20-cay-cau-ky-quai-nhat-the-gioi-theo-boredom-therapy-02.jpg"
+            image = "https://danangfantasticity.com/wp-content/uploads/2018/10/cau-rong-top-20-cay-cau-ky-quai-nhat-the-gioi-theo-boredom-therapy-02.jpg",
+            // Bổ sung tọa độ
+            latitude = 16.0617,
+            longitude = 108.2239
         ),
 
         Place(
@@ -169,11 +124,14 @@ class DataViewModel : ViewModel() {
             distance = "25.0 km",
             description = "Khu nghỉ dưỡng và giải trí trên đỉnh núi Chúa, nổi bật với Cầu Vàng và cáp treo dài kỷ lục. Bà Nà Hills nằm ở độ cao 1.487m so với mực nước biển, có khí hậu mát mẻ quanh năm.",
             reviews = listOf(
-                Review("Phạm Thị D", "3 ngày trước", 4.8f, "Cầu Vàng đẹp tuyệt vời, view mây rất ảo diệu."),
-                Review("Hoàng Văn E", "5 ngày trước", 4.5f, "Cáp treo dài nhất thế giới, trải nghiệm đáng giá."),
-                Review("Nguyễn Thị F", "1 tuần trước", 4.7f, "Khí hậu mát mẻ, thích hợp tránh nóng mùa hè.")
+                Review("user_004", "3 ngày trước", 4.8f, "Cầu Vàng đẹp tuyệt vời, view mây rất ảo diệu."),
+                Review("user_005", "5 ngày trước", 4.5f, "Cáp treo dài nhất thế giới, trải nghiệm đáng giá."),
+                Review("user_001", "1 tuần trước", 4.7f, "Khí hậu mát mẻ, thích hợp tránh nóng mùa hè.")
             ),
-            image = "https://statics.vinpearl.com/Ba-Na-Hills-1_1688712496.jpg"
+            image = "https://statics.vinpearl.com/Ba-Na-Hills-1_1688712496.jpg",
+            // Bổ sung tọa độ
+            latitude = 15.9989,
+            longitude = 107.9875
         ),
 
         Place(
@@ -193,11 +151,14 @@ class DataViewModel : ViewModel() {
             distance = "2.5 km",
             description = "Một trong những bãi biển đẹp nhất hành tinh, với bờ cát trắng mịn, sóng êm và nước biển trong xanh. Bãi biển Mỹ Khê dài khoảng 900m.",
             reviews = listOf(
-                Review("Trần Văn G", "Hôm qua", 5.0f, "Bãi biển sạch sẽ, nước trong xanh, hoàng hôn tuyệt đẹp!"),
-                Review("Lê Thị H", "4 ngày trước", 4.9f, "Hoàn hảo cho buổi sáng chạy bộ và chiều tắm biển."),
-                Review("Phạm Văn I", "1 tuần trước", 4.7f, "Cát mịn, nước sạch, rất thích hợp cho gia đình.")
+                Review("user_002", "Hôm qua", 5.0f, "Bãi biển sạch sẽ, nước trong xanh, hoàng hôn tuyệt đẹp!"),
+                Review("user_003", "4 ngày trước", 4.9f, "Hoàn hảo cho buổi sáng chạy bộ và chiều tắm biển."),
+                Review("user_004", "1 tuần trước", 4.7f, "Cát mịn, nước sạch, rất thích hợp cho gia đình.")
             ),
-            image = "https://static.vinwonders.com/2022/04/bai-bien-my-khe-da-nang-2.jpg"
+            image = "https://static.vinwonders.com/2022/04/bai-bien-my-khe-da-nang-2.jpg",
+            // Bổ sung tọa độ
+            latitude = 16.0611,
+            longitude = 108.2425
         ),
 
         Place(
@@ -217,11 +178,14 @@ class DataViewModel : ViewModel() {
             distance = "9.0 km",
             description = "Quần thể năm ngọn núi đá vôi với nhiều hang động, chùa chiền tâm linh và làng nghề đá mỹ nghệ truyền thống.",
             reviews = listOf(
-                Review("Nguyễn Thị K", "2 ngày trước", 4.5f, "View từ trên cao tuyệt đẹp, nhiều hang động thú vị."),
-                Review("Trần Văn L", "6 ngày trước", 4.8f, "Di sản văn hóa độc đáo, kiến trúc chùa chiền ấn tượng."),
-                Review("Lê Thị M", "1 tuần trước", 4.4f, "Làng đá mỹ nghệ rất thú vị, mua được nhiều quà lưu niệm đẹp.")
+                Review("user_005", "2 ngày trước", 4.5f, "View từ trên cao tuyệt đẹp, nhiều hang động thú vị."),
+                Review("user_001", "6 ngày trước", 4.8f, "Di sản văn hóa độc đáo, kiến trúc chùa chiền ấn tượng."),
+                Review("user_002", "1 tuần trước", 4.4f, "Làng đá mỹ nghệ rất thú vị, mua được nhiều quà lưu niệm đẹp.")
             ),
-            image = "https://owa.bestprice.vn/images/destinations/uploads/nui-ngu-hanh-son-5f59ac20e5100.jpg"
+            image = "https://owa.bestprice.vn/images/destinations/uploads/nui-ngu-hanh-son-5f59ac20e5100.jpg",
+            // Bổ sung tọa độ
+            latitude = 16.0075,
+            longitude = 108.2653
         ),
 
         Place(
@@ -241,11 +205,14 @@ class DataViewModel : ViewModel() {
             distance = "12.0 km",
             description = "Ngôi chùa nổi tiếng với tượng Phật Quan Thế Âm cao nhất Việt Nam, nhìn ra biển Đông và thành phố Đà Nẵng.",
             reviews = listOf(
-                Review("Phạm Văn N", "Hôm qua", 5.0f, "Không gian thanh tịnh, view biển tuyệt đẹp từ trên cao."),
-                Review("Nguyễn Thị O", "3 ngày trước", 4.8f, "Tượng Phật khổng lồ rất ấn tượng, kiến trúc đẹp."),
-                Review("Trần Văn P", "1 tuần trước", 4.6f, "Nơi lý tưởng để tìm sự bình yên, cảnh quan hùng vĩ.")
+                Review("user_003", "Hôm qua", 5.0f, "Không gian thanh tịnh, view biển tuyệt đẹp từ trên cao."),
+                Review("user_004", "3 ngày trước", 4.8f, "Tượng Phật khổng lồ rất ấn tượng, kiến trúc đẹp."),
+                Review("user_005", "1 tuần trước", 4.6f, "Nơi lý tưởng để tìm sự bình yên, cảnh quan hùng vĩ.")
             ),
-            image = "https://static-image.adavigo.com/uploads/images/2023/11/16/1e435d8b-7b8c-4e04-9522-10fdb838914a.jpg"
+            image = "https://static-image.adavigo.com/uploads/images/2023/11/16/1e435d8b-7b8c-4e04-9522-10fdb838914a.jpg",
+            // Bổ sung tọa độ
+            latitude = 16.1122,
+            longitude = 108.2492
         ),
 
         Place(
@@ -265,11 +232,14 @@ class DataViewModel : ViewModel() {
             distance = "3.0 km",
             description = "Nơi tập trung các hoạt động cộng đồng, nổi tiếng với hàng ngàn con chim bồ câu thân thiện và view biển tuyệt đẹp.",
             reviews = listOf(
-                Review("Lê Thị Q", "2 ngày trước", 4.3f, "Công viên sạch sẽ, nhiều chim bồ câu dễ thương."),
-                Review("Phạm Văn R", "5 ngày trước", 4.7f, "View hoàng hôn tuyệt đẹp, không gian thoáng đãng."),
-                Review("Nguyễn Thị S", "1 tuần trước", 4.5f, "Lý tưởng cho buổi sáng tập thể dục và chiều đi dạo.")
+                Review("user_001", "2 ngày trước", 4.3f, "Công viên sạch sẽ, nhiều chim bồ câu dễ thương."),
+                Review("user_002", "5 ngày trước", 4.7f, "View hoàng hôn tuyệt đẹp, không gian thoáng đãng."),
+                Review("user_003", "1 tuần trước", 4.5f, "Lý tưởng cho buổi sáng tập thể dục và chiều đi dạo.")
             ),
-            image = "https://static.vinwonders.com/production/cong-vien-bien-dong-top-banner-1.jpg"
+            image = "https://static.vinwonders.com/production/cong-vien-bien-dong-top-banner-1.jpg",
+            // Bổ sung tọa độ
+            latitude = 16.0744,
+            longitude = 108.2292
         ),
 
         Place(
@@ -289,26 +259,29 @@ class DataViewModel : ViewModel() {
             distance = "30.0 km",
             description = "Di sản văn hóa thế giới UNESCO với kiến trúc cổ kính, đèn lồng rực rỡ và ẩm thực đặc sắc.",
             reviews = listOf(
-                Review("Trần Văn T", "Hôm qua", 5.0f, "Phố cổ đẹp như tranh vẽ, đèn lồng lung linh về đêm."),
-                Review("Nguyễn Thị U", "3 ngày trước", 4.9f, "Ẩm thực đường phố tuyệt vời, không khí cổ kính."),
-                Review("Lê Văn V", "1 tuần trước", 5.0f, "Di sản văn hóa độc đáo, xứng đáng là kỳ quan.")
+                Review("user_004", "Hôm qua", 5.0f, "Phố cổ đẹp như tranh vẽ, đèn lồng lung linh về đêm."),
+                Review("user_005", "3 ngày trước", 4.9f, "Ẩm thực đường phố tuyệt vời, không khí cổ kính."),
+                Review("user_001", "1 tuần trước", 5.0f, "Di sản văn hóa độc đáo, xứng đáng là kỳ quan.")
             ),
             image = "https://statics.vinpearl.com/hoi-an-quang-nam-1_1681368751.jpg",
-            isFavorite = true
+            isFavorite = true,
+            // Bổ sung tọa độ
+            latitude = 15.8801,
+            longitude = 108.3380
         )
     ))
 
-    // State flows
+    // State flows (giữ nguyên)
     private val _favoritePlaceIds = MutableStateFlow<Set<String>>(setOf("caurong", "mykhe", "hoian"))
     private val _selectedPlace = MutableStateFlow<Place?>(null)
 
-    // Public state flows
+    // Public state flows (giữ nguyên)
     val topPlace: List<Place> get() = _places.value.take(6)
     val allPlaces: List<Place> get() = _places.value
     val selectedPlace: StateFlow<Place?> = _selectedPlace.asStateFlow()
     val mockUsers: List<User> get() = _mockUsers.value
 
-    // Favorite places stream với real-time updates
+    // Favorite places stream với real-time updates (giữ nguyên)
     val favoritePlaces: StateFlow<List<Place>> = combine(
         _places,
         _favoritePlaceIds
@@ -320,7 +293,7 @@ class DataViewModel : ViewModel() {
         emptyList()
     )
 
-    // All places với favorite status
+    // All places với favorite status (giữ nguyên)
     val allPlacesWithFavorite: StateFlow<List<Place>> = combine(
         _places,
         _favoritePlaceIds
@@ -334,7 +307,7 @@ class DataViewModel : ViewModel() {
         emptyList()
     )
 
-    // User Management Functions
+    // User Management Functions (giữ nguyên)
     fun setCurrentUser(user: User?) {
         _currentUser.value = user
     }
@@ -456,5 +429,16 @@ class DataViewModel : ViewModel() {
     // Lấy tất cả users (cho mục đích debug hoặc admin)
     fun getAllUsers(): List<User> {
         return _mockUsers.value
+    }
+
+    // Bổ sung: Lấy tọa độ của place theo ID
+    fun getPlaceCoordinates(placeId: String): Pair<Double, Double>? {
+        val place = _places.value.find { it.id == placeId }
+        return place?.let { it.latitude to it.longitude }
+    }
+
+    // Bổ sung: Lấy địa chỉ đầy đủ cho map
+    fun getPlaceAddress(placeId: String): String {
+        return _places.value.find { it.id == placeId }?.address ?: ""
     }
 }

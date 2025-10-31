@@ -1,9 +1,11 @@
 package com.hiddendanang.app
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,19 +23,47 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hiddendanang.app.navigation.Screen
 
+// Thêm import MapLibre
+import org.maplibre.android.MapLibre
+import org.maplibre.android.WellKnownTileServer
+
 class MainActivity : ComponentActivity() {
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+        if (fineLocationGranted || coarseLocationGranted) {
+            //
+        }
+    }
+
+    private fun requestLocationPermission() {
+        locationPermissionLauncher.launch(arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        MapLibre.getInstance(this, "", WellKnownTileServer.MapLibre)
+
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            HiddenDaNangApp()
+            HiddenDaNangApp(
+                onRequestLocationPermission = { requestLocationPermission() }
+            )
         }
     }
 }
 
 @Composable
-fun HiddenDaNangApp(){
+fun HiddenDaNangApp(
+    onRequestLocationPermission: () -> Unit = {}
+){
     val themePreference = remember { mutableStateOf(AppThemeMode.SYSTEM) }
     val navController = rememberNavController()
 
@@ -49,7 +79,8 @@ fun HiddenDaNangApp(){
             ) { paddingValues ->
                 AppNavHost(
                     modifier = Modifier.padding(paddingValues),
-                    navController = navController
+                    navController = navController,
+                    onRequestLocationPermission = onRequestLocationPermission
                 )
             }
         }
