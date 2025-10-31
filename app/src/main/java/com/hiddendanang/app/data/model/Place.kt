@@ -28,7 +28,7 @@ data class ImageDetail(
 
 data class Place(
     @DocumentId
-    val id: String? = null,
+    val id: String = "",
 
     val name: String = "",
     val name_lower: String = "",

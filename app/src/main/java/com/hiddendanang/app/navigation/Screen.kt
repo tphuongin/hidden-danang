@@ -3,6 +3,8 @@ package com.hiddendanang.app.navigation
 sealed class Screen(val route: String, val title: String) {
     object Splash : Screen("splash", "Splash")
     object HomePage: Screen("homepage", "Home")
+    object Login: Screen("login", "Login")
+    object Register: Screen("register", "Register")
     object Map: Screen("map", "Map")
     object Favorite: Screen("favorite", "Favorite")
     object Profile: Screen("profile/id", "Profile"){

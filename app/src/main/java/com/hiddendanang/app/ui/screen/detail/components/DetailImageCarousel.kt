@@ -19,13 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import com.hiddendanang.app.data.model.ImageDetail
 import com.hiddendanang.app.ui.theme.Dimens
 import kotlinx.coroutines.launch
 
 @Composable
 fun DetailImageCarousel(
     navController: NavHostController,
-    images: List<String>,
+    images: List<ImageDetail>,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit
 ) {

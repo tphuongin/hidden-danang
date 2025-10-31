@@ -34,7 +34,7 @@ import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.Wallet
 import com.composables.icons.lucide.Waypoints
 import com.hiddendanang.app.R
-import com.hiddendanang.app.ui.model.Place
+import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.theme.Dimens
 
 @Composable
@@ -65,12 +65,12 @@ fun PlaceTitleAndRating(place: Place) {
                     tint = Color.Yellow
                 )
                 Text(
-                    text = "${place.rating}",
+                    text = "${place.rating_summary.average}",
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = ". ${place.reviewCount} ${stringResource(R.string.review)} ",
+                    text = ". ${place.rating_summary.count} ${stringResource(R.string.review)} ",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -85,7 +85,7 @@ fun PlaceTitleAndRating(place: Place) {
                     .padding(horizontal = Dimens.PaddingMedium, vertical = Dimens.PaddingTiny)
             ) {
                 Text(
-                    text = place.category,
+                    text = place.subcategory,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -99,13 +99,13 @@ fun PlaceInfoSection(place: Place) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
-        InfoItem(Lucide.MapPinHouse, R.string.address, place.address)
-        InfoItem(Lucide.Clock3, R.string.opening_hours, place.hours)
-        InfoItem(Lucide.Wallet, R.string.price_range, place.priceRange)
+        InfoItem(Lucide.MapPinHouse, R.string.address, place.address.formatted_address)
+        InfoItem(Lucide.Clock3, R.string.opening_hours, "Đang cập nhật...")
+        InfoItem(Lucide.Wallet, R.string.price_range, place.price_indicator)
         InfoItem(
             Lucide.Waypoints,
             R.string.distance,
-            place.distance
+            "Đang tính toán..."
         )
     }
 }
