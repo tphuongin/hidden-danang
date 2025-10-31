@@ -52,4 +52,26 @@
     <string name="bottom_nav_map">Map</string>
     <string name="bottom_nav_favorite">Favorite</string>
     <string name="bottom_nav_profile">Profile</string>
+
+    <!-- Interactive Map Screen -->
+    <string name="map_directions_to">Directions to %1$s</string>
+    <string name="map_directions">Directions</string>
+    <string name="back_button_description">Back</string>
+
+    <!-- MapCard Component -->
+    <string name="map_card_static_map_description">Static Map with route to the location</string>
+    <string name="map_card_location_error_description">Location error icon</string>
+    <string name="map_card_load_error_title">Failed to load map</string>
+    <string name="map_card_load_error_retry">Tap to retry</string>
+    <string name="map_card_permission_required_description">Location permission required icon</string>
+    <string name="map_card_permission_required_title">Enable location to see directions</string>
+    <string name="map_card_permission_required_action">Tap to grant permission</string>
+    <string name="map_card_loading">Loading map...</string>
+    <string name="map_card_place_image_description">Placeholder image of the place</string>
+    <string name="map_card_route_pin_description">Route pin icon</string>
+
+<!--    Key Api-->
+    <string name="goong_api_key" translatable="false">wl9WcliOz8fo9XP6nchMVFpoDUqYSk0YbPf78gGc</string>
+    <string name="goong_base_url" translatable="false">https://rsapi.goong.io/</string>
+
 </resources>
