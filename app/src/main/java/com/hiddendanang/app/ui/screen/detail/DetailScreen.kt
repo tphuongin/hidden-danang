@@ -15,6 +15,7 @@ import com.hiddendanang.app.ui.screen.detail.components.DetailContent
 fun DetailScreen(
     navController: NavHostController,
     placeId: String,
+    onRequestLocationPermission: () -> Unit = {}
 ) {
     val viewModel: DataViewModel = viewModel()
     // Fetch place details and favorite status from ViewModel
@@ -34,7 +35,8 @@ fun DetailScreen(
                 place = currentPlace,
                 isFavorite = isFavorite,
                 onToggleFavorite = { viewModel.toggleFavorite(currentPlace.id) },
-                viewModel = viewModel
+                viewModel = viewModel,
+                onRequestLocationPermission = onRequestLocationPermission
             )
         } ?: run {
 
