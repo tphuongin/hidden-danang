@@ -124,8 +124,10 @@ fun HomePageScreen(navController: NavHostController) {
 }
 fun navToDetailScreen(navController: NavHostController, placeId: String){
     navController.navigate(Screen.DetailPlace.createRoute(placeId)){
-        popUpTo(navController.graph.startDestinationId)
         launchSingleTop = true
         restoreState = true
+        popUpTo(Screen.DetailPlace.route) {
+            inclusive = false
+        }
     }
 }

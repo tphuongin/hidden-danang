@@ -7,6 +7,7 @@ import com.hiddendanang.app.data.model.Favorite
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.data.repository.FavoritesRepository
 import com.hiddendanang.app.data.repository.LocationRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,18 +43,19 @@ class DetailViewModel(
             )
 
     // Lấy "id" từ arguments của navigation
-    private val placeId: String = checkNotNull(savedStateHandle["id"])
-
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
-    init {
-        // Lắng nghe 3 luồng dữ liệu cùng lúc
-        listenToDataChanges()
-    }
-
-    private fun listenToDataChanges() {
+    public fun listenToDataChanges(placeId : String, forceReload: Boolean = false) {
         viewModelScope.launch {
+            if (!forceReload && placeId == _uiState.value.place?.id && !_uiState.value.isLoading) {
+                return@launch
+            }
+            if (placeId == _uiState.value.place?.id && !_uiState.value.isLoading) {
+                return@launch
+            }
+
+            _uiState.update { it.copy(isLoading = true, error = null) }
             // Luồng 2: Lấy chi tiết địa điểm
             val placeResult = locationRepository.getPlaceDetail(placeId)
 

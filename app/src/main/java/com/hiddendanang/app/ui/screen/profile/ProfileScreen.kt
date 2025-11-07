@@ -64,7 +64,8 @@ fun ProfileScreen(
                 ) {
                     LoggedInProfile(
                         user = uiState.user!!,
-                        onLogout = { viewModel.logout() } // Truyền sự kiện logout
+                        onLogout = { viewModel.logout() }, // Truyền sự kiện logout
+                        viewModel = viewModel
                     )
                 }
             }
@@ -75,13 +76,14 @@ fun ProfileScreen(
 @Composable
 fun LoggedInProfile(
     user: com.hiddendanang.app.data.model.User, // Dùng com.hiddendanang.app.data.model.User
-    onLogout: () -> Unit // Thêm
+    onLogout: () -> Unit, // Thêm
+    viewModel: ProfileViewModel
 ) {
     val themePreference = LocalThemePreference.current
-
+    val favoriteCount by viewModel.favoriteCount.collectAsState()
     ProfileHeader(
         user = user,
-        favoriteCount = 0,
+        favoriteCount = favoriteCount,
         reviewsCount = user.stats.reviews_count,
         visitedCount = user.stats.locations_added
     )

@@ -32,7 +32,9 @@ fun DetailImageCarousel(
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
     val coroutineScope = rememberCoroutineScope()
-
+    LaunchedEffect(images) {
+        println("Images size: ${images.size}")
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,10 +46,11 @@ fun DetailImageCarousel(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             AsyncImage(
-                model = images[page],
+                model = images[page].url,
                 contentDescription = "Image ${page + 1}",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
+
             )
         }
 
