@@ -4,12 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.data.model.User
 import com.hiddendanang.app.data.repository.AuthRepository
+import com.hiddendanang.app.data.repository.FavoritesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,6 +27,8 @@ data class ProfileUiState(
 
 class ProfileViewModel : ViewModel() {
     private val authRepository: AuthRepository = AuthRepository()
+    private val favoritesRepository: FavoritesRepository by lazy { FavoritesRepository() }
+
 
     // StateFlow riêng cho ProfileScreen
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -31,6 +38,16 @@ class ProfileViewModel : ViewModel() {
         // Bắt đầu lắng nghe ngay lập tức
         loadUserProfile()
     }
+
+    val favoriteCount: StateFlow<Int> =
+        favoritesRepository.getFavoriteIdsStream()
+            .map { it.size } // biến Set<String> thành số lượng phần tử
+            .catch { emit(0) } // nếu lỗi thì trả 0
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = 0
+            )
 
     private fun loadUserProfile() {
         viewModelScope.launch {

@@ -20,6 +20,9 @@ fun DetailScreen(
 ) {
     val viewModel: DetailViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(placeId) {
+        viewModel.listenToDataChanges(placeId, true)
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),

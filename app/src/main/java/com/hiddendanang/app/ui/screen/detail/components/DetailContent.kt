@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
+import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.components.place.PlaceCard
