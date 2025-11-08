@@ -23,7 +23,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hiddendanang.app.navigation.Screen
 
-// Thêm import MapLibre
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
 
