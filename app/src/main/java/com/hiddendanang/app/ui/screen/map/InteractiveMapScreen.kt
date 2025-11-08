@@ -32,6 +32,9 @@ fun InteractiveMapScreen(
         dataViewModel.getPlaceById(placeId)
     }
 
+    // KHỞI TẠO SCROLL BEHAVIOR để thêm đổ bóng cho TopAppBar
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -56,7 +59,8 @@ fun InteractiveMapScreen(
                         Icon(
                             imageVector = Lucide.ChevronLeft,
                             contentDescription = stringResource(id = R.string.back_button_description),
-                            tint = MaterialTheme.colorScheme.onBackground
+                            // ĐIỂM CHỈNH SỬA 1: Tăng độ tương phản
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
@@ -64,7 +68,9 @@ fun InteractiveMapScreen(
                     containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
                     titleContentColor = MaterialTheme.colorScheme.onBackground
                 ),
-
+                // ĐIỂM CHỈNH SỬA 2: Thêm ScrollBehavior và WindowInsets
+                scrollBehavior = scrollBehavior,
+                windowInsets = TopAppBarDefaults.windowInsets,
                 modifier = Modifier.fillMaxWidth()
             )
         },
