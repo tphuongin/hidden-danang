@@ -49,7 +49,12 @@ fun HomePageScreen(navController: NavHostController) {
                 Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
                     HomePageTitle()
                     Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-                    SearchBar()
+                    SearchBar(
+                        onClick = {
+                            // Điều hướng đến màn hình Search mới
+                            navController.navigate(Screen.Search.route)
+                        }
+                    )
                     Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
                     CategoryRow()
                 }
