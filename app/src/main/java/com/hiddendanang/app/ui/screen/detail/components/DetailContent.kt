@@ -34,6 +34,7 @@ import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.GoongViewModel
+import com.hiddendanang.app.ui.screen.detail.DetailViewModel
 
 @Composable
 fun DetailContent(
@@ -44,7 +45,7 @@ fun DetailContent(
     nearbyPlaces: List<Place>,
     isNearbyFavorite: (String) -> Boolean,
     onToggleNearbyFavorite: (String) -> Unit
-    viewModel: DataViewModel,
+    viewModel: DetailViewModel,
     onRequestLocationPermission: () -> Unit = {}
 ) {
     val goongViewModel: GoongViewModel = viewModel()
