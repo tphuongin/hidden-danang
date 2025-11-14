@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -20,21 +22,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
-import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
-import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.GoongViewModel
-import com.hiddendanang.app.ui.screen.detail.DetailViewModel
+import com.hiddendanang.app.viewmodel.DetailViewModel
 
 @Composable
 fun DetailContent(
@@ -46,9 +48,11 @@ fun DetailContent(
     isNearbyFavorite: (String) -> Boolean,
     onToggleNearbyFavorite: (String) -> Unit,
     viewModel: DetailViewModel,
+    onWriteReviewClicked: () -> Unit,
     onRequestLocationPermission: () -> Unit = {}
 ) {
     val goongViewModel: GoongViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
@@ -83,7 +87,6 @@ fun DetailContent(
                     PlaceTitleAndRating(place = place)
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
-
                     // MapCard với location permission handling
                     MapCard(
                         place = place,
@@ -104,7 +107,7 @@ fun DetailContent(
 
             // Review Actions
             item {
-                ReviewActionsSection()
+                ReviewActionsSection(viewModel, onWriteReviewClicked = onWriteReviewClicked)
             }
 
             // Nearby Places Section
@@ -166,7 +169,10 @@ fun DetailContent(
 }
 
 @Composable
-private fun ReviewActionsSection() {
+private fun ReviewActionsSection(
+    viewModel: DetailViewModel,
+    onWriteReviewClicked: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,6 +182,21 @@ private fun ReviewActionsSection() {
             ),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
+        if (uiState.allReviews.isEmpty()) {
+            Text(
+                text = "Chưa có đánh giá nào",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        } else {
+            uiState.allReviews.take(2).forEach { review ->
+                ReviewCard(
+                    review = review,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+        }
         // Button view all comments
         Button(
             onClick = { /* TODO: Implement view all comments */ },
@@ -192,10 +213,19 @@ private fun ReviewActionsSection() {
                 )
             )
         }
-
+        if (uiState.isReviewFormVisible) {
+            ReviewForm(
+                initialRating = uiState.userReview?.rating ?: 0,
+                initialComment = uiState.userReview?.comment ?: "",
+                onDismiss = { viewModel.hideReviewForm() },
+                onSubmit = { rating, comment ->
+                    viewModel.submitUserReview(rating, comment)
+                }
+            )
+        }
         // Button write your comment
         Button(
-            onClick = { /* TODO: Implement write comment */ },
+            onClick = { onWriteReviewClicked() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ButtonLarge),

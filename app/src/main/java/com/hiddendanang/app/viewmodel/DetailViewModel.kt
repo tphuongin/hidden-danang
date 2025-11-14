@@ -1,19 +1,21 @@
-package com.hiddendanang.app.ui.screen.detail
+package com.hiddendanang.app.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.data.model.Favorite
 import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.data.model.Review
 import com.hiddendanang.app.data.repository.FavoritesRepository
 import com.hiddendanang.app.data.repository.LocationRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.hiddendanang.app.data.repository.AuthRepository
+import com.hiddendanang.app.data.repository.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,14 +27,21 @@ data class DetailUiState(
     val nearbyPlaces: List<Place> = emptyList(),
     val error: String? = null,
     val favoriteIds: Set<String> = emptySet(),
+    val isReviewFormVisible: Boolean = false, // <-- TRẠNG THÁI MỚI
+    val userReview: Review? = null, // Đánh giá hiện tại của user
+    val allReviews: List<Review> = emptyList()
 )
 
 class DetailViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    private val placeIdArgument: String = savedStateHandle["id"] ?: ""
 
+    private val reviewRepository: ReviewRepository by lazy { ReviewRepository() }
+    private val authRepository: AuthRepository by lazy { AuthRepository() }
     private val locationRepository: LocationRepository by lazy { LocationRepository() }
     private val favoritesRepository: FavoritesRepository by lazy { FavoritesRepository() }
+
     val favoriteIds: StateFlow<Set<String>> =
         favoritesRepository.getFavoriteIdsStream()
             .catch { emit(emptySet<String>()) }
@@ -80,6 +89,26 @@ class DetailViewModel(
             }
 
             val nearbyPlaces = nearbyPlacesResult.getOrNull() ?: emptyList()
+            launch {
+                reviewRepository.getAllReviewsStreamForPlace(placeId)
+                    .catch { e ->
+                        Log.e("DetailViewModel", "Lỗi lấy reviews: ${e.message}")
+                    }
+                    .collect { reviews ->
+                        _uiState.update { it.copy(allReviews = reviews) }
+                    }
+            }
+
+            // THÊM: Lắng nghe review của user hiện tại
+            launch {
+                reviewRepository.getUserReviewStream(placeId)
+                    .catch { e ->
+                        Log.e("DetailViewModel", "Lỗi lấy user review: ${e.message}")
+                    }
+                    .collect { userReview ->
+                        _uiState.update { it.copy(userReview = userReview) }
+                    }
+            }
             // Gộp Luồng 1 (favoriteIds) với data đã fetch (place)
             favoriteIds
                 .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
@@ -140,8 +169,59 @@ class DetailViewModel(
         }
     }
 
+
+    // Hàm gọi khi UI muốn mở Form (bấm nút "Viết đánh giá")
+    fun showReviewForm() {
+        _uiState.update { it.copy(isReviewFormVisible = true) }
+    }
+
+    // Hàm gọi khi Form bị đóng (bấm Hủy hoặc Submit)
+    fun hideReviewForm() {
+        _uiState.update { it.copy(isReviewFormVisible = false) }
+    }
+
+    // Hàm gọi khi Form gửi dữ liệu
+    // [VỊ TRÍ CẦN SỬA: Hàm submitUserReview]
+
+    fun submitUserReview(rating: Int, comment: String) {
+        // 1. Lấy thông tin cần thiết (để đảm bảo không bị null)
+        val currentUser = authRepository.getCurrentUser()
+        val currentUserId = currentUser?.uid ?: return
+        val currentUserName = currentUser.displayName ?: "Ẩn danh"
+        val placeId = _uiState.value.place?.id ?: return
+        val currentUserPhotoUrl = currentUser.photoUrl?.toString() ?: ""
+
+        val existingReview = _uiState.value.userReview // Lấy review cũ để giữ metadata
+        // 2. Tạo đối tượng Review Model
+        val reviewToSubmit = Review(
+            rating = rating,
+            comment = comment,
+            user_id = currentUserId,
+            user_name = currentUserName,
+            user_photo_url = currentUserPhotoUrl,
+            created_at = existingReview?.created_at, // Giữ lại ngày tạo nếu là chỉnh sửa
+            updated_at = com.google.firebase.Timestamp(java.util.Date())
+        )
+
+        // 3. Gọi Repository để lưu DB
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val result = reviewRepository.submitOrUpdateReview(placeId, reviewToSubmit)
+
+            result.onSuccess {
+                _uiState.update { it.copy(isLoading = false, error = null) }
+                hideReviewForm() // Ẩn form sau khi gửi thành công
+            }.onFailure { e ->
+                _uiState.update { it.copy(isLoading = false, error = e.message) }
+            }
+        }
+    }
+
     fun errorShown() {
         _uiState.update { it.copy(error = null) }
     }
+
+
 }
 
