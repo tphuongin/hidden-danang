@@ -31,19 +31,18 @@ import com.composables.icons.lucide.Heart
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Star
 import com.hiddendanang.app.R
+import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.model.DataViewModel
-import com.hiddendanang.app.ui.model.Place
 import com.hiddendanang.app.ui.theme.Dimens
 
 @Composable
 fun PlaceCard(
     modifier: Modifier = Modifier,
     place: Place,
+    isFavorite: Boolean,
     onClick: ((placeId: String) -> Unit)? = null,
-    onFavoriteToggle: ((Boolean) -> Unit)? = null
+    onFavoriteToggle: () -> Unit
 ) {
-    val viewModel: DataViewModel = viewModel()
-    val isFavorite by viewModel.isFavorite(place.id).collectAsState(initial = false)
     var isPressed by remember { mutableStateOf(false) }
 
     val elevation by animateDpAsState(
@@ -89,7 +88,7 @@ fun PlaceCard(
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(place.images.firstOrNull() ?: place.image)
+                        .data(place.images.firstOrNull() ?.url  )
                         .crossfade(true)
                         .build(),
                     contentDescription = place.name,
@@ -109,8 +108,7 @@ fun PlaceCard(
                         )
                         .size(Dimens.IconLargeMedium)
                         .clickable {
-                            viewModel.toggleFavorite(place.id)
-                            onFavoriteToggle?.invoke(!isFavorite)
+                            onFavoriteToggle()
                         },
                     contentAlignment = Alignment.Center
                 ) {
@@ -143,7 +141,7 @@ fun PlaceCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = place.category,
+                        text = place.subcategory,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         maxLines = 1,
@@ -162,7 +160,7 @@ fun PlaceCard(
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "${place.rating}",
+                        text = "${place.rating_summary.average}",
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }

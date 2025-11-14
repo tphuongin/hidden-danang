@@ -19,19 +19,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import com.hiddendanang.app.data.model.ImageDetail
 import com.hiddendanang.app.ui.theme.Dimens
 import kotlinx.coroutines.launch
 
 @Composable
 fun DetailImageCarousel(
     navController: NavHostController,
-    images: List<String>,
+    images: List<ImageDetail>,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
     val coroutineScope = rememberCoroutineScope()
-
+    LaunchedEffect(images) {
+        println("Images size: ${images.size}")
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,10 +46,11 @@ fun DetailImageCarousel(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             AsyncImage(
-                model = images[page],
+                model = images[page].url,
                 contentDescription = "Image ${page + 1}",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
+
             )
         }
 
