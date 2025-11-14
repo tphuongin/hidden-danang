@@ -15,13 +15,10 @@ import com.hiddendanang.app.ui.screen.detail.components.DetailContent
 fun DetailScreen(
     navController: NavHostController,
     placeId: String,
-    onRequestLocationPermission: () -> Unit = {}
 ) {
     val viewModel: DataViewModel = viewModel()
-    // Fetch place details and favorite status from ViewModel
     LaunchedEffect(placeId) {
         viewModel.getPlaceById(placeId)
-
     }
     val place by viewModel.selectedPlace.collectAsState()
     val isFavorite by viewModel.isFavorite(placeId).collectAsState(initial = false)
@@ -36,10 +33,8 @@ fun DetailScreen(
                 isFavorite = isFavorite,
                 onToggleFavorite = { viewModel.toggleFavorite(currentPlace.id) },
                 viewModel = viewModel,
-                onRequestLocationPermission = onRequestLocationPermission
             )
         } ?: run {
-
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }

@@ -41,6 +41,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.android.sdk.v1100)
+    implementation(libs.android.plugin.annotation.v9)
+    implementation(libs.accompanist.permissions)
     implementation(libs.android.sdk)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
@@ -63,6 +66,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.places)
     implementation(libs.androidx.foundation)
+    implementation(libs.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

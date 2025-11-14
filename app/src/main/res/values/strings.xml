@@ -73,5 +73,6 @@
 <!--    Key Api-->
     <string name="goong_api_key" translatable="false">wl9WcliOz8fo9XP6nchMVFpoDUqYSk0YbPf78gGc</string>
     <string name="goong_base_url" translatable="false">https://rsapi.goong.io/</string>
+    <string name="map_key" translatable="false">ZNnBPwWGxOjMOPDWc6vCIHMlzAxvgGXzvuqK8yUB</string>
 
 </resources>

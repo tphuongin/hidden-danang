@@ -2,14 +2,11 @@
 package com.hiddendanang.app.viewmodel
 
 import android.app.Application
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.R
 import com.hiddendanang.app.api.GoongRetrofitClient
-import com.hiddendanang.app.data.model.goongmodel.DirectionsResponse
+import com.hiddendanang.app.data.model.goongmodel.DirectionResponse
 import com.hiddendanang.app.data.repository.GoongRepository
 import com.hiddendanang.app.utils.LocationService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,13 +19,8 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
     private val apiService = GoongRetrofitClient.getInstance(application)
     private val repository = GoongRepository(apiService)
     private val locationService = LocationService(application)
-
-    private val _directionsResponse = MutableStateFlow<DirectionsResponse?>(null)
-    val directionsResponse: StateFlow<DirectionsResponse?> = _directionsResponse.asStateFlow()
-
-    private val _staticMapBitmap = MutableStateFlow<Bitmap?>(null)
-    val staticMapBitmap: StateFlow<Bitmap?> = _staticMapBitmap.asStateFlow()
-
+    private val _directionsResponse = MutableStateFlow<DirectionResponse?>(null)
+    val directionsResponse: StateFlow<DirectionResponse?> = _directionsResponse.asStateFlow()
     private val _currentLocation = MutableStateFlow<String?>(null)
     val currentLocation: StateFlow<String?> = _currentLocation.asStateFlow()
 
@@ -47,33 +39,6 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun fetchStaticMap(
-        origin: String,
-        destination: String,
-        width: Int = 500,
-        height: Int = 400,
-        vehicle: String = "car",
-        type: String = "fastest",
-        color: String = "#253494"
-    ) {
-        viewModelScope.launch {
-            try {
-                val response = repository.getStaticMap(
-                    origin, destination, vehicle, width, height, type, color, apiKey
-                )
-
-                // Convert ResponseBody to Bitmap
-                val inputStream = response.byteStream()
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                _staticMapBitmap.value = bitmap
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _errorMessage.value = "Lỗi khi tải bản đồ: ${e.message}"
-            }
-        }
-    }
-
-    // Trong GoongViewModel
     fun fetchCurrentLocation() {
         viewModelScope.launch {
             try {

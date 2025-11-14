@@ -4,9 +4,36 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
+import com.composables.icons.lucide.Locate
+import com.composables.icons.lucide.Lucide
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.hiddendanang.app.ui.theme.Dimens
 import kotlinx.coroutines.tasks.await
 
 class LocationService(private val context: Context) {
@@ -20,11 +47,9 @@ class LocationService(private val context: Context) {
         ]
     )
     suspend fun getCurrentLocation(): String? {
-        // Kiểm tra quyền trước khi sử dụng location API
         if (!hasLocationPermission()) {
             return null
         }
-
         return try {
             val location: Location? = fusedLocationClient.lastLocation.await()
             location?.let {
@@ -48,5 +73,105 @@ class LocationService(private val context: Context) {
                     context,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
+    }
+
+}
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun LocationPermission(
+    onGranted: @Composable () -> Unit
+) {
+    val permissionState = rememberPermissionState(
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    // Auto request popup when entering the screen
+    LaunchedEffect(Unit) {
+        permissionState.launchPermissionRequest()
+    }
+
+    when {
+        permissionState.status.isGranted -> {
+            onGranted()
+        }
+
+        permissionState.status.shouldShowRationale -> {
+            PermissionRationaleUI(
+                title = "Location Permission Needed",
+                message = "We use your location to show your position on the map. Please allow location access.",
+                buttonText = "Allow",
+                onButtonClick = {
+                    permissionState.launchPermissionRequest()
+                }
+            )
+        }
+
+        else -> {
+            PermissionRationaleUI(
+                title = "Location Permission Required",
+                message = "Please allow location access to use the map feature.",
+                buttonText = "Grant Permission",
+                onButtonClick = {
+                    permissionState.launchPermissionRequest()
+                }
+            )
+        }
+    }
+}
+@Composable
+fun PermissionRationaleUI(
+    title: String,
+    message: String,
+    buttonText: String,
+    onButtonClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Dimens.PaddingXLarge),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, shape = RoundedCornerShape(Dimens.PaddingLarge))
+                .padding(Dimens.PaddingXLarge),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Icon(
+                imageVector = Lucide.Locate,
+                contentDescription = null,
+                tint = Color(0xFF1976D2),
+                modifier = Modifier.size(Dimens.ButtonLarge)
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpaceMedium))
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpaceTiny))
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.SpaceLarge))
+
+            Button(
+                onClick = onButtonClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(Dimens.CornerMediumLarge)
+            ) {
+                Text(text = buttonText)
+            }
+        }
     }
 }
