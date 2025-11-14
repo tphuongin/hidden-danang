@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,10 +27,13 @@ import com.composables.icons.lucide.Navigation
 import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.navigation.Screen
+import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.GoongViewModel
 
 @Composable
 fun DetailContent(
@@ -40,11 +44,17 @@ fun DetailContent(
     nearbyPlaces: List<Place>,
     isNearbyFavorite: (String) -> Boolean,
     onToggleNearbyFavorite: (String) -> Unit
+    viewModel: DataViewModel,
+    onRequestLocationPermission: () -> Unit = {}
 ) {
+    val goongViewModel: GoongViewModel = viewModel()
+    val context = LocalContext.current
     val listState = rememberLazyListState()
+
     LaunchedEffect(place.id) {
         listState.scrollToItem(0)
     }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             state = listState,
@@ -72,7 +82,12 @@ fun DetailContent(
                     PlaceTitleAndRating(place = place)
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
-                    MapCard(place = place)
+
+                    // MapCard với location permission handling
+                    MapCard(
+                        place = place,
+                        onRequestLocationPermission = onRequestLocationPermission
+                    )
                 }
             }
 
@@ -113,7 +128,9 @@ fun DetailContent(
                 .fillMaxSize()
         ) {
             Button(
-                onClick = { /* TODO: Implement navigation to map */ },
+                onClick = {
+                    navToInteractiveMapScreen(navController, place.id)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.PaddingXLarge, vertical = Dimens.PaddingLarge)
@@ -232,5 +249,12 @@ private fun NearbyPlacesSection(
                 )
             }
         }
+    }
+}
+fun navToInteractiveMapScreen(navController: NavHostController, placeId: String){
+    navController.navigate(Screen.InteractiveMap.createRoute(placeId)){
+        popUpTo(navController.graph.startDestinationId)
+        launchSingleTop = true
+        restoreState = true
     }
 }

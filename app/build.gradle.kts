@@ -51,6 +51,12 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation(libs.android.sdk)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.converter.gson)
+    implementation(libs.converter.gson.v264)
+    implementation("com.github.goong-io:goong-map-android-sdk:1.5@aar") { isTransitive = true }
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.lottie.compose)
     implementation(libs.coil.compose)

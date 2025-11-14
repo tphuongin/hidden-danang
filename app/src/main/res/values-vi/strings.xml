@@ -52,4 +52,22 @@
     <string name="bottom_nav_map">Bản đồ</string>
     <string name="bottom_nav_favorite">Yêu thích</string>
     <string name="bottom_nav_profile">Cá nhân</string>
+
+    <!-- Interactive Map Screen -->
+    <string name="map_directions_to">Chỉ đường đến %1$s</string>
+    <string name="map_directions">Chỉ đường</string>
+    <string name="back_button_description">Quay lại</string>
+
+    <!-- MapCard Component -->
+    <string name="map_card_static_map_description">Bản đồ tĩnh với tuyến đường đến địa điểm</string>
+    <string name="map_card_location_error_description">Biểu tượng lỗi vị trí</string>
+    <string name="map_card_load_error_title">Không thể tải bản đồ</string>
+    <string name="map_card_load_error_retry">Nhấn để thử lại</string>
+    <string name="map_card_permission_required_description">Biểu tượng yêu cầu quyền vị trí</string>
+    <string name="map_card_permission_required_title">Bật quyền vị trí để xem chỉ đường</string>
+    <string name="map_card_permission_required_action">Nhấn để cấp quyền</string>
+    <string name="map_card_loading">Đang tải bản đồ...</string>
+    <string name="map_card_place_image_description">Hình ảnh minh họa địa điểm</string>
+    <string name="map_card_route_pin_description">Biểu tượng ghim tuyến đường</string>
+
 </resources>
