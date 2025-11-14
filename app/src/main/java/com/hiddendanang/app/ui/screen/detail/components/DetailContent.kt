@@ -44,7 +44,7 @@ fun DetailContent(
     onToggleFavorite: () -> Unit,
     nearbyPlaces: List<Place>,
     isNearbyFavorite: (String) -> Boolean,
-    onToggleNearbyFavorite: (String) -> Unit
+    onToggleNearbyFavorite: (String) -> Unit,
     viewModel: DetailViewModel,
     onRequestLocationPermission: () -> Unit = {}
 ) {
