@@ -29,6 +29,26 @@ class LocationRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun getAllPlaces(): Result<List<Place>> {
+        return try {
+            // 1. Lấy tham chiếu đến collection "places"
+            val snapshot = remoteDataSource.getPlacesCollection().get().await()
+
+            // 2. Chuyển đổi tất cả documents thành List<Place>
+            //    Sử dụng .copy(id = doc.id) để đảm bảo ID của document được gán vào object,
+            //    rất quan trọng cho việc điều hướng.
+            val places = snapshot.documents.mapNotNull { doc ->
+                doc.toObject<Place>()?.copy(id = doc.id)
+            }
+
+            // 3. Trả về kết quả thành công
+            Result.success(places)
+        } catch (e: Exception) {
+            // 4. Trả về lỗi nếu có
+            Result.failure(e)
+        }
+    }
     suspend fun getNearbyPlaces(currentPlaceGeohash: String, limit: Long = 10): Result<List<Place>> {
         if (currentPlaceGeohash.isEmpty()) {
             return Result.success(emptyList()) // Trả về rỗng nếu không có geohash

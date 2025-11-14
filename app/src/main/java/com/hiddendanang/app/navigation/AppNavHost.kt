@@ -2,7 +2,6 @@ package com.hiddendanang.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,6 +14,7 @@ import com.hiddendanang.app.ui.screen.favorite.FavoriteScreen
 import com.hiddendanang.app.ui.screen.home.HomePageScreen
 import com.hiddendanang.app.ui.screen.map.InteractiveMapScreen
 import com.hiddendanang.app.ui.screen.profile.ProfileScreen
+import com.hiddendanang.app.ui.screen.search.SearchScreen
 import com.hiddendanang.app.ui.screen.splash.SplashScreen
 
 @Composable
@@ -41,6 +41,9 @@ fun AppNavHost(
             HomePageScreen(
                 navController = navController,
             )
+        }
+        composable(Screen.Search.route) {
+            SearchScreen(navController = navController)
         }
         composable(
             Screen.DetailPlace.route,
