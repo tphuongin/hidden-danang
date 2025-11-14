@@ -27,24 +27,6 @@ import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
 
 class MainActivity : ComponentActivity() {
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-
-        if (fineLocationGranted || coarseLocationGranted) {
-            //
-        }
-    }
-
-    private fun requestLocationPermission() {
-        locationPermissionLauncher.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         MapLibre.getInstance(this, "", WellKnownTileServer.MapLibre)
 
@@ -52,17 +34,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            HiddenDaNangApp(
-                onRequestLocationPermission = { requestLocationPermission() }
-            )
+            HiddenDaNangApp()
         }
     }
 }
 
 @Composable
-fun HiddenDaNangApp(
-    onRequestLocationPermission: () -> Unit = {}
-){
+fun HiddenDaNangApp(){
     val themePreference = remember { mutableStateOf(AppThemeMode.SYSTEM) }
     val navController = rememberNavController()
 
@@ -79,7 +57,6 @@ fun HiddenDaNangApp(
                 AppNavHost(
                     modifier = Modifier.padding(paddingValues),
                     navController = navController,
-                    onRequestLocationPermission = onRequestLocationPermission
                 )
             }
         }

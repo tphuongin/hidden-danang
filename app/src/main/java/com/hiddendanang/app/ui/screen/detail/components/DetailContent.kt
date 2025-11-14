@@ -13,26 +13,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
 import com.hiddendanang.app.R
-import com.hiddendanang.app.navigation.Screen
-import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.model.Place
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
+import com.hiddendanang.app.ui.screen.map.MapScreen
 import com.hiddendanang.app.ui.theme.Dimens
-import com.hiddendanang.app.viewmodel.GoongViewModel
 
 @Composable
 fun DetailContent(
@@ -41,10 +43,7 @@ fun DetailContent(
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
     viewModel: DataViewModel,
-    onRequestLocationPermission: () -> Unit = {}
 ) {
-    val goongViewModel: GoongViewModel = viewModel()
-    val context = LocalContext.current
     val listState = rememberLazyListState()
 
     LaunchedEffect(place.id) {
@@ -79,11 +78,7 @@ fun DetailContent(
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
 
-                    // MapCard với location permission handling
-                    MapCard(
-                        place = place,
-                        onRequestLocationPermission = onRequestLocationPermission
-                    )
+                    MapLottie()
                 }
             }
 
@@ -130,7 +125,6 @@ fun DetailContent(
         ) {
             Button(
                 onClick = {
-                    navToInteractiveMapScreen(navController, place.id)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -247,10 +241,26 @@ private fun NearbyPlacesSection(
         }
     }
 }
-fun navToInteractiveMapScreen(navController: NavHostController, placeId: String){
-    navController.navigate(Screen.InteractiveMap.createRoute(placeId)){
-        popUpTo(navController.graph.startDestinationId)
-        launchSingleTop = true
-        restoreState = true
-    }
+
+@Composable
+fun MapLottie(){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.dlivery_map))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = Dimens.PaddingLarge)
+    )
 }
+//fun navToInteractiveMapScreen(navController: NavHostController, placeId: String){
+//    navController.navigate(Screen.InteractiveMap.createRoute(placeId)){
+//        popUpTo(navController.graph.startDestinationId)
+//        launchSingleTop = true
+//        restoreState = true
+//    }
+//}

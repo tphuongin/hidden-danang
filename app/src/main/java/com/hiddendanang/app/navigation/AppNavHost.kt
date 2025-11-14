@@ -11,7 +11,6 @@ import androidx.navigation.navArgument
 import com.hiddendanang.app.ui.screen.detail.DetailScreen
 import com.hiddendanang.app.ui.screen.favorite.FavoriteScreen
 import com.hiddendanang.app.ui.screen.home.HomePageScreen
-import com.hiddendanang.app.ui.screen.map.InteractiveMapScreen
 import com.hiddendanang.app.ui.screen.profile.ProfileScreen
 import com.hiddendanang.app.ui.screen.splash.SplashScreen
 
@@ -19,7 +18,6 @@ import com.hiddendanang.app.ui.screen.splash.SplashScreen
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    onRequestLocationPermission: () -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -47,7 +45,6 @@ fun AppNavHost(
                 DetailScreen(
                     navController = navController,
                     placeId = id,
-                    onRequestLocationPermission = onRequestLocationPermission
                 )
         }
         composable(Screen.Favorite.route) {
@@ -56,14 +53,13 @@ fun AppNavHost(
         composable(Screen.Profile.route) {
             ProfileScreen(navController)
         }
-        composable(
-            Screen.InteractiveMap.route,
-            arguments = listOf(
-                navArgument("placeId") { type = NavType.StringType }
-            )
-        ) { navBackStackEntry ->
-            val placeId = navBackStackEntry.arguments?.getString("placeId") ?: ""
-            InteractiveMapScreen(navController, placeId)
-        }
+//        composable(
+//            Screen.InteractiveMap.route,
+//            arguments = listOf(
+//                navArgument("placeId") { type = NavType.StringType }
+//            )
+//        ) { navBackStackEntry ->
+//            val placeId = navBackStackEntry.arguments?.getString("placeId") ?: ""
+//        }
     }
 }
