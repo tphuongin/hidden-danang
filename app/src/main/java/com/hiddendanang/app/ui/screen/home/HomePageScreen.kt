@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.hiddendanang.app.ui.screen.home.components.SearchBar
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,93 +19,115 @@ import androidx.navigation.NavHostController
 import com.hiddendanang.app.R
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
-import com.hiddendanang.app.ui.model.DataViewModel
+import com.hiddendanang.app.ui.screen.auth.ErrorDialog
+import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
+import com.hiddendanang.app.ui.screen.favorite.FavoritesViewModel
 import com.hiddendanang.app.ui.screen.home.components.CategoryRow
 import com.hiddendanang.app.ui.screen.home.components.HomePageTitle
 import com.hiddendanang.app.ui.theme.Dimens
 
 @Composable
 fun HomePageScreen(navController: NavHostController) {
-    val viewmodel: DataViewModel = viewModel()
-    val featuredPlaces = viewmodel.topPlace
-    val exploreMore = viewmodel.topPlace
-    LazyColumn(
+    val viewModel: HomeViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val favoritesViewModel: FavoritesViewModel = viewModel()
+    val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(vertical = Dimens.PaddingLarge),
-        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        // --- Header ---
-        item {
-            Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
-                HomePageTitle()
-                Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-                SearchBar()
-                Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-                CategoryRow()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentPadding = PaddingValues(vertical = Dimens.PaddingLarge),
+            verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
+        ) {
+            // --- Header ---
+            item {
+                Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
+                    HomePageTitle()
+                    Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
+                    SearchBar()
+                    Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
+                    CategoryRow()
+                }
             }
-        }
 
-        // --- Featured Places ---
-        item {
-            Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
-                Text(
-                    text = stringResource(R.string.featured_location),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-            }
-        }
-        item {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = Dimens.PaddingLarge),
-                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
-            ) {
-                items(featuredPlaces) { place ->
-                    PlaceCard(
-                        modifier = Modifier.width(Dimens.CardLargeWidth),
-                        place = place,
-                        onClick = { navToDetailScreen(navController, place.id) }
+            // --- Featured Places ---
+            item {
+                Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
+                    Text(
+                        text = stringResource(R.string.featured_location),
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             }
-        }
-
-        // --- Explore more ---
-        item {
-            Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
-                Text(
-                    text = stringResource(R.string.discover_more),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
+            item {
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = Dimens.PaddingLarge),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
+                ) {
+                    items(uiState.popularPlaces) { place ->
+                        PlaceCard(
+                            modifier = Modifier.width(Dimens.CardLargeWidth),
+                            place = place,
+                            isFavorite = place.id in favoriteIds,
+                            onClick = { navToDetailScreen(navController, place.id) },
+                            onFavoriteToggle = { favoritesViewModel.toggleFavorite(place) }
+                        )
+                    }
+                }
             }
-        }
 
-        items(exploreMore.chunked(2)) { rowItems ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimens.PaddingMedium),
-                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
-            ) {
-                rowItems.forEach { place ->
-                    PlaceCard(
-                        modifier = Modifier.weight(Dimens.WeightMedium),
-                        place = place,
-                        onClick = { navToDetailScreen(navController, place.id) }
+            // --- Explore more ---
+            item {
+                Column(Modifier.padding(horizontal = Dimens.PaddingLarge)) {
+                    Text(
+                        text = stringResource(R.string.discover_more),
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
-                if (rowItems.size == 1) {
-                    Spacer(modifier = Modifier.weight(Dimens.WeightMedium))
+            }
+
+            items(uiState.popularPlaces.chunked(2)) { rowItems ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.PaddingMedium),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
+                ) {
+                    rowItems.forEach { place ->
+                        PlaceCard(
+                            modifier = Modifier.weight(Dimens.WeightMedium),
+                            place = place,
+                            place.id in favoriteIds,
+                            onClick = { navToDetailScreen(navController, place.id) },
+                            onFavoriteToggle = { favoritesViewModel.toggleFavorite(place) }
+                        )
+                    }
+                    if (rowItems.size == 1) {
+                        Spacer(modifier = Modifier.weight(Dimens.WeightMedium))
+                    }
                 }
             }
+        }
+        if (uiState.isLoading) {
+            FullScreenLoading()
+        }
+
+        uiState.error?.let { message ->
+            ErrorDialog(message = message, onDismiss = { viewModel.errorShown() })
         }
     }
 }
 fun navToDetailScreen(navController: NavHostController, placeId: String){
     navController.navigate(Screen.DetailPlace.createRoute(placeId)){
-        popUpTo(navController.graph.startDestinationId)
         launchSingleTop = true
         restoreState = true
+        popUpTo(Screen.DetailPlace.route) {
+            inclusive = false
+        }
     }
 }
