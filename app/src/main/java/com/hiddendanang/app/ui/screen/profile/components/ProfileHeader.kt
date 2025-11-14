@@ -19,14 +19,22 @@ import com.hiddendanang.app.ui.model.User
 import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.helpers.UserAvatar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ProfileHeader(
-    user: User,
+    user: com.hiddendanang.app.data.model.User,
     favoriteCount: Int,
     reviewsCount: Int,
     visitedCount: Int
 ) {
+    val formattedDate = user.created_at?.let {timestamp ->
+        val date = timestamp.toDate()
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("vi", "VN"))
+        formatter.format(date)
+    } ?: "Không xác định"
     Card(
         shape = RoundedCornerShape(Dimens.CornerXLarge),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationHigh),
@@ -52,7 +60,7 @@ fun ProfileHeader(
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    UserAvatar(user.avatarURL.toString(), user.name)
+                    UserAvatar(user.photo_url, user.display_name)
                 }
 
                 Spacer(Modifier.width(Dimens.SpaceLarge))
@@ -64,7 +72,7 @@ fun ProfileHeader(
                         .padding(end = Dimens.PaddingSmall)
                 ) {
                     Text(
-                        text = user.name,
+                        text = user.display_name,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -79,7 +87,7 @@ fun ProfileHeader(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "• Tham gia ${user.joinDate}",
+                        text = "• Tham gia $formattedDate",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = Dimens.PaddingNano)

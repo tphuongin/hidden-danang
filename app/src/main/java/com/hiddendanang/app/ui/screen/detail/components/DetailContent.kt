@@ -24,15 +24,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
+import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
+import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
-import com.hiddendanang.app.ui.model.Place
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.GoongViewModel
+import com.hiddendanang.app.ui.screen.detail.DetailViewModel
 
 @Composable
 fun DetailContent(
@@ -40,7 +42,10 @@ fun DetailContent(
     place: Place,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
-    viewModel: DataViewModel,
+    nearbyPlaces: List<Place>,
+    isNearbyFavorite: (String) -> Boolean,
+    onToggleNearbyFavorite: (String) -> Unit
+    viewModel: DetailViewModel,
     onRequestLocationPermission: () -> Unit = {}
 ) {
     val goongViewModel: GoongViewModel = viewModel()
@@ -97,13 +102,6 @@ fun DetailContent(
                 )
             }
 
-            items(place.reviews.take(3)) { review ->
-                ReviewCard(
-                    review = review,
-                    modifier = Modifier.padding(horizontal = Dimens.PaddingXLarge)
-                )
-            }
-
             // Review Actions
             item {
                 ReviewActionsSection()
@@ -113,7 +111,9 @@ fun DetailContent(
             item {
                 NearbyPlacesSection(
                     navController = navController,
-                    viewModel = viewModel
+                    nearbyPlaces = nearbyPlaces,
+                    isNearbyFavorite = isNearbyFavorite,
+                    onToggleNearbyFavorite = onToggleNearbyFavorite
                 )
             }
 
@@ -214,7 +214,9 @@ private fun ReviewActionsSection() {
 @Composable
 private fun NearbyPlacesSection(
     navController: NavHostController,
-    viewModel: DataViewModel
+    nearbyPlaces: List<Place>,
+    isNearbyFavorite: (String) -> Boolean,
+    onToggleNearbyFavorite: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -232,15 +234,18 @@ private fun NearbyPlacesSection(
             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium),
             contentPadding = PaddingValues(vertical = Dimens.PaddingSmall)
         ) {
-            items(viewModel.topPlace) { nearbyPlace ->
+            // SỬA LỖI: Dùng data thật
+            items(nearbyPlaces.filter { it.id.isNotEmpty() }) { nearbyPlace ->
                 PlaceCard(
                     modifier = Modifier.width(Dimens.CardLargeWidth),
                     place = nearbyPlace,
+                    // SỬA LỖI: Dùng hàm được truyền vào
+                    isFavorite = isNearbyFavorite(nearbyPlace.id),
                     onClick = {
                         navToDetailScreen(navController, nearbyPlace.id)
                     },
-                    onFavoriteToggle = { isFavorite ->
-                        viewModel.toggleFavorite(nearbyPlace.id)
+                    onFavoriteToggle = {
+                        onToggleNearbyFavorite(nearbyPlace.id)
                     }
                 )
             }

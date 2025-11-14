@@ -28,12 +28,12 @@ fun PlacesSection(
         Spacer(modifier = Modifier.height(12.dp))
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(places) { place ->
-                PlaceCard(
-                    place = place,
-                    onClick = { onPlaceClick?.invoke(place.id) }
-                )
-            }
+//            items(places) { place ->
+//                PlaceCard(
+//                    place = place,
+//                    onClick = { onPlaceClick?.invoke(place.id) }
+//                )
+//            }
         }
     }
 }

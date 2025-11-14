@@ -16,9 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.hiddendanang.app.R
+import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.components.place.PlaceCard
-import com.hiddendanang.app.ui.model.DataViewModel
-import com.hiddendanang.app.ui.model.Place
+import com.hiddendanang.app.ui.screen.favorite.FavoritesViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 
@@ -26,7 +26,7 @@ import com.hiddendanang.app.ui.theme.Dimens
 fun FavoriteList(
     places: List<Place>,
     navController: NavHostController,
-    viewModel: DataViewModel
+    viewModel: FavoritesViewModel
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -49,16 +49,17 @@ fun FavoriteList(
             key = { it.id } // Thêm key để optimization
         ) { place ->
             PlaceCard(
+                modifier = Modifier.fillMaxWidth(),
                 place = place,
+                true,
                 onClick = {
-                    navToDetailScreen(navController,place.id)
+                    navToDetailScreen(navController, place.id)
                 },
-                onFavoriteToggle = { isFavorite ->
-                    if (!isFavorite) {
-                        viewModel.removeFromFavorites(place.id)
-                    }
+                onFavoriteToggle = {
+                    // Không cần tham số 'isFavorite' hay 'if'
+                    // Một cú click ở đây luôn có nghĩa là "bỏ yêu thích"
+                    viewModel.removeFromFavorites(place.id)
                 },
-                modifier = Modifier.fillMaxWidth()
             )
         }
 
