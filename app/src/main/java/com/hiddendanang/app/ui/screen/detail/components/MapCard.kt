@@ -37,7 +37,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPinOff
 import com.composables.icons.lucide.Route
 import com.hiddendanang.app.R
-import com.hiddendanang.app.ui.model.Place
+import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.GoongViewModel
 
@@ -56,7 +56,7 @@ fun MapCard(
     LaunchedEffect(place, currentLocation) {
         if (currentLocation != null) {
             // Có location, fetch static map
-            val destination = "${place.latitude},${place.longitude}"
+            val destination = "${place.coordinates.latitude},${place.coordinates.longitude}"
             viewModel.fetchStaticMap(
                 origin = currentLocation!!,
                 destination = destination,
