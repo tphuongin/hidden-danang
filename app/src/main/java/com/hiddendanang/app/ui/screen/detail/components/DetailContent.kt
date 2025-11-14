@@ -13,28 +13,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
+import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
+import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.navigation.Screen
+import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
-import com.hiddendanang.app.ui.model.Place
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
-import com.hiddendanang.app.ui.screen.map.MapScreen
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.GoongViewModel
+import com.hiddendanang.app.ui.screen.detail.DetailViewModel
 
 @Composable
 fun DetailContent(
@@ -42,8 +42,13 @@ fun DetailContent(
     place: Place,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
-    viewModel: DataViewModel,
+    nearbyPlaces: List<Place>,
+    isNearbyFavorite: (String) -> Boolean,
+    onToggleNearbyFavorite: (String) -> Unit,
+    viewModel: DetailViewModel,
 ) {
+    val goongViewModel: GoongViewModel = viewModel()
+    val context = LocalContext.current
     val listState = rememberLazyListState()
 
     LaunchedEffect(place.id) {
@@ -78,7 +83,7 @@ fun DetailContent(
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
 
-                    MapLottie()
+                     MapLottie()
                 }
             }
 
@@ -92,13 +97,6 @@ fun DetailContent(
                 )
             }
 
-            items(place.reviews.take(3)) { review ->
-                ReviewCard(
-                    review = review,
-                    modifier = Modifier.padding(horizontal = Dimens.PaddingXLarge)
-                )
-            }
-
             // Review Actions
             item {
                 ReviewActionsSection()
@@ -108,7 +106,9 @@ fun DetailContent(
             item {
                 NearbyPlacesSection(
                     navController = navController,
-                    viewModel = viewModel
+                    nearbyPlaces = nearbyPlaces,
+                    isNearbyFavorite = isNearbyFavorite,
+                    onToggleNearbyFavorite = onToggleNearbyFavorite
                 )
             }
 
@@ -125,6 +125,7 @@ fun DetailContent(
         ) {
             Button(
                 onClick = {
+                    navToInteractiveMapScreen(navController, place.id)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -208,7 +209,9 @@ private fun ReviewActionsSection() {
 @Composable
 private fun NearbyPlacesSection(
     navController: NavHostController,
-    viewModel: DataViewModel
+    nearbyPlaces: List<Place>,
+    isNearbyFavorite: (String) -> Boolean,
+    onToggleNearbyFavorite: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -226,15 +229,18 @@ private fun NearbyPlacesSection(
             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium),
             contentPadding = PaddingValues(vertical = Dimens.PaddingSmall)
         ) {
-            items(viewModel.topPlace) { nearbyPlace ->
+            // SỬA LỖI: Dùng data thật
+            items(nearbyPlaces.filter { it.id.isNotEmpty() }) { nearbyPlace ->
                 PlaceCard(
                     modifier = Modifier.width(Dimens.CardLargeWidth),
                     place = nearbyPlace,
+                    // SỬA LỖI: Dùng hàm được truyền vào
+                    isFavorite = isNearbyFavorite(nearbyPlace.id),
                     onClick = {
                         navToDetailScreen(navController, nearbyPlace.id)
                     },
-                    onFavoriteToggle = { isFavorite ->
-                        viewModel.toggleFavorite(nearbyPlace.id)
+                    onFavoriteToggle = {
+                        onToggleNearbyFavorite(nearbyPlace.id)
                     }
                 )
             }

@@ -59,7 +59,15 @@ fun SplashScreen(navController: NavHostController) {
         // Dừng nhẹ trước khi chuyển màn
         delay(1500)
 
-        navController.navigate(Screen.HomePage.route) {
+        val isLoggedIn = false // Tạm thời, giả sử chưa đăng nhập
+
+        val route = if (isLoggedIn) {
+            Screen.HomePage.route // Nếu đã đăng nhập, vào Home
+        } else {
+            Screen.Register.route // Nếu chưa, vào Đăng Ký (hoặc Login)
+        }
+
+        navController.navigate(route) {
             popUpTo(Screen.Splash.route) { inclusive = true }
         }
     }
