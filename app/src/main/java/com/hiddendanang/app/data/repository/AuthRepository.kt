@@ -60,6 +60,16 @@ class AuthRepository {
         }
     }
 
+    suspend fun getUserById(uid: String): Result<User?> {
+        return try {
+            val snapshot = dataSource.getUserDocumentReference(uid).get().await()
+            val user = snapshot.toObject<User>()
+            Result.success(user)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun loginUser(email: String, password: String): Result<FirebaseUser> {
         return try {
             val user = auth.signInWithEmailAndPassword(email, password).await().user

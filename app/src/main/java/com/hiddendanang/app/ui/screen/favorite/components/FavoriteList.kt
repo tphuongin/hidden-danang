@@ -18,7 +18,7 @@ import androidx.navigation.NavHostController
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.components.place.PlaceCard
-import com.hiddendanang.app.ui.screen.favorite.FavoritesViewModel
+import com.hiddendanang.app.viewmodel.FavoritesViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 

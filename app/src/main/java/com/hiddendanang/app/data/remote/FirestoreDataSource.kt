@@ -35,4 +35,16 @@ class FirestoreDataSource {
 
     fun getFavoritesCollection(uid: String) =
         usersRef.document(uid).collection("favorites")
+
+    fun getReviewsCollection(placeId: String): CollectionReference {
+        return placesRef.document(placeId).collection("reviews")
+    }
+
+    /**
+     * Lấy tham chiếu Document Review DUY NHẤT của User: /places/{placeId}/reviews/{userId}
+     * Dùng để READ trạng thái Review cũ và WRITE (submit/update).
+     */
+    fun getUserReviewDocumentReference(placeId: String, userId: String): DocumentReference {
+        return getReviewsCollection(placeId).document(userId)
+    }
 }
