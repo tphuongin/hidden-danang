@@ -13,4 +13,8 @@ sealed class Screen(val route: String, val title: String) {
     object DetailPlace: Screen("detail-place/{id}", "Detail Place"){
         fun createRoute(id: String): String = "detail-place/${id}"
     }
+    object InteractiveMap : Screen("interactive_map/{placeId}", "Direction") {
+        fun createRoute(placeId: String) = "interactive_map/$placeId"
+    }
+
 }

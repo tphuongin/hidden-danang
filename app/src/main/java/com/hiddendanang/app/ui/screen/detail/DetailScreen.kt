@@ -17,6 +17,7 @@ import com.hiddendanang.app.ui.screen.detail.components.DetailContent
 fun DetailScreen(
     navController: NavHostController,
     placeId: String,
+    onRequestLocationPermission: () -> Unit = {}
 ) {
     val viewModel: DetailViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -62,7 +63,9 @@ fun DetailScreen(
                         if (placeToToggle != null) {
                             viewModel.toggleFavorite(placeToToggle)
                         }
-                    }
+                    },
+                    viewModel = viewModel,
+                    onRequestLocationPermission = onRequestLocationPermission
                 )
             }
         }
