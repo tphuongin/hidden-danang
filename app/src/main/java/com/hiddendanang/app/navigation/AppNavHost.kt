@@ -7,11 +7,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
+import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.ui.screen.auth.LoginScreen
 import com.hiddendanang.app.ui.screen.auth.RegisterScreen
 import com.hiddendanang.app.ui.screen.detail.DetailScreen
 import com.hiddendanang.app.ui.screen.favorite.FavoriteScreen
 import com.hiddendanang.app.ui.screen.home.HomePageScreen
+import com.hiddendanang.app.ui.screen.map.MapScreen
 import com.hiddendanang.app.ui.screen.profile.ProfileScreen
 import com.hiddendanang.app.ui.screen.search.SearchScreen
 import com.hiddendanang.app.ui.screen.splash.SplashScreen
@@ -64,13 +66,21 @@ fun AppNavHost(
         composable(Screen.Profile.route) {
             ProfileScreen(navController)
         }
-//        composable(
-//            Screen.InteractiveMap.route,
-//            arguments = listOf(
-//                navArgument("placeId") { type = NavType.StringType }
-//            )
-//        ) { navBackStackEntry ->
-//            val placeId = navBackStackEntry.arguments?.getString("placeId") ?: ""
-//        }
+        composable(
+            route = Screen.Map.route,
+        ) { backStackEntry ->
+
+            val destLat = backStackEntry.arguments?.getString("destLat")?.toDoubleOrNull()
+            val destLng = backStackEntry.arguments?.getString("destLng")?.toDoubleOrNull()
+
+            val destination = if (destLat != null && destLng != null)
+                Location(destLat, destLng)
+            else null
+
+            MapScreen(
+                destination = destination
+            )
+        }
+
     }
 }

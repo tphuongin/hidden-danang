@@ -29,12 +29,9 @@ okhttp = "5.3.0"
 places = "5.0.0"
 foundation = "1.9.3"
 foundationVersion = "1.9.4"
-<<<<<<< HEAD
-=======
 playServicesAppindexing = "9.8.0"
 firebaseFirestoreKtx = "26.0.2"
 roomKtx = "2.8.3"
->>>>>>> develop
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
