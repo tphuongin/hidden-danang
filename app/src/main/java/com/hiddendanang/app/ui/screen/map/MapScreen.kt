@@ -7,12 +7,11 @@ import com.hiddendanang.app.utils.LocationPermission
 
 @Composable
 fun MapScreen(
-    origin: Location?,
     destination: Location?
 ) {
     LocationPermission(
         onGranted = {
-            MapViewContent(origin, destination)
+            MapViewContent( destination)
         }
     )
 }

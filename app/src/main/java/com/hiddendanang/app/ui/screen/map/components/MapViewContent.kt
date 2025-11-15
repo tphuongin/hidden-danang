@@ -21,21 +21,24 @@ import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
 import org.maplibre.android.annotations.PolylineOptions
 import androidx.core.graphics.createBitmap
+import com.hiddendanang.app.utils.LocationService
 
 @Composable
 fun MapViewContent(
-    originLocation: Location?,
     destinationLocation: Location?,
     goongVM: GoongViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val locationService = LocationService(context)
     val mapKey = stringResource(R.string.map_key)
     val coroutine = rememberCoroutineScope()
+    val originLocation = Location(2.0,3.0) //for test
 
     val direction by goongVM.directionsResponse.collectAsState()
 
     // Gọi Goong Direction API khi có đủ origin + destination
-    LaunchedEffect(originLocation, destinationLocation) {
+    LaunchedEffect(destinationLocation)
+    @androidx.annotation.RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION]) {
         if (originLocation != null && destinationLocation != null) {
             goongVM.fetchDirections(
                 "${originLocation.lat},${originLocation.lng}",

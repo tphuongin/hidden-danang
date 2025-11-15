@@ -64,7 +64,6 @@ fun DetailScreen(
                         }
                     },
                     viewModel = viewModel,
-                    onRequestLocationPermission = onRequestLocationPermission
                 )
             }
         }

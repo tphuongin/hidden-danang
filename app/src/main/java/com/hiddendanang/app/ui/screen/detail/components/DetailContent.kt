@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -22,19 +23,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
 import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.navigation.Screen
-import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.GoongViewModel
 import com.hiddendanang.app.ui.screen.detail.DetailViewModel
+import com.hiddendanang.app.utils.LocationService
 
 @Composable
 fun DetailContent(
@@ -42,13 +49,13 @@ fun DetailContent(
     place: Place,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    onToggleNearbyFavorite: (String) -> Unit,
     nearbyPlaces: List<Place>,
     isNearbyFavorite: (String) -> Boolean,
-    onToggleNearbyFavorite: (String) -> Unit,
-    viewModel: DetailViewModel,
+    viewModel: DetailViewModel
 ) {
     val goongViewModel: GoongViewModel = viewModel()
-    val context = LocalContext.current
+    val locationService = LocationService(LocalContext.current)
     val listState = rememberLazyListState()
 
     LaunchedEffect(place.id) {
@@ -125,7 +132,7 @@ fun DetailContent(
         ) {
             Button(
                 onClick = {
-                    navToInteractiveMapScreen(navController, place.id)
+//                    navToInteractiveMapScreen(navController, place.id)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -156,6 +163,14 @@ fun DetailContent(
                     )
                 )
             }
+        }
+    }
+    fun navToInteractiveMapScreen(navController: NavHostController, place: Place, destinationLocation: Location){
+        val destinationLocation = Location(place.coordinates.latitude, place.coordinates.longitude)
+        navController.navigate(Screen.Map.createRoute( destinationLocation)){
+            popUpTo(navController.graph.startDestinationId)
+            launchSingleTop = true
+            restoreState = true
         }
     }
 }
@@ -263,10 +278,3 @@ fun MapLottie(){
             .padding(bottom = Dimens.PaddingLarge)
     )
 }
-//fun navToInteractiveMapScreen(navController: NavHostController, placeId: String){
-//    navController.navigate(Screen.InteractiveMap.createRoute(placeId)){
-//        popUpTo(navController.graph.startDestinationId)
-//        launchSingleTop = true
-//        restoreState = true
-//    }
-//}
