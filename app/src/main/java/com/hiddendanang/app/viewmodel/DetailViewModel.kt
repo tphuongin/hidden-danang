@@ -1,4 +1,4 @@
-package com.hiddendanang.app.viewmodel
+package com.hiddendanang.app.ui.screen.detail
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle

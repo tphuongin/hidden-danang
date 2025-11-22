@@ -12,20 +12,27 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.composables.icons.lucide.*
 import com.hiddendanang.app.ui.theme.Dimens
 
-data class Category(val name: String, val icon: ImageVector)
+// BỔ SUNG: Thêm trường ID thực tế cho Firestore Query
+data class Category(val id: String, val name: String, val icon: ImageVector)
 
 @Composable
-fun CategoryRow() {
-    val categories = listOf(
-        Category("Tất cả", Lucide.List),
-        Category("Ăn uống", Lucide.Utensils),
-        Category("Cà phê", Lucide.Coffee),
-        Category("Du lịch", Lucide.Map),
-        Category("Góc chill", Lucide.Sofa),
-        Category("Hidden Gems", Lucide.Gem)
-    )
-    var selectedIndex by remember { mutableIntStateOf(0) }
-
+fun CategoryRow(
+    // 1. THAM SỐ MỚI: Nhận ID danh mục hiện tại (State)
+    currentCategory: String,
+    // 2. THAM SỐ MỚI: Callback khi người dùng chọn danh mục (Action)
+    onCategorySelected: (categoryId: String) -> Unit
+) {
+    // Dữ liệu danh mục và ID thực tế của chúng
+    val categories = remember {
+        listOf(
+            Category("all", "Tất cả", Lucide.List),
+            Category("category_food", "Ăn uống", Lucide.Utensils),
+            Category("category_coffee", "Cà phê", Lucide.Coffee),
+            Category("category_sightseeing", "Du lịch", Lucide.Map),
+            Category("category_chill", "Góc chill", Lucide.Sofa),
+            Category("category_hidden", "Hidden Gems", Lucide.Gem)
+        )
+    }
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,8 +44,12 @@ fun CategoryRow() {
             CategoryButton(
                 text = category.name,
                 icon = category.icon,
-                isSelected = selectedIndex == index,
-                onClick = { selectedIndex = index }
+                // KIỂM TRA TRẠNG THÁI: Dùng ID để so sánh, không dùng index
+                isSelected = currentCategory == category.id,
+                onClick = {
+                    // GỌI CALLBACK: Truyền ID danh mục thực tế lên ViewModel
+                    onCategorySelected(category.id)
+                }
             )
         }
     }
