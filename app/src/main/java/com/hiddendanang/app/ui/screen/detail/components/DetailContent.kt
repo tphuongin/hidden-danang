@@ -135,7 +135,15 @@ fun DetailContent(
         ) {
             Button(
                 onClick = {
-//                    navToInteractiveMapScreen(navController, place.id)
+                    val destinationLocation = Location(
+                        place.coordinates.latitude,
+                        place.coordinates.longitude
+                    )
+                    navController.navigate(Screen.Map.createRoute(destinationLocation)) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

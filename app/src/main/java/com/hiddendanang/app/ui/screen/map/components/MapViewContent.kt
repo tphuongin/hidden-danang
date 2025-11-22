@@ -32,13 +32,17 @@ fun MapViewContent(
     val locationService = LocationService(context)
     val mapKey = stringResource(R.string.map_key)
     val coroutine = rememberCoroutineScope()
-    val originLocation = Location(2.0,3.0) //for test
+    val originLocation = Location(2.0, 3.0) // for test
 
     val direction by goongVM.directionsResponse.collectAsState()
 
+    // Log direction state for debugging
+    LaunchedEffect(direction) {
+        android.util.Log.d("MapViewContent", "Direction state updated: $direction")
+    }
+
     // Gọi Goong Direction API khi có đủ origin + destination
-    LaunchedEffect(destinationLocation)
-    @androidx.annotation.RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION]) {
+    LaunchedEffect(destinationLocation) {
         if (originLocation != null && destinationLocation != null) {
             goongVM.fetchDirections(
                 "${originLocation.lat},${originLocation.lng}",
@@ -54,16 +58,21 @@ fun MapViewContent(
                     map.setStyle(
                         "https://tiles.goong.io/assets/goong_map_web.json?api_key=$mapKey"
                     ) { style ->
+                        if (style.isFullyLoaded) {
+                            android.util.Log.d("MapViewContent", "Goong map style loaded successfully.")
 
-                        if (originLocation != null && destinationLocation != null) {
-                            addMarkers(
-                                map = map,
-                                mapView = this,
-                                origin = originLocation,
-                                destination = destinationLocation
-                            )
+                            if (originLocation != null && destinationLocation != null) {
+                                addMarkers(
+                                    map = map,
+                                    mapView = this,
+                                    origin = originLocation,
+                                    destination = destinationLocation
+                                )
 
-                            moveCameraToBounds(map, originLocation, destinationLocation)
+                                moveCameraToBounds(map, originLocation, destinationLocation)
+                            }
+                        } else {
+                            android.util.Log.e("MapViewContent", "Failed to load Goong map style. Default style applied.")
                         }
                     }
                 }
@@ -72,12 +81,55 @@ fun MapViewContent(
         update = { mapView ->
             mapView.getMapAsync { map ->
                 if (direction != null) {
+                    android.util.Log.d("MapViewContent", "DirectionResponse: $direction")
                     drawRoute(map, direction!!)
+                } else {
+                    // Log for debugging if direction is null
+                    android.util.Log.e("MapViewContent", "Direction is null or not fetched yet.")
                 }
             }
         }
     )
 }
+
+private fun moveCameraToBounds(
+    map: MapLibreMap,
+    origin: Location,
+    destination: Location
+) {
+    val bounds = org.maplibre.android.geometry.LatLngBounds.Builder()
+        .include(LatLng(origin.lat!!, origin.lng!!))
+        .include(LatLng(destination.lat!!, destination.lng!!))
+        .build()
+
+    // Reduced padding for a closer view
+    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20))
+}
+
+private fun drawRoute(map: MapLibreMap, direction: DirectionResponse) {
+    val route = direction.routes?.firstOrNull()
+    if (route == null) {
+        android.util.Log.e("MapViewContent", "No routes found in DirectionResponse.")
+        return
+    }
+
+    val polyPoints = decodePolyline(route.overviewPolyline?.points ?: "")
+    android.util.Log.d("MapViewContent", "Decoded polyline points: $polyPoints")
+
+    if (polyPoints.isEmpty()) {
+        android.util.Log.e("MapViewContent", "Polyline decoding returned no points.")
+        return
+    }
+
+    val polyline = PolylineOptions()
+        .addAll(polyPoints)
+        .width(8f) // Increased width for better visibility
+        .color(0xFF00AEEF.toInt())
+
+    map.addPolyline(polyline)
+    android.util.Log.d("MapViewContent", "Polyline added to map successfully.")
+}
+
 private fun addMarkers(
     map: MapLibreMap,
     mapView: MapView,
@@ -109,29 +161,7 @@ private fun addMarkers(
         symbolManager.create(d)
     }
 }
-private fun moveCameraToBounds(
-    map: MapLibreMap,
-    origin: Location,
-    destination: Location
-) {
-    val bounds = org.maplibre.android.geometry.LatLngBounds.Builder()
-        .include(LatLng(origin.lat!!, origin.lng!!))
-        .include(LatLng(destination.lat!!, destination.lng!!))
-        .build()
 
-    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-}
-private fun drawRoute(map: MapLibreMap, direction: DirectionResponse) {
-    val route = direction.routes?.firstOrNull() ?: return
-    val polyPoints = decodePolyline(route.overviewPolyline?.points!!)
-
-    val polyline = PolylineOptions()
-        .addAll(polyPoints)
-        .width(6f)
-        .color(0xFF00AEEF.toInt()) 
-
-    map.addPolyline(polyline)
-}
 private fun decodePolyline(encoded: String): List<LatLng> {
     val poly = ArrayList<LatLng>()
     var index = 0
@@ -165,6 +195,7 @@ private fun decodePolyline(encoded: String): List<LatLng> {
     }
     return poly
 }
+
 @SuppressLint("UseCompatLoadingForDrawables")
 private fun vectorToBitmap(context: android.content.Context, id: Int, width: Int, height: Int): Bitmap {
     val drawable = context.getDrawable(id)!!
