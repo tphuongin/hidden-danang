@@ -49,13 +49,15 @@ fun DetailContent(
     place: Place,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
-    onToggleNearbyFavorite: (String) -> Unit,
     nearbyPlaces: List<Place>,
     isNearbyFavorite: (String) -> Boolean,
-    viewModel: DetailViewModel
+    onToggleNearbyFavorite: (String) -> Unit,
+    viewModel: DetailViewModel,
+    onWriteReviewClicked: () -> Unit,
+    onRequestLocationPermission: () -> Unit = {}
 ) {
     val goongViewModel: GoongViewModel = viewModel()
-    val locationService = LocationService(LocalContext.current)
+    val context = LocalContext.current
     val listState = rememberLazyListState()
 
     LaunchedEffect(place.id) {
@@ -106,7 +108,7 @@ fun DetailContent(
 
             // Review Actions
             item {
-                ReviewActionsSection()
+                ReviewActionsSection(viewModel, onWriteReviewClicked = onWriteReviewClicked)
             }
 
             // Nearby Places Section
@@ -165,6 +167,7 @@ fun DetailContent(
             }
         }
     }
+}
     fun navToInteractiveMapScreen(navController: NavHostController, place: Place, destinationLocation: Location){
         val destinationLocation = Location(place.coordinates.latitude, place.coordinates.longitude)
         navController.navigate(Screen.Map.createRoute( destinationLocation)){
@@ -173,10 +176,12 @@ fun DetailContent(
             restoreState = true
         }
     }
-}
 
 @Composable
-private fun ReviewActionsSection() {
+private fun ReviewActionsSection(
+    viewModel: DetailViewModel,
+    onWriteReviewClicked: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,6 +191,21 @@ private fun ReviewActionsSection() {
             ),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
+        if (uiState.allReviews.isEmpty()) {
+            Text(
+                text = "Chưa có đánh giá nào",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        } else {
+            uiState.allReviews.take(2).forEach { review ->
+                ReviewCard(
+                    review = review,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+        }
         // Button view all comments
         Button(
             onClick = { /* TODO: Implement view all comments */ },
@@ -202,10 +222,19 @@ private fun ReviewActionsSection() {
                 )
             )
         }
-
+        if (uiState.isReviewFormVisible) {
+            ReviewForm(
+                initialRating = uiState.userReview?.rating ?: 0,
+                initialComment = uiState.userReview?.comment ?: "",
+                onDismiss = { viewModel.hideReviewForm() },
+                onSubmit = { rating, comment ->
+                    viewModel.submitUserReview(rating, comment)
+                }
+            )
+        }
         // Button write your comment
         Button(
-            onClick = { /* TODO: Implement write comment */ },
+            onClick = { onWriteReviewClicked() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ButtonLarge),

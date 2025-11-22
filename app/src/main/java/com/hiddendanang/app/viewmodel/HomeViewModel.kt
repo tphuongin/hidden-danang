@@ -1,4 +1,4 @@
-package com.hiddendanang.app.ui.screen.home
+package com.hiddendanang.app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -21,10 +21,11 @@ import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
-import com.hiddendanang.app.ui.screen.favorite.FavoritesViewModel
+import com.hiddendanang.app.viewmodel.FavoritesViewModel
 import com.hiddendanang.app.ui.screen.home.components.CategoryRow
 import com.hiddendanang.app.ui.screen.home.components.HomePageTitle
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.HomeViewModel
 
 @Composable
 fun HomePageScreen(navController: NavHostController) {
