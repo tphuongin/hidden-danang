@@ -27,6 +27,7 @@
     <string name="visited">Đã đến</string>
     <string name="logout_title">Đăng xuất</string>
     <string name="logout_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</string>
+    <string name="select_language">Chọn ngôn ngữ</string>
     <string name="cancel">Hủy</string>
 
     //Favorite Screen

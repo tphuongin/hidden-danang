@@ -2,6 +2,7 @@
 package com.hiddendanang.app.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.R
@@ -32,9 +33,11 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val response = repository.getDirections(origin, destination, apiKey)
                 _directionsResponse.value = response
+                Log.d("GoongViewModel", "Directions fetched successfully: $response")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi khi lấy chỉ đường: ${e.message}"
+                Log.e("GoongViewModel", "Error fetching directions: ${e.message}")
             }
         }
     }
