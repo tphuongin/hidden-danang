@@ -15,12 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.UserPen
-import com.hiddendanang.app.ui.model.User
 import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.helpers.UserAvatar
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -28,7 +26,8 @@ fun ProfileHeader(
     user: com.hiddendanang.app.data.model.User,
     favoriteCount: Int,
     reviewsCount: Int,
-    visitedCount: Int
+    visitedCount: Int,
+    onEditClick: () -> Unit
 ) {
     val formattedDate = user.created_at?.let {timestamp ->
         val date = timestamp.toDate()
@@ -96,7 +95,7 @@ fun ProfileHeader(
 
                 // Edit Button
                 IconButton(
-                    onClick = { /* TODO: Navigate to edit profile */ },
+                    onClick = onEditClick,
                     modifier = Modifier
                         .size(Dimens.IconXLarge)
                         .background(

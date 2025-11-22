@@ -12,14 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel // Thêm import
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.Eye
 import com.composables.icons.lucide.EyeOff
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.theme.Dimens
-import com.hiddendanang.app.viewmodel.AuthUiState
-import com.hiddendanang.app.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -120,7 +119,7 @@ fun LoginScreen(navController: NavHostController) {
                         if (uiState is AuthUiState.Loading) {
                             CircularProgressIndicator(modifier = Modifier.size(Dimens.IconSmall))
                         } else {
-                            Text(text = "Sign Up", style = MaterialTheme.typography.titleMedium)
+                            Text(text = "Login", style = MaterialTheme.typography.titleMedium)
                         }
                     }
 
