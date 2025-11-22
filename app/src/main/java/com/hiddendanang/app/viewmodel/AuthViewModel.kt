@@ -1,12 +1,14 @@
-package com.hiddendanang.app.viewmodel
+package com.hiddendanang.app.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.data.model.User
 import com.hiddendanang.app.data.repository.AuthRepository
+import com.hiddendanang.app.utils.constants.AppThemeMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -54,7 +56,15 @@ class AuthViewModel : ViewModel() {
 
             // B3: Xử lý kết quả trả về
             result.fold(
-                onSuccess = {
+                onSuccess = { user ->
+                    val userTheme = user.preferences?.theme
+                    if (userTheme != null) {
+                        try {
+                            val mode = AppThemeMode.valueOf(userTheme)
+                        } catch (e: Exception) {
+                            // Ignore lỗi format
+                        }
+                    }
                     // Nếu thành công, cập nhật trạng thái
                     _uiState.value = AuthUiState.Success
                     _isLoggedIn.value = true
@@ -93,7 +103,6 @@ class AuthViewModel : ViewModel() {
             result.fold(
                 onSuccess = {
                     _uiState.value = AuthUiState.Success
-                    _isLoggedIn.value = true
                 },
                 onFailure = { e ->
                     _uiState.value = AuthUiState.Error(e.message ?: "Đăng ký thất bại")
