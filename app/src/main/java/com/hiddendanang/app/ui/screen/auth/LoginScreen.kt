@@ -12,13 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel // Thêm import
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.Eye
 import com.composables.icons.lucide.EyeOff
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.AuthUiState
+import com.hiddendanang.app.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
