@@ -23,9 +23,9 @@ import com.composables.icons.lucide.Star
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.data.model.Review
 import com.hiddendanang.app.data.model.User
+import com.hiddendanang.app.ui.screen.auth.AuthViewModel
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.helpers.UserAvatar
-import com.hiddendanang.app.viewmodel.AuthViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
