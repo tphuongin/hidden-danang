@@ -20,6 +20,7 @@ import com.hiddendanang.app.ui.screen.profile.components.SettingsSection
 import com.hiddendanang.app.ui.screen.profile.components.ThemeSelector
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.LocalThemePreference
+import com.hiddendanang.app.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(

@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.android.libraries.places.api.model.kotlin.place
+import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
 import com.hiddendanang.app.ui.screen.detail.components.DetailContent
@@ -17,9 +17,23 @@ import com.hiddendanang.app.ui.screen.detail.components.DetailContent
 fun DetailScreen(
     navController: NavHostController,
     placeId: String,
+    onRequestLocationPermission: () -> Unit = {}
 ) {
     val viewModel: DetailViewModel = viewModel()
+    val authViewModel: AuthViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+
+    val onWriteReviewClicked = {
+        Log.d("DETAIL_SCREEN", "isLoggedIn status: $isLoggedIn")
+         //[1] Lấy trạng thái đăng nhập từ ViewModel (Giả định AuthViewModel cung cấp trạng thái)
+        if (isLoggedIn) {
+            viewModel.showReviewForm()
+        } else {
+            // [2] Thực hiện điều hướng
+            navController.navigate(Screen.Login.route)
+        }
+    }
     LaunchedEffect(placeId) {
         viewModel.listenToDataChanges(placeId, true)
     }
@@ -64,6 +78,8 @@ fun DetailScreen(
                         }
                     },
                     viewModel = viewModel,
+                    onRequestLocationPermission = onRequestLocationPermission,
+                    onWriteReviewClicked = onWriteReviewClicked
                 )
             }
         }

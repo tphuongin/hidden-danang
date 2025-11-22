@@ -1,4 +1,4 @@
-package com.hiddendanang.app.ui.screen.favorite
+package com.hiddendanang.app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

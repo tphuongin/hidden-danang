@@ -70,4 +70,12 @@
     <string name="map_card_place_image_description">Hình ảnh minh họa địa điểm</string>
     <string name="map_card_route_pin_description">Biểu tượng ghim tuyến đường</string>
 
+    <!-- ReviewForm-->
+    <string name="review_form_title_new">Viết đánh giá mới</string>
+    <string name="review_form_title_edit">Chỉnh sửa đánh giá</string>
+    <string name="review_form_rating_star_description">Xếp hạng %d sao</string>
+    <string name="review_form_comment_label">Bình luận của bạn</string>
+    <string name="review_form_comment_placeholder">Chia sẻ trải nghiệm của bạn...</string>
+    <string name="review_form_button_cancel">Hủy</string>
+    <string name="review_form_button_submit">Gửi</string>
 </resources>
