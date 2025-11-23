@@ -93,6 +93,7 @@ fun HiddenDaNangApp(
                     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                     val bottomBarRoutes = setOf(
                         Screen.HomePage.route,
+                        Screen.Map.route,
                         Screen.Favorite.route,
                         Screen.Profile.route
                     )
