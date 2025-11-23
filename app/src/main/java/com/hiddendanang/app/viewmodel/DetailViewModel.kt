@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.hiddendanang.app.data.model.Favorite
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.data.model.Review
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 
 data class DetailUiState(
     val isLoading: Boolean = true,
@@ -200,7 +202,7 @@ class DetailViewModel(
             user_name = currentUserName,
             user_photo_url = currentUserPhotoUrl,
             created_at = existingReview?.created_at, // Giữ lại ngày tạo nếu là chỉnh sửa
-            updated_at = com.google.firebase.Timestamp(java.util.Date())
+            updated_at = Timestamp(Date())
         )
 
         // 3. Gọi Repository để lưu DB
