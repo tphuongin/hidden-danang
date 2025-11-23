@@ -3,7 +3,10 @@ package com.hiddendanang.app.ui.screen.map.components
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Log
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
@@ -12,7 +15,6 @@ import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.goongmodel.DirectionResponse
 import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.viewmodel.GoongViewModel
-import kotlinx.coroutines.launch
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
@@ -22,6 +24,9 @@ import org.maplibre.android.plugins.annotation.SymbolOptions
 import org.maplibre.android.annotations.PolylineOptions
 import androidx.core.graphics.createBitmap
 import com.hiddendanang.app.utils.LocationService
+import org.maplibre.android.annotations.MarkerOptions
+import org.maplibre.android.exceptions.InvalidLatLngBoundsException
+import org.maplibre.android.geometry.LatLngBounds
 
 @Composable
 fun MapViewContent(
@@ -51,9 +56,24 @@ fun MapViewContent(
         }
     }
 
+    // Define mapView variable in the appropriate scope
+    val mapView = remember { MapView(context) }
+
+    // Observe direction state and trigger rendering when updated
+    LaunchedEffect(direction) {
+        if (direction != null) {
+            android.util.Log.d("MapViewContent", "Rendering map with updated direction state.")
+            mapView.getMapAsync { map ->
+                renderMap(map, direction!!)
+            }
+        } else {
+            android.util.Log.w("MapViewContent", "Skipping map rendering as direction is null.")
+        }
+    }
+
     AndroidView(
         factory = { ctx ->
-            MapView(ctx).apply {
+            mapView.apply {
                 getMapAsync { map ->
                     map.setStyle(
                         "https://tiles.goong.io/assets/goong_map_web.json?api_key=$mapKey"
@@ -71,6 +91,11 @@ fun MapViewContent(
 
                                 moveCameraToBounds(map, originLocation, destinationLocation)
                             }
+
+                            // Trigger map rendering with direction
+                            if (direction != null) {
+                                renderMap(map, direction!!)
+                            }
                         } else {
                             android.util.Log.e("MapViewContent", "Failed to load Goong map style. Default style applied.")
                         }
@@ -82,14 +107,68 @@ fun MapViewContent(
             mapView.getMapAsync { map ->
                 if (direction != null) {
                     android.util.Log.d("MapViewContent", "DirectionResponse: $direction")
-                    drawRoute(map, direction!!)
+                    renderMap(map, direction!!)
                 } else {
-                    // Log for debugging if direction is null
-                    android.util.Log.e("MapViewContent", "Direction is null or not fetched yet.")
+                    android.util.Log.w("MapViewContent", "Skipping map rendering as direction is null.")
                 }
             }
         }
     )
+}
+
+// Update renderMap function to accept MapLibreMap instance
+private fun renderMap(map: MapLibreMap, direction: DirectionResponse) {
+    val route = direction.routes?.firstOrNull()
+    if (route != null) {
+        val bounds = route.bounds
+        // Ensure null safety and explicitly define the type for flatMap
+        val steps = route.legs?.flatMap { leg -> leg.steps ?: emptyList() } ?: emptyList()
+
+        // Update camera bounds
+        // Ensure bounds are valid before building LatLngBounds
+        val cameraBounds = LatLngBounds.Builder().apply {
+            bounds?.northeast?.let { include(LatLng(it.lat!!, it.lng!!)) }
+            bounds?.southwest?.let { include(LatLng(it.lat!!, it.lng!!)) }
+            // Include start and end locations explicitly
+            route.legs?.firstOrNull()?.startLocation?.let { include(LatLng(it.lat!!, it.lng!!)) }
+            route.legs?.lastOrNull()?.endLocation?.let { include(LatLng(it.lat!!, it.lng!!)) }
+        }.let {
+            try {
+                it.build()
+            } catch (e: InvalidLatLngBoundsException) {
+                android.util.Log.e("MapViewContent", "Failed to create LatLngBounds: ${e.message}")
+                null // Return null if bounds are invalid
+            }
+        }
+
+        // Reduce padding for a closer camera view
+        if (cameraBounds != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds, 10)) // Further reduced padding to 10
+        } else {
+            android.util.Log.w("MapViewContent", "Skipping camera movement due to invalid bounds.")
+        }
+
+        // Draw polyline for the route
+        // Convert Color to Int for PolylineOptions
+        val polylineOptions = PolylineOptions().apply {
+            color(Color.Blue.toArgb()) // Convert Color to ARGB Int
+            width(10f)
+            addAll(steps.flatMap { decodePolyline(it.polyline?.points).map { point -> LatLng(point.latitude, point.longitude) } })
+        }
+        map.addPolyline(polylineOptions)
+
+        // Place markers for start and end locations
+        val startLocation = route.legs?.firstOrNull()?.startLocation
+        val endLocation = route.legs?.lastOrNull()?.endLocation
+        startLocation?.let {
+            map.addMarker(MarkerOptions().position(LatLng(it.lat!!, it.lng!!)).title("Start"))
+        }
+        endLocation?.let {
+            map.addMarker(MarkerOptions().position(LatLng(it.lat!!, it.lng!!)).title("End"))
+        }
+    } else {
+        Log.w("MapViewContent", "No route found in direction response.")
+    }
 }
 
 private fun moveCameraToBounds(
@@ -162,19 +241,19 @@ private fun addMarkers(
     }
 }
 
-private fun decodePolyline(encoded: String): List<LatLng> {
+private fun decodePolyline(encoded: String?): List<LatLng> {
     val poly = ArrayList<LatLng>()
     var index = 0
-    val len = encoded.length
+    val len = encoded?.length
     var lat = 0
     var lng = 0
 
-    while (index < len) {
+    while (index < len!!) {
         var result = 0
         var shift = 0
         var b: Int
         do {
-            b = encoded[index++].code - 63
+                b = encoded[index++].code - 63
             result = result or ((b and 0x1f) shl shift)
             shift += 5
         } while (b >= 0x20)
