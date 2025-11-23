@@ -63,10 +63,22 @@ fun MapViewContent(
     }
 
     // Gọi Goong Direction API khi có đủ origin + destination
+    val mapView = remember { MapView(context) } // Ensure mapView is defined in the correct scope
+
     LaunchedEffect(destinationLocation, originLocation) {
         goongVM.fetchCurrentLocation()
-        if (originLocation != null &&
-            destinationLocation?.lat != null && destinationLocation?.lng != null) {
+        if (destinationLocation == null) {
+            android.util.Log.d("MapViewContent", "No destination provided. Displaying Da Nang city bounds.")
+            mapView.getMapAsync { map ->
+                val daNangBounds = LatLngBounds.Builder()
+                    .include(LatLng(16.047079, 108.206230)) // Approximate center of Da Nang
+                    .include(LatLng(16.153, 108.151)) // Northern boundary
+                    .include(LatLng(15.975, 108.250)) // Southern boundary
+                    .build()
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(daNangBounds, 150)) // Adjusted padding for better view
+            }
+        } else if (originLocation != null &&
+            destinationLocation.lat != null && destinationLocation.lng != null) {
             goongVM.fetchDirections(
                 "${originLocation.lat},${originLocation.lng}",
                 "${destinationLocation.lat},${destinationLocation.lng}"
@@ -81,8 +93,6 @@ fun MapViewContent(
         android.util.Log.d("MapViewContent", "Current origin location: $originLocation")
     }
 
-    // Define mapView variable in the appropriate scope
-    val mapView = remember { MapView(context) }
 
     // Observe direction state and trigger rendering when updated
     LaunchedEffect(direction) {
