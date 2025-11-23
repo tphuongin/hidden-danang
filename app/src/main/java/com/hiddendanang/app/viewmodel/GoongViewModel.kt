@@ -48,16 +48,25 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
                 // Kiểm tra quyền trước khi gọi
                 if (hasLocationPermission()) {
                     val location = locationService.getCurrentLocation()
-                    _currentLocation.value = location
+                    if (location != null) {
+                        _currentLocation.value = location
+                        Log.d("GoongViewModel", "Fetched current location: ${_currentLocation.value}")
+                    } else {
+                        _errorMessage.value = "Không thể lấy vị trí hiện tại"
+                        Log.w("GoongViewModel", "Location is null")
+                    }
                 } else {
                     _errorMessage.value = "Không có quyền truy cập vị trí"
+                    Log.w("GoongViewModel", "Location permission not granted")
                 }
             } catch (e: SecurityException) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi bảo mật khi lấy vị trí: ${e.message}"
+                Log.e("GoongViewModel", "SecurityException: ${e.message}")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi lấy vị trí: ${e.message}"
+                Log.e("GoongViewModel", "Exception: ${e.message}")
             }
         }
     }

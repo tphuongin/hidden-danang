@@ -37,7 +37,23 @@ fun MapViewContent(
     val locationService = LocationService(context)
     val mapKey = stringResource(R.string.map_key)
     val coroutine = rememberCoroutineScope()
-    val originLocation = Location(2.0, 3.0) // for test
+
+    // Set default origin location to Đại học Bách Khoa - Đại học Đà Nẵng
+    val originLocation = Location(16.0736606, 108.149869)
+    // Parse the currentLocation string into a Location object
+//    val originLocation = goongVM.currentLocation.collectAsState().value?.split(",")?.let {
+//        if (it.size == 2) {
+//            val lat = it[0].toDoubleOrNull()
+//            val lng = it[1].toDoubleOrNull()
+//            if (lat != null && lng != null) {
+//                Location(lat, lng)
+//            } else {
+//                null
+//            }
+//        } else {
+//            null
+//        }
+//    } ?: defaultOriginLocation // Use default location if current location is null
 
     val direction by goongVM.directionsResponse.collectAsState()
 
@@ -47,13 +63,22 @@ fun MapViewContent(
     }
 
     // Gọi Goong Direction API khi có đủ origin + destination
-    LaunchedEffect(destinationLocation) {
-        if (originLocation != null && destinationLocation != null) {
+    LaunchedEffect(destinationLocation, originLocation) {
+        goongVM.fetchCurrentLocation()
+        if (originLocation != null &&
+            destinationLocation?.lat != null && destinationLocation?.lng != null) {
             goongVM.fetchDirections(
                 "${originLocation.lat},${originLocation.lng}",
                 "${destinationLocation.lat},${destinationLocation.lng}"
             )
+        } else {
+            android.util.Log.w("MapViewContent", "Origin or destination location is invalid.")
         }
+    }
+
+    // Log the current location for debugging
+    LaunchedEffect(originLocation) {
+        android.util.Log.d("MapViewContent", "Current origin location: $originLocation")
     }
 
     // Define mapView variable in the appropriate scope
@@ -126,12 +151,19 @@ private fun renderMap(map: MapLibreMap, direction: DirectionResponse) {
 
         // Update camera bounds
         // Ensure bounds are valid before building LatLngBounds
+        // Ensure all relevant points are included in LatLngBounds
         val cameraBounds = LatLngBounds.Builder().apply {
             bounds?.northeast?.let { include(LatLng(it.lat!!, it.lng!!)) }
             bounds?.southwest?.let { include(LatLng(it.lat!!, it.lng!!)) }
             // Include start and end locations explicitly
             route.legs?.firstOrNull()?.startLocation?.let { include(LatLng(it.lat!!, it.lng!!)) }
             route.legs?.lastOrNull()?.endLocation?.let { include(LatLng(it.lat!!, it.lng!!)) }
+            // Include intermediate waypoints
+
+            // Explicitly specify the type for flatMap and ensure null safety
+            route.legs?.flatMap { leg -> leg.steps ?: emptyList() }?.forEach { step ->
+                step.endLocation?.let { include(LatLng(it.lat!!, it.lng!!)) }
+            }
         }.let {
             try {
                 it.build()
@@ -143,7 +175,7 @@ private fun renderMap(map: MapLibreMap, direction: DirectionResponse) {
 
         // Reduce padding for a closer camera view
         if (cameraBounds != null) {
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds, 10)) // Further reduced padding to 10
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(cameraBounds, 150)) // Increased padding to 150
         } else {
             android.util.Log.w("MapViewContent", "Skipping camera movement due to invalid bounds.")
         }
@@ -209,6 +241,7 @@ private fun drawRoute(map: MapLibreMap, direction: DirectionResponse) {
     android.util.Log.d("MapViewContent", "Polyline added to map successfully.")
 }
 
+// Update markers to use custom images
 private fun addMarkers(
     map: MapLibreMap,
     mapView: MapView,
@@ -219,13 +252,14 @@ private fun addMarkers(
         val symbolManager = SymbolManager(mapView, map, style)
         symbolManager.iconAllowOverlap = true
 
+        // Add custom images for markers
         style.addImage(
             "origin-icon",
-            vectorToBitmap(mapView.context, R.drawable.start, 80, 80)
+            vectorToBitmap(mapView.context, R.drawable.start, 80, 80) // Replace with your custom image
         )
         style.addImage(
             "dest-icon",
-            vectorToBitmap(mapView.context, R.drawable.location, 80, 80)
+            vectorToBitmap(mapView.context, R.drawable.location, 80, 80) // Replace with your custom image
         )
 
         val o = SymbolOptions()
@@ -239,6 +273,12 @@ private fun addMarkers(
         symbolManager.create(o)
         symbolManager.create(d)
     }
+
+    // Log the current map style and destination coordinates
+    map.getStyle { style ->
+        android.util.Log.d("MapViewContent", "Current map style: ${style.uri}")
+    }
+
 }
 
 private fun decodePolyline(encoded: String?): List<LatLng> {

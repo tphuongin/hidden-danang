@@ -69,7 +69,6 @@ fun AppNavHost(
         composable(
             route = Screen.Map.route,
         ) { backStackEntry ->
-
             val destLat = backStackEntry.arguments?.getString("destLat")?.toDoubleOrNull()
             val destLng = backStackEntry.arguments?.getString("destLng")?.toDoubleOrNull()
 
