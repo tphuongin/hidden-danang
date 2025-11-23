@@ -33,6 +33,7 @@ fun HomePageScreen(navController: NavHostController) {
     val uiState by viewModel.uiState.collectAsState()
     val favoritesViewModel: FavoritesViewModel = viewModel()
     val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +58,10 @@ fun HomePageScreen(navController: NavHostController) {
                         }
                     )
                     Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-                    CategoryRow()
+                    CategoryRow(
+                        currentCategory = selectedCategory, // Truyền trạng thái hiện tại
+                        onCategorySelected = viewModel::selectCategory // Truyền hàm xử lý sự kiện
+                    )
                 }
             }
 
@@ -75,7 +79,7 @@ fun HomePageScreen(navController: NavHostController) {
                     contentPadding = PaddingValues(horizontal = Dimens.PaddingLarge),
                     horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
                 ) {
-                    items(uiState.popularPlaces) { place ->
+                    items(uiState.places) { place ->
                         PlaceCard(
                             modifier = Modifier.width(Dimens.CardLargeWidth),
                             place = place,
@@ -97,7 +101,7 @@ fun HomePageScreen(navController: NavHostController) {
                 }
             }
 
-            items(uiState.popularPlaces.chunked(2)) { rowItems ->
+            items(uiState.places.chunked(2)) { rowItems ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

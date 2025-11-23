@@ -60,6 +60,11 @@ fun RegisterScreen(navController: NavHostController) {
         is AuthUiState.Idle -> {
             // Không làm gì cả
         }
+
+        is AuthUiState.Error -> TODO()
+        AuthUiState.Idle -> TODO()
+        AuthUiState.Loading -> TODO()
+        AuthUiState.Success -> TODO()
     }
 
     LazyColumn(

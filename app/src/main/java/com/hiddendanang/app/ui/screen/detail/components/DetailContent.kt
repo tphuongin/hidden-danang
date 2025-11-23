@@ -32,13 +32,11 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
-import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
-import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.DetailViewModel
@@ -93,7 +91,7 @@ fun DetailContent(
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
 
-                     MapLottie()
+                    MapLottie()
                 }
             }
 
@@ -177,14 +175,14 @@ fun DetailContent(
         }
     }
 }
-    fun navToInteractiveMapScreen(navController: NavHostController, place: Place, destinationLocation: Location){
-        val destinationLocation = Location(place.coordinates.latitude, place.coordinates.longitude)
-        navController.navigate(Screen.Map.createRoute( destinationLocation)){
-            popUpTo(navController.graph.startDestinationId)
-            launchSingleTop = true
-            restoreState = true
-        }
+fun navToInteractiveMapScreen(navController: NavHostController, place: Place, destinationLocation: Location){
+    val destinationLocation = Location(place.coordinates.latitude, place.coordinates.longitude)
+    navController.navigate(Screen.Map.createRoute( destinationLocation)){
+        popUpTo(navController.graph.startDestinationId)
+        launchSingleTop = true
+        restoreState = true
     }
+}
 
 @Composable
 private fun ReviewActionsSection(
