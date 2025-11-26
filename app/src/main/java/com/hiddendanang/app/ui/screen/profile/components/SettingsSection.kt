@@ -1,5 +1,8 @@
 package com.hiddendanang.app.ui.screen.profile.components
 
+import android.content.Context
+import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,11 +13,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.composables.icons.lucide.*
 import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.theme.Dimens
+import java.util.*
 
 data class SettingItem(
     val title: String,
@@ -23,14 +28,69 @@ data class SettingItem(
 )
 
 @Composable
+fun LanguageSelectionDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onLanguageSelected: (String) -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    text = stringResource(R.string.select_language),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            text = {
+                Column {
+                    val languages = listOf("English" to "en", "Vietnamese" to "vi")
+                    languages.forEach { (language, code) ->
+                        Text(
+                            text = language,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onLanguageSelected(code)
+                                    onDismiss()
+                                }
+                                .padding(vertical = Dimens.PaddingMedium),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            },
+            confirmButton = {}
+        )
+    }
+}
+
+private fun updateAppLocale(context: Context, languageCode: String) {
+    val locale = Locale(languageCode)
+    Locale.setDefault(locale)
+    val config = Configuration(context.resources.configuration)
+    config.setLocale(locale)
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+}
+
+@Composable
 fun SettingsSection(
     onLogout: () -> Unit,
     onPostLocation: () -> Unit = {},
     onReviewManagement: () -> Unit = {},
     onAccountSetting: () -> Unit = {},
-    onLanguage: () -> Unit = {}
+    onLanguage: (String) -> Unit = {}
 ) {
+    val context = LocalContext.current
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    // Set default language to Vietnamese
+    LaunchedEffect(Unit) {
+        updateAppLocale(context, "vi")
+        onLanguage("vi")
+    }
 
     // Lấy string resources
     val logoutText = stringResource(R.string.logout_title)
@@ -95,6 +155,16 @@ fun SettingsSection(
         )
     }
 
+    LanguageSelectionDialog(
+        showDialog = showLanguageDialog,
+        onDismiss = { showLanguageDialog = false },
+        onLanguageSelected = { selectedLanguageCode ->
+            Log.d("SettingsSection", "Selected language code: $selectedLanguageCode")
+            updateAppLocale(context, selectedLanguageCode)
+            onLanguage(selectedLanguageCode)
+        }
+    )
+
     Card(
         shape = RoundedCornerShape(Dimens.CornerXLarge),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
@@ -116,7 +186,7 @@ fun SettingsSection(
                             postLocationText -> onPostLocation()
                             reviewManagementText -> onReviewManagement()
                             accountSettingText -> onAccountSetting()
-                            languageText -> onLanguage()
+                            languageText -> showLanguageDialog = true
                         }
                     },
                     showDivider = index != settings.lastIndex

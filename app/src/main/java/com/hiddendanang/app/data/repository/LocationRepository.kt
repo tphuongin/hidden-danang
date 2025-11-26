@@ -1,14 +1,40 @@
 package com.hiddendanang.app.data.repository
 
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.dataObjects
 import com.google.firebase.firestore.toObject
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.data.remote.FirestoreDataSource
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
 class LocationRepository {
 
     private val remoteDataSource: FirestoreDataSource = FirestoreDataSource()
 
+
+    fun getPlacesStreamByCategory(categoryId: String): Flow<List<Place>> {
+        // [1] Lấy tham chiếu Collection từ DataSource
+        val collectionRef = remoteDataSource.getPlacesCollection()
+
+        // [2] Thiết lập Query cơ bản: Lọc theo trạng thái và sắp xếp theo độ phổ biến
+        val baseQuery = collectionRef
+            .whereEqualTo("status", "active")
+            .orderBy("popularity_score", Query.Direction.DESCENDING)
+
+        // [3] Áp dụng bộ lọc category_id nếu cần
+        val query = if (categoryId.isNotEmpty() && categoryId != "all") {
+            // Áp dụng bộ lọc cho danh mục cụ thể
+            baseQuery.whereEqualTo("category_id", categoryId)
+        } else {
+            // Trường hợp "Tất cả" hoặc ID rỗng: Trả về Query cơ bản (tất cả địa điểm hoạt động)
+            baseQuery
+        }
+
+        // [4] Chuyển đổi Query thành Flow<List<Place>> (Real-time)
+        // Đây là điểm quan trọng nhất: dataObjects<Place>() chuyển đổi Firestore Query thành Flow<List<Place>>
+        return query.dataObjects<Place>()
+    }
     suspend fun getPopularPlaces(): Result<List<Place>> {
         return try {
             val snapshot = remoteDataSource.fetchPopularPlacesRaw()

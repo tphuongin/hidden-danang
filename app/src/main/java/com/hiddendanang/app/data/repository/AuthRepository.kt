@@ -60,10 +60,76 @@ class AuthRepository {
         }
     }
 
-    suspend fun loginUser(email: String, password: String): Result<FirebaseUser> {
+    suspend fun getUserById(uid: String): Result<User?> {
         return try {
-            val user = auth.signInWithEmailAndPassword(email, password).await().user
-            Result.success(user!!)
+            val snapshot = dataSource.getUserDocumentReference(uid).get().await()
+            val user = snapshot.toObject<User>()
+            Result.success(user)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // SỬA: Thay đổi kiểu trả về từ Result<FirebaseUser> thành Result<User>
+    suspend fun loginUser(email: String, password: String): Result<User> {
+        return try {
+            // Bước 1: Đăng nhập vào Firebase Auth
+            val authResult = auth.signInWithEmailAndPassword(email, password).await()
+            val uid = authResult.user?.uid ?: throw IllegalStateException("UID is null")
+
+            // Bước 2: Dùng UID đó lấy ngay dữ liệu từ Firestore
+            // (Lúc này lấy luôn được preferences, theme, bio...)
+            val documentSnapshot = dataSource.getUserDocumentReference(uid).get().await()
+
+            // Bước 3: Parse sang object User của bạn
+            val customUser = documentSnapshot.toObject<User>()
+                ?: throw IllegalStateException("User data not found in Firestore")
+
+            // Trả về User đầy đủ thông tin
+            Result.success(customUser)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+    // Cập nhật thông tin profile.
+    // Các tham số để null nghĩa là không muốn thay đổi trường đó.
+    suspend fun updateUserProfile(
+        uid: String,
+        displayName: String? = null,
+        bio: String? = null,
+        photoUrl: String? = null,
+        theme: String? = null
+    ): Result<Unit> {
+        return try {
+            // 1. Chuẩn bị dữ liệu để update lên Firestore
+            val updates = mutableMapOf<String, Any>()
+
+            // Chỉ đưa vào map những trường có giá trị (không null)
+            displayName?.let { updates["display_name"] = it }
+            bio?.let { updates["bio"] = it }
+            photoUrl?.let { updates["photo_url"] = it }
+            theme?.let { updates["preferences.theme"] = it }
+
+            if (updates.isNotEmpty()) {
+                // Gọi lệnh update (chỉ thay đổi các trường được chỉ định, giữ nguyên các trường khác)
+                dataSource.getUserDocumentReference(uid).update(updates).await()
+            }
+
+            // 2. Cập nhật song song lên FirebaseAuth (để đồng bộ Authentication Profile)
+            // Bước này quan trọng để khi gọi auth.currentUser.displayName thì ra tên mới ngay
+            val firebaseUser = auth.currentUser
+            if (firebaseUser != null && (displayName != null || photoUrl != null)) {
+                val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder().apply {
+                    displayName?.let { setDisplayName(it) }
+                    photoUrl?.let { setPhotoUri(android.net.Uri.parse(it)) }
+                }.build()
+
+                firebaseUser.updateProfile(profileUpdates).await()
+            }
+
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

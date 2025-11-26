@@ -19,6 +19,8 @@ import com.composables.icons.lucide.Eye
 import com.composables.icons.lucide.EyeOff
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.AuthUiState
+import com.hiddendanang.app.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
@@ -58,6 +60,11 @@ fun RegisterScreen(navController: NavHostController) {
         is AuthUiState.Idle -> {
             // Không làm gì cả
         }
+
+        is AuthUiState.Error -> TODO()
+        AuthUiState.Idle -> TODO()
+        AuthUiState.Loading -> TODO()
+        AuthUiState.Success -> TODO()
     }
 
     LazyColumn(

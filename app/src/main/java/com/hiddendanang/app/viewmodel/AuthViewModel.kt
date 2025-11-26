@@ -1,12 +1,13 @@
-package com.hiddendanang.app.ui.screen.auth
+package com.hiddendanang.app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hiddendanang.app.data.model.User
 import com.hiddendanang.app.data.repository.AuthRepository
+import com.hiddendanang.app.utils.constants.AppThemeMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -29,6 +30,11 @@ class AuthViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
+    //TRẠNG THÁI XÁC THỰC
+    private val _isLoggedIn = MutableStateFlow(authRepository.getCurrentUser() != null)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user.asStateFlow()
     /**
      * Hàm này được gọi từ LoginScreen khi người dùng nhấn nút "Login".
      */
@@ -49,9 +55,18 @@ class AuthViewModel : ViewModel() {
 
             // B3: Xử lý kết quả trả về
             result.fold(
-                onSuccess = {
+                onSuccess = { user ->
+                    val userTheme = user.preferences?.theme
+                    if (userTheme != null) {
+                        try {
+                            val mode = AppThemeMode.valueOf(userTheme)
+                        } catch (e: Exception) {
+                            // Ignore lỗi format
+                        }
+                    }
                     // Nếu thành công, cập nhật trạng thái
                     _uiState.value = AuthUiState.Success
+                    _isLoggedIn.value = true
                 },
                 onFailure = { e ->
                     // Nếu thất bại, gửi thông báo lỗi
@@ -94,6 +109,25 @@ class AuthViewModel : ViewModel() {
             )
         }
     }
+
+    fun getUserById(userId: String) {
+        viewModelScope.launch {
+            _uiState.value = AuthUiState.Loading
+
+            val result = authRepository.getUserById(userId)
+
+            result.fold(
+                onSuccess = { userData ->
+                    _user.value = userData
+                    _uiState.value = AuthUiState.Success
+                },
+                onFailure = { e ->
+                    _uiState.value = AuthUiState.Error(e.message ?: "Không thể tải thông tin người dùng")
+                }
+            )
+        }
+    }
+
 
     /**
      * Dùng để reset trạng thái về Idle (ví dụ: sau khi người dùng đóng dialog lỗi)

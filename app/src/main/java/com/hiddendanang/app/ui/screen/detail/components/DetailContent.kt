@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -20,21 +22,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
 import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.navigation.Screen
-import com.hiddendanang.app.ui.components.MapCard
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.DetailViewModel
 import com.hiddendanang.app.viewmodel.GoongViewModel
-import com.hiddendanang.app.ui.screen.detail.DetailViewModel
+import com.hiddendanang.app.utils.LocationService
 
 @Composable
 fun DetailContent(
@@ -46,6 +55,7 @@ fun DetailContent(
     isNearbyFavorite: (String) -> Boolean,
     onToggleNearbyFavorite: (String) -> Unit,
     viewModel: DetailViewModel,
+    onWriteReviewClicked: () -> Unit,
     onRequestLocationPermission: () -> Unit = {}
 ) {
     val goongViewModel: GoongViewModel = viewModel()
@@ -84,11 +94,7 @@ fun DetailContent(
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
 
-                    // MapCard với location permission handling
-                    MapCard(
-                        place = place,
-                        onRequestLocationPermission = onRequestLocationPermission
-                    )
+                     MapLottie()
                 }
             }
 
@@ -104,7 +110,7 @@ fun DetailContent(
 
             // Review Actions
             item {
-                ReviewActionsSection()
+                ReviewActionsSection(viewModel, onWriteReviewClicked = onWriteReviewClicked)
             }
 
             // Nearby Places Section
@@ -130,7 +136,15 @@ fun DetailContent(
         ) {
             Button(
                 onClick = {
-                    navToInteractiveMapScreen(navController, place.id)
+                    val destinationLocation = Location(
+                        place.coordinates.latitude,
+                        place.coordinates.longitude
+                    )
+                    navController.navigate(Screen.Map.createRoute(destinationLocation)) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,9 +178,20 @@ fun DetailContent(
         }
     }
 }
+fun navToInteractiveMapScreen(navController: NavHostController, place: Place, destinationLocation: Location){
+    val destinationLocation = Location(place.coordinates.latitude, place.coordinates.longitude)
+    navController.navigate(Screen.Map.createRoute( destinationLocation)){
+        popUpTo(navController.graph.startDestinationId)
+        launchSingleTop = true
+        restoreState = true
+    }
+}
 
 @Composable
-private fun ReviewActionsSection() {
+private fun ReviewActionsSection(
+    viewModel: DetailViewModel,
+    onWriteReviewClicked: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,6 +201,21 @@ private fun ReviewActionsSection() {
             ),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
+        if (uiState.allReviews.isEmpty()) {
+            Text(
+                text = "Chưa có đánh giá nào",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        } else {
+            uiState.allReviews.take(2).forEach { review ->
+                ReviewCard(
+                    review = review,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+        }
         // Button view all comments
         Button(
             onClick = { /* TODO: Implement view all comments */ },
@@ -192,10 +232,19 @@ private fun ReviewActionsSection() {
                 )
             )
         }
-
+        if (uiState.isReviewFormVisible) {
+            ReviewForm(
+                initialRating = uiState.userReview?.rating ?: 0,
+                initialComment = uiState.userReview?.comment ?: "",
+                onDismiss = { viewModel.hideReviewForm() },
+                onSubmit = { rating, comment ->
+                    viewModel.submitUserReview(rating, comment)
+                }
+            )
+        }
         // Button write your comment
         Button(
-            onClick = { /* TODO: Implement write comment */ },
+            onClick = { onWriteReviewClicked() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ButtonLarge),
@@ -252,10 +301,19 @@ private fun NearbyPlacesSection(
         }
     }
 }
-fun navToInteractiveMapScreen(navController: NavHostController, placeId: String){
-    navController.navigate(Screen.InteractiveMap.createRoute(placeId)){
-        popUpTo(navController.graph.startDestinationId)
-        launchSingleTop = true
-        restoreState = true
-    }
+
+@Composable
+fun MapLottie(){
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.dlivery_map))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = Dimens.PaddingLarge)
+    )
 }

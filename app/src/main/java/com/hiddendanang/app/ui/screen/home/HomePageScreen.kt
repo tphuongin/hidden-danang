@@ -21,10 +21,11 @@ import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
-import com.hiddendanang.app.ui.screen.favorite.FavoritesViewModel
+import com.hiddendanang.app.viewmodel.FavoritesViewModel
 import com.hiddendanang.app.ui.screen.home.components.CategoryRow
 import com.hiddendanang.app.ui.screen.home.components.HomePageTitle
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.HomeViewModel
 
 @Composable
 fun HomePageScreen(navController: NavHostController) {
@@ -32,6 +33,7 @@ fun HomePageScreen(navController: NavHostController) {
     val uiState by viewModel.uiState.collectAsState()
     val favoritesViewModel: FavoritesViewModel = viewModel()
     val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +58,10 @@ fun HomePageScreen(navController: NavHostController) {
                         }
                     )
                     Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-                    CategoryRow()
+                    CategoryRow(
+                        currentCategory = selectedCategory, // Truyền trạng thái hiện tại
+                        onCategorySelected = viewModel::selectCategory // Truyền hàm xử lý sự kiện
+                    )
                 }
             }
 
@@ -74,7 +79,7 @@ fun HomePageScreen(navController: NavHostController) {
                     contentPadding = PaddingValues(horizontal = Dimens.PaddingLarge),
                     horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
                 ) {
-                    items(uiState.popularPlaces) { place ->
+                    items(uiState.places) { place ->
                         PlaceCard(
                             modifier = Modifier.width(Dimens.CardLargeWidth),
                             place = place,
@@ -96,7 +101,7 @@ fun HomePageScreen(navController: NavHostController) {
                 }
             }
 
-            items(uiState.popularPlaces.chunked(2)) { rowItems ->
+            items(uiState.places.chunked(2)) { rowItems ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

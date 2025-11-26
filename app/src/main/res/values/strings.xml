@@ -27,6 +27,7 @@
     <string name="visited">Visited</string>
     <string name="logout_title">Log out</string>
     <string name="logout_message">Are you sure you want to log out of your account?</string>
+    <string name="select_language">Select language</string>
     <string name="cancel">Cancel</string>
 
     // Favorite Screen
@@ -73,5 +74,16 @@
 <!--    Key Api-->
     <string name="goong_api_key" translatable="false">wl9WcliOz8fo9XP6nchMVFpoDUqYSk0YbPf78gGc</string>
     <string name="goong_base_url" translatable="false">https://rsapi.goong.io/</string>
+
+<!-- ReviewForm-->
+    <string name="review_form_title_new">Write a New Review</string>
+    <string name="review_form_title_edit">Edit Your Review</string>
+    <string name="review_form_rating_star_description">Rate %d stars</string>
+    <string name="review_form_comment_label">Your Comment</string>
+    <string name="review_form_comment_placeholder">Share your experience...</string>
+    <string name="review_form_button_cancel">Cancel</string>
+    <string name="review_form_button_submit">Submit</string>
+
+    <string name="map_key" translatable="false">ZNnBPwWGxOjMOPDWc6vCIHMlzAxvgGXzvuqK8yUB</string>
 
 </resources>

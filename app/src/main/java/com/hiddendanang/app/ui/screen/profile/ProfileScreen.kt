@@ -9,17 +9,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
+import com.hiddendanang.app.ui.screen.profile.components.EditProfileDialog
 import com.hiddendanang.app.ui.screen.profile.components.NotLoggedInView
 import com.hiddendanang.app.ui.screen.profile.components.ProfileHeader
 import com.hiddendanang.app.ui.screen.profile.components.SettingsSection
 import com.hiddendanang.app.ui.screen.profile.components.ThemeSelector
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.LocalThemePreference
+import com.hiddendanang.app.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
@@ -27,6 +32,20 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    //Quản lý hiển thị edit dialog
+    var showEditDialog by remember { mutableStateOf(false) }
+    // Xử lý Dialog
+    if (showEditDialog && uiState.user != null) {
+        EditProfileDialog(
+            user = uiState.user!!,
+            onDismiss = { showEditDialog = false },
+            onConfirm = { newName, newBio, newPhotoUrl ->
+                viewModel.updateProfile(newName, newBio, newPhotoUrl)
+                showEditDialog = false
+            }
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -65,7 +84,8 @@ fun ProfileScreen(
                     LoggedInProfile(
                         user = uiState.user!!,
                         onLogout = { viewModel.logout() }, // Truyền sự kiện logout
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        onEditClick = { showEditDialog = true }
                     )
                 }
             }
@@ -75,9 +95,10 @@ fun ProfileScreen(
 
 @Composable
 fun LoggedInProfile(
-    user: com.hiddendanang.app.data.model.User, // Dùng com.hiddendanang.app.data.model.User
+    user: com.hiddendanang.app.data.model.User,
     onLogout: () -> Unit, // Thêm
-    viewModel: ProfileViewModel
+    viewModel: ProfileViewModel,
+    onEditClick: () -> Unit
 ) {
     val themePreference = LocalThemePreference.current
     val favoriteCount by viewModel.favoriteCount.collectAsState()
@@ -85,13 +106,20 @@ fun LoggedInProfile(
         user = user,
         favoriteCount = favoriteCount,
         reviewsCount = user.stats.reviews_count,
-        visitedCount = user.stats.locations_added
+        visitedCount = user.stats.locations_added,
+        onEditClick = onEditClick
     )
     Spacer(Modifier.height(Dimens.SpaceMedium))
 
     ThemeSelector(
         currentTheme = themePreference.value,
-        onThemeChange = { themePreference.value = it }
+        onThemeChange = { newTheme ->
+            // 1. Cập nhật state UI ngay lập tức (để nhìn thấy đổi màu)
+            themePreference.value = newTheme
+
+            // 2. Báo ViewModel lưu lại (vào máy + lên mạng)
+            viewModel.onThemeChange(newTheme)
+        }
     )
 
     Spacer(Modifier.height(Dimens.SpaceMedium))
