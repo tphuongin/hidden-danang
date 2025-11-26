@@ -32,15 +32,18 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
+import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
+import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.DetailViewModel
 import com.hiddendanang.app.viewmodel.GoongViewModel
+import com.hiddendanang.app.utils.LocationService
 
 @Composable
 fun DetailContent(
@@ -91,7 +94,7 @@ fun DetailContent(
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
 
-                    MapLottie()
+                     MapLottie()
                 }
             }
 

@@ -3,17 +3,19 @@ package com.hiddendanang.app.ui.screen.detail
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.google.android.libraries.places.api.model.kotlin.place
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
+import com.hiddendanang.app.viewmodel.DetailViewModel
 import com.hiddendanang.app.ui.screen.detail.components.DetailContent
 import com.hiddendanang.app.viewmodel.AuthViewModel
-import com.hiddendanang.app.viewmodel.DetailViewModel
 
 @Composable
 fun DetailScreen(
