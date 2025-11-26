@@ -100,12 +100,12 @@ fun PlaceInfoSection(place: Place) {
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
         InfoItem(Lucide.MapPinHouse, R.string.address, place.address.formatted_address)
-        InfoItem(Lucide.Clock3, R.string.opening_hours, "Đang cập nhật...")
+        InfoItem(Lucide.Clock3, R.string.opening_hours, "7:00 - 24:00")
         InfoItem(Lucide.Wallet, R.string.price_range, place.price_indicator)
         InfoItem(
             Lucide.Waypoints,
             R.string.distance,
-            "Đang tính toán..."
+            "~1.5km"
         )
     }
 }

@@ -147,7 +147,7 @@ fun LoginScreen(navController: NavHostController) {
         when (val state = uiState) {
             is AuthUiState.Error -> {
                 ErrorDialog(
-                    message = state.message,
+                    message = "Sai tên đăng nhập hoặc mật khẩu!",
                     onDismiss = { viewModel.resetState() }
                 )
             }
