@@ -45,6 +45,9 @@ android {
 
 
 dependencies {
+    implementation(libs.android.sdk.v1100)
+    implementation(libs.android.plugin.annotation.v9)
+    implementation(libs.accompanist.permissions)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
     implementation("com.google.firebase:firebase-auth-ktx")
@@ -73,6 +76,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.places)
     implementation(libs.androidx.foundation)
+    implementation(libs.foundation)
     implementation(libs.play.services.appindexing)
     implementation(libs.androidx.room.ktx)
     kapt("androidx.room:room-compiler:2.6.1")

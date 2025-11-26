@@ -7,12 +7,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
+import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.ui.screen.auth.LoginScreen
 import com.hiddendanang.app.ui.screen.auth.RegisterScreen
 import com.hiddendanang.app.ui.screen.detail.DetailScreen
 import com.hiddendanang.app.ui.screen.favorite.FavoriteScreen
 import com.hiddendanang.app.ui.screen.home.HomePageScreen
-import com.hiddendanang.app.ui.screen.map.InteractiveMapScreen
+import com.hiddendanang.app.ui.screen.map.MapScreen
 import com.hiddendanang.app.ui.screen.profile.ProfileScreen
 import com.hiddendanang.app.ui.screen.search.SearchScreen
 import com.hiddendanang.app.ui.screen.splash.SplashScreen
@@ -21,7 +22,6 @@ import com.hiddendanang.app.ui.screen.splash.SplashScreen
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    onRequestLocationPermission: () -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -58,7 +58,6 @@ fun AppNavHost(
                 DetailScreen(
                     navController = navController,
                     placeId = id,
-                    onRequestLocationPermission = onRequestLocationPermission
                 )
         }
         composable(Screen.Favorite.route) {
@@ -68,13 +67,19 @@ fun AppNavHost(
             ProfileScreen(navController)
         }
         composable(
-            Screen.InteractiveMap.route,
-            arguments = listOf(
-                navArgument("placeId") { type = NavType.StringType }
+            route = Screen.Map.route,
+        ) { backStackEntry ->
+            val destLat = backStackEntry.arguments?.getString("destLat")?.toDoubleOrNull()
+            val destLng = backStackEntry.arguments?.getString("destLng")?.toDoubleOrNull()
+
+            val destination = if (destLat != null && destLng != null)
+                Location(destLat, destLng)
+            else null
+
+            MapScreen(
+                destination = destination
             )
-        ) { navBackStackEntry ->
-            val placeId = navBackStackEntry.arguments?.getString("placeId") ?: ""
-            InteractiveMapScreen(navController, placeId)
         }
+
     }
 }

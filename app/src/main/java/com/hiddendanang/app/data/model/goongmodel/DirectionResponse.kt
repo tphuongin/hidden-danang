@@ -1,6 +1,6 @@
 package com.hiddendanang.app.data.model.goongmodel
 
-data class DirectionsResponse(
+data class DirectionResponse(
     val geocodedWaypoints: List<GeocodedWaypoint>?,
     val routes: List<Route>?,
     val executionTime: String?,

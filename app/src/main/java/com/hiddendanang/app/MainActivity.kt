@@ -36,30 +36,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// Thêm import MapLibre
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-
-        if (fineLocationGranted || coarseLocationGranted) {
-            //
-        }
-    }
-
-    private fun requestLocationPermission() {
-        locationPermissionLauncher.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         MapLibre.getInstance(this, "", WellKnownTileServer.MapLibre)
 
@@ -69,7 +50,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             HiddenDaNangApp(
                 mainViewModel,
-                onRequestLocationPermission = { requestLocationPermission() }
             )
         }
     }
@@ -78,7 +58,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HiddenDaNangApp(
     mainViewModel : MainViewModel,
-    onRequestLocationPermission: () -> Unit = {}
 ){
     val themePreference = remember { mutableStateOf(AppThemeMode.SYSTEM) }
     val navController = rememberNavController()
@@ -114,6 +93,7 @@ fun HiddenDaNangApp(
                     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                     val bottomBarRoutes = setOf(
                         Screen.HomePage.route,
+                        Screen.Map.route,
                         Screen.Favorite.route,
                         Screen.Profile.route
                     )
@@ -125,7 +105,6 @@ fun HiddenDaNangApp(
                 AppNavHost(
                     modifier = Modifier.padding(paddingValues),
                     navController = navController,
-                    onRequestLocationPermission = onRequestLocationPermission
                 )
             }
         }

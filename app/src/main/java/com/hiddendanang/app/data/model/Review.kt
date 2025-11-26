@@ -14,7 +14,7 @@ data class Review(
     val user_name: String = "",
     val user_photo_url: String = "",
 
-    val photos: List<String> = emptyList(), 
+    val photos: List<String> = emptyList(),
 
     val created_at: Timestamp? = null,
     val updated_at: Timestamp? = null,

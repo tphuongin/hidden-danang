@@ -5,14 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.google.android.material.progressindicator.CircularProgressIndicator
-import com.hiddendanang.app.ui.screen.favorite.FavoritesViewModel
+import com.hiddendanang.app.viewmodel.FavoritesViewModel
 
 @Composable
 fun FavoriteContent(

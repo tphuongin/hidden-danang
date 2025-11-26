@@ -112,7 +112,7 @@ class DataViewModel : ViewModel() {
             name = "Bà Nà Hills",
             address = "Hoà Ninh, Hoà Vang, Đà Nẵng",
             images = listOf(
-                "https://vcdn1-dulich.vnecdn.net/2025/04/10/BNtop-1744279080-7298-1744280762.jpg",
+                "https://banahills.sunworld.vn/wp-content/uploads/2024/04/DJI_0004-1-scaled.jpg",
                 "https://statics.vinpearl.com/Ba-Na-Hills-1_1688712496.jpg",
                 "https://cdn3.ivivu.com/2023/08/Ba-Na-Hills-ivivu-23.jpg"
             ),
@@ -247,7 +247,7 @@ class DataViewModel : ViewModel() {
             name = "Phố cổ Hội An",
             address = "Thành phố Hội An, Quảng Nam",
             images = listOf(
-                "https://cdn.tgdd.vn/Files/2022/01/18/1412747/hoi-an-13-dia-diem-du-lich-dep-lung-linh-cuc-thich-hop-cho-cac-cap-doi-202201181554364367.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvPS4UgvqA4AQ2euhKPW0GrkDF3KRaIWq_iw&s",
                 "https://statics.vinpearl.com/hoi-an-quang-nam-1_1681368751.jpg",
                 "https://ik.imagekit.io/tvlk/blog/2023/02/hoi-an-ancient-town-1.jpg"
             ),

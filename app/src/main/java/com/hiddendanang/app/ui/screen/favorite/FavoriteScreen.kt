@@ -14,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.hiddendanang.app.ui.screen.favorite.components.FavoriteContent
 import com.hiddendanang.app.ui.screen.profile.components.NotLoggedInView
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.FavoritesViewModel
 
 @Composable
 fun FavoriteScreen(

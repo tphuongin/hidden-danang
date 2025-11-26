@@ -25,7 +25,7 @@ data class User(
     val uid: String = "",
     val email: String = "",
     val display_name: String = "",
-    val photo_url: String? = null,
+    val photo_url: String = "",
     val bio: String? = null,
 
     val preferences: Preferences = Preferences(),
