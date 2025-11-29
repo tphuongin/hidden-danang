@@ -101,4 +101,15 @@ class LocationRepository {
             Result.failure(e)
         }
     }
+    suspend fun addPlace(place: Place): Result<Unit> {
+        return try {
+            val collection = remoteDataSource.getPlacesCollection()
+            val docRef = if (place.id.isNotEmpty()) collection.document(place.id) else collection.document()
+            val placeToSave = place.copy(id = docRef.id)
+            docRef.set(placeToSave).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

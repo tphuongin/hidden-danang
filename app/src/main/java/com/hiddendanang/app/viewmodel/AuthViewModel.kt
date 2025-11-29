@@ -10,10 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * Lớp sealed này đại diện cho tất cả các trạng thái có thể có của màn hình Auth.
- * UI sẽ "lắng nghe" state này để biết khi nào cần hiển thị gì.
- */
 sealed class AuthUiState {
     object Idle : AuthUiState()      // Trạng thái chờ, mặc định
     object Loading : AuthUiState()   // Đang tải (hiện vòng xoay)
@@ -35,9 +31,7 @@ class AuthViewModel : ViewModel() {
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
-    /**
-     * Hàm này được gọi từ LoginScreen khi người dùng nhấn nút "Login".
-     */
+
     fun login(email: String, password: String) {
         // Kiểm tra đầu vào đơn giản
         if (email.isBlank() || password.isBlank()) {
@@ -76,13 +70,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Hàm này được gọi từ RegisterScreen khi người dùng nhấn nút "Sign Up".
-     *
-     * QUAN TRỌNG: Hàm này cần `fullName`, `email`, `password`.
-     * Bạn cần sửa file `AuthRepository.kt` một chút để chấp nhận `fullName`.
-     * (Xem hướng dẫn ở mục 2)
-     */
+
     fun register(fullName: String, email: String, password: String, confirmPassword: String) {
         if (fullName.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
             _uiState.value = AuthUiState.Error("Vui lòng nhập đầy đủ thông tin")
@@ -129,9 +117,7 @@ class AuthViewModel : ViewModel() {
     }
 
 
-    /**
-     * Dùng để reset trạng thái về Idle (ví dụ: sau khi người dùng đóng dialog lỗi)
-     */
+
     fun resetState() {
         _uiState.value = AuthUiState.Idle
     }
