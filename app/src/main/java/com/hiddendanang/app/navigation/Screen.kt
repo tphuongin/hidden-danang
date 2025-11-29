@@ -26,6 +26,9 @@ sealed class Screen(val route: String, val title: String) {
             return "map?&destLat=${destination?.lat}&destLng=${destination?.lng}"
         }
     }
+    object AllReviews: Screen("all-reviews/{id}", "All Reviews"){
+        fun createRoute(id: String): String = "all-reviews/${id}"
+    }
 
 
 
