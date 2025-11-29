@@ -109,7 +109,10 @@ fun DetailContent(
 
             // Review Actions
             item {
-                ReviewActionsSection(viewModel, onWriteReviewClicked = onWriteReviewClicked)
+                ReviewActionsSection(viewModel,
+                    onWriteReviewClicked = onWriteReviewClicked,
+                    navController = navController,
+                    place = place)
             }
 
             // Nearby Places Section
@@ -189,7 +192,9 @@ fun navToInteractiveMapScreen(navController: NavHostController, place: Place, de
 @Composable
 private fun ReviewActionsSection(
     viewModel: DetailViewModel,
-    onWriteReviewClicked: () -> Unit) {
+    onWriteReviewClicked: () -> Unit,
+    navController: NavHostController,
+    place: Place) {
     val uiState by viewModel.uiState.collectAsState()
     Column(
         modifier = Modifier
@@ -217,7 +222,9 @@ private fun ReviewActionsSection(
         }
         // Button view all comments
         Button(
-            onClick = { /* TODO: Implement view all comments */ },
+            onClick = {
+                navController.navigate(Screen.AllReviews.createRoute(place.id))
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(Dimens.ButtonMedium),

@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.ui.screen.auth.LoginScreen
 import com.hiddendanang.app.ui.screen.auth.RegisterScreen
+import com.hiddendanang.app.ui.screen.detail.AllReviewsScreen
 import com.hiddendanang.app.ui.screen.detail.DetailScreen
 import com.hiddendanang.app.ui.screen.favorite.FavoriteScreen
 import com.hiddendanang.app.ui.screen.home.HomePageScreen
@@ -96,5 +97,22 @@ fun AppNavHost(
         composable(Screen.AccountSetting.route) {
             AccountSettingScreen(navController = navController)
         }
+
+        composable(
+            Screen.AllReviews.route,
+            arguments = listOf(
+                navArgument("id"){
+                    type = NavType.StringType
+                }
+            )
+        ){ navBackStackEntry ->
+            val id = navBackStackEntry.arguments?.getString("id")
+            if(id != null)
+                AllReviewsScreen(
+                    placeId = id,
+                    onBack = { navController.popBackStack()}
+                )
+        }
+
     }
 }
