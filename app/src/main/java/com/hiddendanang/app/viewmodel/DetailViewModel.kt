@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -193,6 +194,7 @@ class DetailViewModel(
         val placeId = _uiState.value.place?.id ?: return
         val currentUserPhotoUrl = currentUser.photoUrl?.toString() ?: ""
 
+
         val existingReview = _uiState.value.userReview // Lấy review cũ để giữ metadata
         // 2. Tạo đối tượng Review Model
         val reviewToSubmit = Review(
@@ -223,6 +225,21 @@ class DetailViewModel(
     fun errorShown() {
         _uiState.update { it.copy(error = null) }
     }
+
+    val allReviews: StateFlow<List<Review>> = _uiState
+        .map { it.allReviews }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+    val isReviewsLoading: StateFlow<Boolean> = _uiState
+        .map { it.isLoading }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
 
 
 }
