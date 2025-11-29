@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.profile.components.EditProfileDialog
 import com.hiddendanang.app.ui.screen.profile.components.NotLoggedInView
@@ -85,7 +86,11 @@ fun ProfileScreen(
                         user = uiState.user!!,
                         onLogout = { viewModel.logout() }, // Truyền sự kiện logout
                         viewModel = viewModel,
-                        onEditClick = { showEditDialog = true }
+                        onEditClick = { showEditDialog = true },
+                        onAdminDashboard = { navController.navigate(Screen.Admin.route) },
+                        onPostLocation = { navController.navigate(Screen.AddPlace.route) },
+                        onReviewManagement = { navController.navigate(Screen.MyReviews.route) },
+                        onAccountSetting = { navController.navigate(Screen.AccountSetting.route) }
                     )
                 }
             }
@@ -96,9 +101,13 @@ fun ProfileScreen(
 @Composable
 fun LoggedInProfile(
     user: com.hiddendanang.app.data.model.User,
-    onLogout: () -> Unit, // Thêm
+    onLogout: () -> Unit,
     viewModel: ProfileViewModel,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
+    onAdminDashboard: () -> Unit,
+    onPostLocation: () -> Unit,
+    onReviewManagement: () -> Unit,
+    onAccountSetting: () -> Unit
 ) {
     val themePreference = LocalThemePreference.current
     val favoriteCount by viewModel.favoriteCount.collectAsState()
@@ -125,6 +134,11 @@ fun LoggedInProfile(
     Spacer(Modifier.height(Dimens.SpaceMedium))
 
     SettingsSection(
-        onLogout = onLogout
+        onLogout = onLogout,
+        isAdmin = user.role == "admin",
+        onAdminDashboard = onAdminDashboard,
+        onPostLocation = onPostLocation,
+        onReviewManagement = onReviewManagement,
+        onAccountSetting = onAccountSetting
     )
 }

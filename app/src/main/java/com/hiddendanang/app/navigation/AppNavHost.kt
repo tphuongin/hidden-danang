@@ -17,6 +17,10 @@ import com.hiddendanang.app.ui.screen.map.MapScreen
 import com.hiddendanang.app.ui.screen.profile.ProfileScreen
 import com.hiddendanang.app.ui.screen.search.SearchScreen
 import com.hiddendanang.app.ui.screen.splash.SplashScreen
+import com.hiddendanang.app.ui.screen.admin.AdminScreen
+import com.hiddendanang.app.ui.screen.addplace.AddPlaceScreen
+import com.hiddendanang.app.ui.screen.profile.MyReviewsScreen
+import com.hiddendanang.app.ui.screen.profile.AccountSettingScreen
 
 @Composable
 fun AppNavHost(
@@ -80,6 +84,17 @@ fun AppNavHost(
                 destination = destination
             )
         }
-
+        composable(Screen.Admin.route) {
+            AdminScreen(navController = navController)
+        }
+        composable(Screen.AddPlace.route) {
+            AddPlaceScreen(navController = navController)
+        }
+        composable(Screen.MyReviews.route) {
+            MyReviewsScreen(navController = navController)
+        }
+        composable(Screen.AccountSetting.route) {
+            AccountSettingScreen(navController = navController)
+        }
     }
 }

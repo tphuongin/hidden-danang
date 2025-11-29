@@ -36,6 +36,8 @@ import com.composables.icons.lucide.Waypoints
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.theme.Dimens
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun PlaceTitleAndRating(place: Place) {
@@ -99,13 +101,33 @@ fun PlaceInfoSection(place: Place) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
+        // Address
         InfoItem(Lucide.MapPinHouse, R.string.address, place.address.formatted_address)
-        InfoItem(Lucide.Clock3, R.string.opening_hours, "7:00 - 24:00")
-        InfoItem(Lucide.Wallet, R.string.price_range, place.price_indicator)
+        
+        // Opening Hours logic (Lấy dữ liệu thật)
+        val hoursText = if (place.opening_hours != null) {
+             // Lấy lịch thứ 2 làm chuẩn hiển thị
+             val today = place.opening_hours.mon 
+             if (today != null) {
+                 if (today.open == "00:00" && today.close == "23:59") "Open 24/7"
+                 else "${today.open} - ${today.close}"
+             } else "No Info"
+        } else "No Info"
+        
+        InfoItem(Lucide.Clock3, R.string.opening_hours, hoursText)
+
+        // Price logic (Lấy dữ liệu thật)
+        val priceText = if (place.price_range != null) {
+             val format = NumberFormat.getNumberInstance(Locale("vi", "VN"))
+             "${format.format(place.price_range!!.min)} - ${format.format(place.price_range!!.max)} ${place.price_range!!.currency}"
+        } else place.price_indicator // Fallback nếu null
+        
+        InfoItem(Lucide.Wallet, R.string.price_range, priceText)
+
         InfoItem(
             Lucide.Waypoints,
             R.string.distance,
-            "~1.5km"
+            "~1.5km" // Placeholder for distance
         )
     }
 }
