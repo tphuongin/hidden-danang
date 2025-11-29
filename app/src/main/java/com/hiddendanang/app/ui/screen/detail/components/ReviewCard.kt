@@ -20,9 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Star
-import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.data.model.Review
-import com.hiddendanang.app.data.model.User
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.helpers.UserAvatar
 import com.hiddendanang.app.viewmodel.AuthViewModel
@@ -36,7 +34,7 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
         viewModel.getUserById(review.user_id)
     }
 
-    val formattedDate = review.created_at?.let {timestamp ->
+    val formattedDate = review.updated_at?.let {timestamp ->
         val date = timestamp.toDate()
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("vi", "VN"))
         formatter.format(date)
@@ -78,12 +76,12 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
                             .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        UserAvatar(user.photo_url, user.display_name, size = 32)
+                        UserAvatar(review.user_photo_url, review.user_name, size = 32)
                     }
 
                     Column(verticalArrangement = Arrangement.spacedBy(Dimens.PaddingTiny)) {
                         Text(
-                            text = user.display_name,
+                            text = review.user_name,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )

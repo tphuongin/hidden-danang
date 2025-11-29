@@ -80,7 +80,9 @@ fun SettingsSection(
     onPostLocation: () -> Unit = {},
     onReviewManagement: () -> Unit = {},
     onAccountSetting: () -> Unit = {},
-    onLanguage: (String) -> Unit = {}
+    onLanguage: (String) -> Unit = {},
+    onAdminDashboard: () -> Unit = {}, // Thêm callback này
+    isAdmin: Boolean = false // Thêm flag này
 ) {
     val context = LocalContext.current
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -98,14 +100,20 @@ fun SettingsSection(
     val reviewManagementText = stringResource(R.string.review_management)
     val accountSettingText = stringResource(R.string.account_setting)
     val languageText = stringResource(R.string.language)
+    val adminDashboardText = "Admin Dashboard" // Tạm hardcode hoặc thêm vào strings.xml
 
-    val settings = listOf(
-        SettingItem(postLocationText, Lucide.MapPinPlusInside),
-        SettingItem(reviewManagementText, Lucide.Star),
-        SettingItem(accountSettingText, Lucide.UserCog),
-        SettingItem(languageText, Lucide.Languages),
-        SettingItem(logoutText, Lucide.LogOut, isDestructive = true),
-    )
+    // Xây dựng danh sách settings
+    val settings = mutableListOf<SettingItem>()
+
+    if (isAdmin) {
+        settings.add(SettingItem(adminDashboardText, Lucide.Shield))
+    }
+    settings.add(SettingItem(postLocationText, Lucide.MapPinPlusInside))
+    settings.add(SettingItem(reviewManagementText, Lucide.Star))
+    settings.add(SettingItem(accountSettingText, Lucide.UserCog))
+    settings.add(SettingItem(languageText, Lucide.Languages))
+    settings.add(SettingItem(logoutText, Lucide.LogOut, isDestructive = true))
+
 
     // Logout Confirmation Dialog
     if (showLogoutDialog) {
@@ -187,6 +195,7 @@ fun SettingsSection(
                             reviewManagementText -> onReviewManagement()
                             accountSettingText -> onAccountSetting()
                             languageText -> showLanguageDialog = true
+                            adminDashboardText -> onAdminDashboard()
                         }
                     },
                     showDivider = index != settings.lastIndex

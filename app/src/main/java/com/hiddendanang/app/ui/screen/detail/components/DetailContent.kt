@@ -93,8 +93,7 @@ fun DetailContent(
                     PlaceTitleAndRating(place = place)
                     PlaceInfoSection(place = place)
                     PlaceDescription(description = place.description)
-
-                     MapLottie()
+                    MapLottie()
                 }
             }
 

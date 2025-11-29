@@ -2,6 +2,8 @@ package com.hiddendanang.app.data.model
 
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.PropertyName
+
 data class Coordinates(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
@@ -17,8 +19,7 @@ data class Address(
 
 data class RatingSummary(
     val average: Double = 0.0,
-    val count: Int = 0,
-
+    val count: Int = 0
 )
 
 data class ImageDetail(
@@ -26,28 +27,32 @@ data class ImageDetail(
     val placeholder_url: String? = null
 )
 
-data class TimeDetail(
-    val open: String = "", // Format HH:mm
-    val close: String = "", // Format HH:mm
-    val is_closed: Boolean = false
+// --- Class mới cho Giá và Giờ mở cửa ---
+
+data class PriceRange(
+    val min: Double = 0.0,
+    val max: Double = 0.0,
+    val currency: String = "VND"
+)
+
+data class DailySchedule(
+    val open: String = "00:00",
+    val close: String = "00:00",
+    @get:PropertyName("is_closed")
+    val isClosed: Boolean = false
 )
 
 data class OpeningHours(
-    val mon: TimeDetail = TimeDetail(),
-    val tue: TimeDetail = TimeDetail(),
-    val wed: TimeDetail = TimeDetail(),
-    val thu: TimeDetail = TimeDetail(),
-    val fri: TimeDetail = TimeDetail(),
-    val sat: TimeDetail = TimeDetail(),
-    val sun: TimeDetail = TimeDetail()
+    val mon: DailySchedule? = null,
+    val tue: DailySchedule? = null,
+    val wed: DailySchedule? = null,
+    val thu: DailySchedule? = null,
+    val fri: DailySchedule? = null,
+    val sat: DailySchedule? = null,
+    val sun: DailySchedule? = null
 )
 
-data class PriceRange(
-    val min: Int = 0,
-    val max: Int = 0,
-    val currency: String = "" // Ví dụ: "VND"
-)
-
+// --- Class Place cập nhật ---
 
 data class Place(
     @DocumentId
@@ -68,11 +73,15 @@ data class Place(
 
     val images: List<ImageDetail> = emptyList(),
 
-    val price_range_detail: PriceRange = PriceRange(), // Đổi tên để tránh trùng với PriceRange data class
-    val opening_hours: OpeningHours = OpeningHours(),
+    // Đổi từ Int sang PriceRange? và map đúng key trong JSON
+    @get:PropertyName("price_range")
+    val price_range: PriceRange? = null,
 
-    val price_range: Int = 0,
-    val price_indicator: String = "",
+    // Thêm trường mới opening_hours
+    @get:PropertyName("opening_hours")
+    val opening_hours: OpeningHours? = null,
+
+    val price_indicator: String = "", // $$$
 
     val status: String = "",
     val is_verified: Boolean = false,
