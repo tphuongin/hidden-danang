@@ -34,7 +34,9 @@ import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.Wallet
 import com.composables.icons.lucide.Waypoints
 import com.hiddendanang.app.R
+import com.hiddendanang.app.data.model.OpeningHours
 import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.data.model.PriceRange
 import com.hiddendanang.app.ui.theme.Dimens
 import java.text.NumberFormat
 import java.util.Locale
@@ -96,8 +98,33 @@ fun PlaceTitleAndRating(place: Place) {
     }
 }
 
+
+fun getCurrentDayTime(openingHours: OpeningHours): String {
+    // Logic đơn giản: Lấy giờ của Thứ Hai làm ví dụ.
+    // Trong thực tế, bạn cần xác định ngày hiện tại.
+    val today = openingHours.mon // Giả sử là Thứ Hai
+
+    return if (today.is_closed) {
+        "Đóng cửa"
+    } else {
+        "${today.open} - ${today.close}"
+    }
+}
+
+fun formatPriceRange(priceRange: PriceRange): String {
+    if (priceRange.min == 0 && priceRange.max == 0) return "Không có thông tin giá"
+
+    // Định dạng số tiền (ví dụ: 20,000 - 50,000 VND)
+    val minFormatted = String.format("%,d", priceRange.min)
+    val maxFormatted = String.format("%,d", priceRange.max)
+
+    return "$minFormatted - $maxFormatted ${priceRange.currency}"
+}
+
 @Composable
 fun PlaceInfoSection(place: Place) {
+    val formattedOpeningHours = getCurrentDayTime(place.opening_hours)
+    val formattedPriceRange = formatPriceRange(place.price_range_detail)
     Column(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
@@ -221,4 +248,5 @@ fun InfoItem(icon: ImageVector, label: Int, value: String) {
             )
         }
     }
+
 }
