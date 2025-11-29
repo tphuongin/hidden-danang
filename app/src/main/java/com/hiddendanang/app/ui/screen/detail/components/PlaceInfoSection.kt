@@ -34,7 +34,9 @@ import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.Wallet
 import com.composables.icons.lucide.Waypoints
 import com.hiddendanang.app.R
+import com.hiddendanang.app.data.model.OpeningHours
 import com.hiddendanang.app.data.model.Place
+import com.hiddendanang.app.data.model.PriceRange
 import com.hiddendanang.app.ui.theme.Dimens
 
 @Composable
@@ -94,14 +96,44 @@ fun PlaceTitleAndRating(place: Place) {
     }
 }
 
+
+fun getCurrentDayTime(openingHours: OpeningHours): String {
+    // Logic đơn giản: Lấy giờ của Thứ Hai làm ví dụ.
+    // Trong thực tế, bạn cần xác định ngày hiện tại.
+    val today = openingHours.mon // Giả sử là Thứ Hai
+
+    return if (today.is_closed) {
+        "Đóng cửa"
+    } else {
+        "${today.open} - ${today.close}"
+    }
+}
+
+fun formatPriceRange(priceRange: PriceRange): String {
+    if (priceRange.min == 0 && priceRange.max == 0) return "Không có thông tin giá"
+
+    // Định dạng số tiền (ví dụ: 20,000 - 50,000 VND)
+    val minFormatted = String.format("%,d", priceRange.min)
+    val maxFormatted = String.format("%,d", priceRange.max)
+
+    return "$minFormatted - $maxFormatted ${priceRange.currency}"
+}
+
 @Composable
 fun PlaceInfoSection(place: Place) {
+    val formattedOpeningHours = getCurrentDayTime(place.opening_hours)
+    val formattedPriceRange = formatPriceRange(place.price_range_detail)
     Column(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
         InfoItem(Lucide.MapPinHouse, R.string.address, place.address.formatted_address)
-        InfoItem(Lucide.Clock3, R.string.opening_hours, "7:00 - 24:00")
-        InfoItem(Lucide.Wallet, R.string.price_range, place.price_indicator)
+
+        // CẬP NHẬT Giờ mở cửa
+        InfoItem(Lucide.Clock3, R.string.opening_hours, formattedOpeningHours)
+
+        // CẬP NHẬT Dải giá
+        InfoItem(Lucide.Wallet, R.string.price_range, formattedPriceRange)
+
         InfoItem(
             Lucide.Waypoints,
             R.string.distance,
@@ -199,4 +231,5 @@ fun InfoItem(icon: ImageVector, label: Int, value: String) {
             )
         }
     }
+
 }

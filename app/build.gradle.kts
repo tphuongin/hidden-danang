@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.foundation)
     implementation(libs.play.services.appindexing)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.runtime)
     kapt("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

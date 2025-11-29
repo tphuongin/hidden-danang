@@ -32,6 +32,8 @@ foundationVersion = "1.9.4"
 playServicesAppindexing = "9.8.0"
 firebaseFirestoreKtx = "26.0.2"
 roomKtx = "2.8.3"
+roomKtxVersion = "2.8.4"
+runtime = "1.9.5"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -72,6 +74,8 @@ androidx-foundation = { group = "androidx.compose.foundation", name = "foundatio
 foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundationVersion" }
 play-services-appindexing = { group = "com.google.android.gms", name = "play-services-appindexing", version.ref = "playServicesAppindexing" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtxVersion" }
+androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
