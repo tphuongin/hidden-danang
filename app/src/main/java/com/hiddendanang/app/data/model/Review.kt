@@ -13,6 +13,8 @@ data class Review(
     val user_id: String = "",
     val user_name: String = "",
     val user_photo_url: String = "",
+    
+    val place_id: String = "", // Thêm trường này
 
     val photos: List<String> = emptyList(),
 

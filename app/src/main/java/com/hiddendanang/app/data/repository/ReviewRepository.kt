@@ -9,7 +9,6 @@ import com.google.firebase.Timestamp
 import com.hiddendanang.app.data.model.Review
 import com.hiddendanang.app.data.remote.FirestoreDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
@@ -46,7 +45,6 @@ class ReviewRepository(
             // SỬ DỤNG TRANSACTION: Đảm bảo tính toán chính xác khi nhiều người review cùng lúc
             firestore.runTransaction { transaction ->
                 // BƯỚC 1: ĐỌC DỮ LIỆU (Read)
-                // Phải đọc Place và Review cũ TRƯỚC khi ghi bất cứ thứ gì
                 val placeSnapshot = transaction.get(placeRef)
                 val oldReviewSnapshot = transaction.get(reviewRef)
 
@@ -54,49 +52,41 @@ class ReviewRepository(
                 val currentRatingSummary = placeSnapshot.get("rating_summary") as? Map<String, Any> ?: emptyMap()
                 val currentCount = (currentRatingSummary["count"] as? Number)?.toLong() ?: 0L
                 val currentAvg = (currentRatingSummary["average"] as? Number)?.toDouble() ?: 0.0
-                // Lấy distribution cũ (để cập nhật biểu đồ 1 sao, 2 sao...)
+                
                 val currentDistribution = (currentRatingSummary["distribution"] as? MutableMap<String, Long>) ?: mutableMapOf(
                     "1" to 0L, "2" to 0L, "3" to 0L, "4" to 0L, "5" to 0L
                 )
 
                 // BƯỚC 2: TÍNH TOÁN (Calculate)
-                val newRatingValue = reviewData.rating.toInt() // Điểm user vừa chấm (vd: 5)
+                val newRatingValue = reviewData.rating.toInt() 
                 var newCount = currentCount
-                var newTotalScore = currentAvg * currentCount // Tổng điểm tích lũy cũ
+                var newTotalScore = currentAvg * currentCount 
 
-                // Kiểm tra xem đây là "Tạo mới" hay "Cập nhật"
                 val isUpdate = oldReviewSnapshot.exists()
 
                 if (isUpdate) {
-                    // --- TRƯỜNG HỢP CẬP NHẬT REVIEW ---
                     val oldRatingValue = oldReviewSnapshot.getDouble("rating")?.toInt() ?: 0
-
-                    // Trừ điểm cũ ra, cộng điểm mới vào
                     newTotalScore = newTotalScore - oldRatingValue + newRatingValue
-
-                    // Cập nhật Distribution: Giảm số lượng của sao cũ, tăng sao mới
                     val oldDistCount = currentDistribution[oldRatingValue.toString()] ?: 0L
                     val newDistCount = currentDistribution[newRatingValue.toString()] ?: 0L
                     if (oldDistCount > 0) currentDistribution[oldRatingValue.toString()] = oldDistCount - 1
                     currentDistribution[newRatingValue.toString()] = newDistCount + 1
 
                 } else {
-                    // --- TRƯỜNG HỢP REVIEW MỚI ---
                     newCount += 1
                     newTotalScore += newRatingValue
-
-                    // Cập nhật Distribution: Tăng sao mới
                     val distCount = currentDistribution[newRatingValue.toString()] ?: 0L
                     currentDistribution[newRatingValue.toString()] = distCount + 1
                 }
 
-                // Tính trung bình mới (làm tròn 1 chữ số thập phân)
                 val newAvg = if (newCount > 0) newTotalScore / newCount else 0.0
                 val roundedAvg = (newAvg * 10).toInt() / 10.0
 
                 // BƯỚC 3: GHI REVIEW (Write Review)
+                // QUAN TRỌNG: Thêm place_id vào data ghi xuống
                 val dataToWrite = reviewData.copy(
                     user_id = currentUserId,
+                    place_id = placeId, // Lưu place_id để query Collection Group
                     created_at = if (isUpdate) oldReviewSnapshot.getTimestamp("created_at") else now,
                     updated_at = now,
                     is_edited = isUpdate
@@ -111,7 +101,7 @@ class ReviewRepository(
                 )
                 transaction.update(placeRef, "rating_summary", newRatingSummary)
 
-            }.await() // Chờ Transaction hoàn tất
+            }.await()
 
             Log.d("ReviewRepository", "✅ Submit review & Update stats thành công!")
             Result.success(Unit)
@@ -122,18 +112,77 @@ class ReviewRepository(
             Result.failure(e)
         }
     }
+    
+    // --- 1.5. XÓA Review (Và tính lại điểm) ---
+    suspend fun deleteReview(placeId: String): Result<Unit> {
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val placeRef = firestore.collection("places").document(placeId)
+        val reviewRef = getUserReviewDocRef(placeId, currentUserId)
+
+        return try {
+            firestore.runTransaction { transaction ->
+                val placeSnapshot = transaction.get(placeRef)
+                val reviewSnapshot = transaction.get(reviewRef)
+
+                if (!reviewSnapshot.exists()) return@runTransaction
+
+                // 1. Lấy data cũ
+                val currentRatingSummary = placeSnapshot.get("rating_summary") as? Map<String, Any> ?: emptyMap()
+                val currentCount = (currentRatingSummary["count"] as? Number)?.toLong() ?: 0L
+                val currentAvg = (currentRatingSummary["average"] as? Number)?.toDouble() ?: 0.0
+                val currentDistribution = (currentRatingSummary["distribution"] as? MutableMap<String, Long>) ?: mutableMapOf()
+
+                val oldRatingValue = reviewSnapshot.getDouble("rating")?.toInt() ?: 0
+
+                // 2. Tính toán trừ đi
+                var newCount = currentCount - 1
+                var newTotalScore = (currentAvg * currentCount) - oldRatingValue
+                
+                if (newCount < 0) newCount = 0
+                if (newTotalScore < 0) newTotalScore = 0.0
+
+                // Giảm Distribution
+                val oldDistCount = currentDistribution[oldRatingValue.toString()] ?: 0L
+                if (oldDistCount > 0) currentDistribution[oldRatingValue.toString()] = oldDistCount - 1
+
+                val newAvg = if (newCount > 0) newTotalScore / newCount else 0.0
+                val roundedAvg = (newAvg * 10).toInt() / 10.0
+
+                // 3. Xóa Review
+                transaction.delete(reviewRef)
+
+                // 4. Cập nhật Place
+                val newRatingSummary = mapOf(
+                    "average" to roundedAvg,
+                    "count" to newCount,
+                    "distribution" to currentDistribution
+                )
+                transaction.update(placeRef, "rating_summary", newRatingSummary)
+            }.await()
+            
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     // --- 2. Đọc (Read Logic) ---
     fun getUserReviewStream(placeId: String): Flow<Review?> {
-        // Hàm dataObjects trên Document Reference (vì nó dùng getUserReviewDocRef)
-        // tự động trả về Flow<T?> (Tức là Review hoặc null).
-        // KHÔNG CẦN .map {} hoặc .firstOrNull
         return getUserReviewDocRef(placeId, currentUserId)
             .dataObjects<Review>()
     }
 
     fun getAllReviewsStreamForPlace(placeId: String): Flow<List<Review>> {
         return getReviewsCollection(placeId)
+            .dataObjects<Review>()
+    }
+    
+    // Lấy danh sách review CỦA TÔI (sử dụng Collection Group Query)
+    fun getMyReviewsStream(): Flow<List<Review>> {
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        return db.collectionGroup("reviews")
+            .whereEqualTo("user_id", currentUserId)
+            .orderBy("created_at", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .dataObjects<Review>()
     }
 }

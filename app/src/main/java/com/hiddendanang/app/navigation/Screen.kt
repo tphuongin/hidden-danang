@@ -7,11 +7,13 @@ sealed class Screen(val route: String, val title: String) {
     object HomePage: Screen("homepage", "Home")
     object Login: Screen("login", "Login")
     object Register: Screen("register", "Register")
-//    object Map: Screen("map", "Map")
     object Favorite: Screen("favorite", "Favorite")
-    object Profile: Screen("profile/id", "Profile"){
-        fun createRoute(id: String) = "profile/${id}"
-    }
+    object Profile: Screen("profile", "Profile")
+    object Admin : Screen("admin", "Admin Dashboard")
+    object AddPlace : Screen("add_place", "Add Place")
+    object MyReviews : Screen("my_reviews", "My Reviews")
+    object AccountSetting : Screen("account_setting", "Account Settings")
+
     object DetailPlace: Screen("detail-place/{id}", "Detail Place"){
         fun createRoute(id: String): String = "detail-place/${id}"
     }

@@ -1,4 +1,3 @@
-// File: AuthRepository.kt (Trong package repository)
 package com.hiddendanang.app.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
