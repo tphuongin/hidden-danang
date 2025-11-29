@@ -78,12 +78,12 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
                             .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        UserAvatar(user.photo_url, user.display_name, size = 32)
+                        UserAvatar(review.user_photo_url, review.user_name, size = 32)
                     }
 
                     Column(verticalArrangement = Arrangement.spacedBy(Dimens.PaddingTiny)) {
                         Text(
-                            text = user.display_name,
+                            text = review.user_name,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
