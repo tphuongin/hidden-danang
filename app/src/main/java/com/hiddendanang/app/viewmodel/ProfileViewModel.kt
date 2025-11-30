@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.data.model.User
 import com.hiddendanang.app.data.repository.AuthRepository
 import com.hiddendanang.app.data.repository.FavoritesRepository
+import com.hiddendanang.app.data.repository.ReviewRepository
 import com.hiddendanang.app.utils.constants.AppThemeMode
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -31,6 +32,7 @@ data class ProfileUiState(
 class ProfileViewModel : ViewModel() {
     private val authRepository: AuthRepository = AuthRepository()
     private val favoritesRepository: FavoritesRepository by lazy { FavoritesRepository() }
+    private val reviewRepository: ReviewRepository by lazy { ReviewRepository() }
     private var saveThemeJob: Job? = null
 
     // StateFlow riêng cho ProfileScreen
@@ -102,10 +104,11 @@ class ProfileViewModel : ViewModel() {
                 }
                 .catch { e ->
                     // Xử lý lỗi nếu không thể get profile
+                    Log.e("ProfileViewModel", "Error loading user profile", e)
                     _uiState.update { it.copy(isLoading = false, error = e.message) }
                 }
                 .collect { userProfile ->
-                    // B4: Cập nhật UI với data (User) từ Firestore
+                    // B4: Cập nhật UI với data
                     _uiState.update {
                         it.copy(isLoading = false, user = userProfile, error = null)
                     }
