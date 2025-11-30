@@ -9,6 +9,9 @@
     import androidx.activity.viewModels
     import androidx.activity.result.contract.ActivityResultContracts
     import androidx.compose.foundation.layout.padding
+    import androidx.compose.material3.FloatingActionButton
+    import androidx.compose.material3.Icon
+    import androidx.compose.material3.MaterialTheme
     import androidx.compose.material3.Scaffold
     import androidx.compose.runtime.Composable
     import androidx.compose.runtime.CompositionLocalProvider
@@ -19,6 +22,8 @@
     import androidx.compose.runtime.remember
     import androidx.compose.ui.Modifier
     import androidx.navigation.compose.rememberNavController
+    import com.composables.icons.lucide.Bot
+    import com.composables.icons.lucide.Lucide
     import com.hiddendanang.app.navigation.AppNavHost
     import com.hiddendanang.app.ui.components.BottomBar
     import com.hiddendanang.app.ui.theme.HiddenDaNangTheme
@@ -99,6 +104,24 @@
                         )
                         if (currentRoute in bottomBarRoutes) {
                             BottomBar(navController)
+                        }
+                    },
+                    floatingActionButton = {
+                        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                        val mainRoutes = setOf(
+                            Screen.HomePage.route,
+                            Screen.Map.route,
+                            Screen.Favorite.route,
+                            Screen.Profile.route
+                        )
+                        if (currentRoute in mainRoutes) {
+                            FloatingActionButton(
+                                onClick = { navController.navigate(Screen.AIPlanner.route) },
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ) {
+                                Icon(Lucide.Bot, contentDescription = "AI Planner")
+                            }
                         }
                     }
                 ) { paddingValues ->
