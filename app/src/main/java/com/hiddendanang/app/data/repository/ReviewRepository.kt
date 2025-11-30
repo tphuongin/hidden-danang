@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.dataObjects
 import com.google.firebase.Timestamp
 import com.hiddendanang.app.data.model.Review
@@ -52,15 +53,15 @@ class ReviewRepository(
                 val currentRatingSummary = placeSnapshot.get("rating_summary") as? Map<String, Any> ?: emptyMap()
                 val currentCount = (currentRatingSummary["count"] as? Number)?.toLong() ?: 0L
                 val currentAvg = (currentRatingSummary["average"] as? Number)?.toDouble() ?: 0.0
-                
+
                 val currentDistribution = (currentRatingSummary["distribution"] as? MutableMap<String, Long>) ?: mutableMapOf(
                     "1" to 0L, "2" to 0L, "3" to 0L, "4" to 0L, "5" to 0L
                 )
 
                 // BƯỚC 2: TÍNH TOÁN (Calculate)
-                val newRatingValue = reviewData.rating.toInt() 
+                val newRatingValue = reviewData.rating.toInt()
                 var newCount = currentCount
-                var newTotalScore = currentAvg * currentCount 
+                var newTotalScore = currentAvg * currentCount
 
                 val isUpdate = oldReviewSnapshot.exists()
 
@@ -101,6 +102,12 @@ class ReviewRepository(
                 )
                 transaction.update(placeRef, "rating_summary", newRatingSummary)
 
+                // BƯỚC 5: CẬP NHẬT USER REVIEW COUNT (CHỈ KHI TẠO MỚI)
+                if (!isUpdate) {
+                    val userRef = firestore.collection("users").document(currentUserId)
+                    transaction.update(userRef, "stats.reviews_count", FieldValue.increment(1))
+                }
+
             }.await()
 
             Log.d("ReviewRepository", "✅ Submit review & Update stats thành công!")
@@ -112,7 +119,7 @@ class ReviewRepository(
             Result.failure(e)
         }
     }
-    
+
     // --- 1.5. XÓA Review (Và tính lại điểm) ---
     suspend fun deleteReview(placeId: String): Result<Unit> {
         val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
@@ -137,7 +144,7 @@ class ReviewRepository(
                 // 2. Tính toán trừ đi
                 var newCount = currentCount - 1
                 var newTotalScore = (currentAvg * currentCount) - oldRatingValue
-                
+
                 if (newCount < 0) newCount = 0
                 if (newTotalScore < 0) newTotalScore = 0.0
 
@@ -158,8 +165,13 @@ class ReviewRepository(
                     "distribution" to currentDistribution
                 )
                 transaction.update(placeRef, "rating_summary", newRatingSummary)
+                
+                // 5. GIẢM USER REVIEW COUNT
+                val userRef = firestore.collection("users").document(currentUserId)
+                transaction.update(userRef, "stats.reviews_count", FieldValue.increment(-1))
+
             }.await()
-            
+
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -176,7 +188,7 @@ class ReviewRepository(
         return getReviewsCollection(placeId)
             .dataObjects<Review>()
     }
-    
+
     // Lấy danh sách review CỦA TÔI (sử dụng Collection Group Query)
     fun getMyReviewsStream(): Flow<List<Review>> {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
@@ -184,5 +196,12 @@ class ReviewRepository(
             .whereEqualTo("user_id", currentUserId)
             .orderBy("created_at", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .dataObjects<Review>()
+    }
+
+    suspend fun getUserReviewCount(userId: String): Int {
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val query = db.collectionGroup("reviews").whereEqualTo("user_id", userId)
+        val snapshot = query.get().await()
+        return snapshot.size()
     }
 }
