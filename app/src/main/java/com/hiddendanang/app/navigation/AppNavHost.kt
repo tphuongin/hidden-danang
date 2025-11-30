@@ -22,6 +22,7 @@ import com.hiddendanang.app.ui.screen.admin.AdminScreen
 import com.hiddendanang.app.ui.screen.addplace.AddPlaceScreen
 import com.hiddendanang.app.ui.screen.profile.MyReviewsScreen
 import com.hiddendanang.app.ui.screen.profile.AccountSettingScreen
+import com.hiddendanang.app.ui.screen.aiplanner.AIPlannerScreen
 
 @Composable
 fun AppNavHost(
@@ -96,6 +97,9 @@ fun AppNavHost(
         }
         composable(Screen.AccountSetting.route) {
             AccountSettingScreen(navController = navController)
+        }
+        composable(Screen.AIPlanner.route) {
+            AIPlannerScreen(navController = navController)
         }
 
         composable(

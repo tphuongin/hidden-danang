@@ -13,6 +13,7 @@ sealed class Screen(val route: String, val title: String) {
     object AddPlace : Screen("add_place", "Add Place")
     object MyReviews : Screen("my_reviews", "My Reviews")
     object AccountSetting : Screen("account_setting", "Account Settings")
+    object AIPlanner : Screen("ai_planner", "AI Travel Planner") // Added AIPlanner Route
 
     object DetailPlace: Screen("detail-place/{id}", "Detail Place"){
         fun createRoute(id: String): String = "detail-place/${id}"
@@ -31,7 +32,4 @@ sealed class Screen(val route: String, val title: String) {
     object AllReviews: Screen("all-reviews/{id}", "All Reviews"){
         fun createRoute(id: String): String = "all-reviews/${id}"
     }
-
-
-
 }
