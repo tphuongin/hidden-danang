@@ -79,4 +79,7 @@
     <string name="review_form_comment_placeholder">Chia sẻ trải nghiệm của bạn...</string>
     <string name="review_form_button_cancel">Hủy</string>
     <string name="review_form_button_submit">Gửi</string>
+
+    <string name = "all_review">Tất cả đánh giá</string>
+    <string name = "no_review">Chưa có đánh giá cho địa điểm này</string>
 </resources>

@@ -10,10 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ChevronLeft
+import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.screen.detail.components.ReviewCard
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.DetailViewModel
@@ -32,13 +34,15 @@ fun AllReviewsScreen(
 
     val reviewList by viewModel.allReviews.collectAsState(initial = emptyList())
     val isLoading by viewModel.isReviewsLoading.collectAsState(initial = true)
+    val allReview = stringResource(R.string.all_review)
+    val noReview = stringResource(R.string.no_review)
+
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        "Tất cả Đánh giá (${reviewList.size})",
+                    Text( "$allReview(${reviewList.size})",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -69,7 +73,7 @@ fun AllReviewsScreen(
                 }
                 reviewList.isEmpty() -> {
                     Text(
-                        text = "Chưa có đánh giá nào cho địa điểm này.",
+                        text = noReview,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         modifier = Modifier.align(Alignment.Center)

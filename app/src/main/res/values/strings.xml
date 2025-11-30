@@ -86,4 +86,7 @@
 
     <string name="map_key" translatable="false">ZNnBPwWGxOjMOPDWc6vCIHMlzAxvgGXzvuqK8yUB</string>
 
+    <string name = "all_review">All reviews</string>
+    <string name = "no_review">There are no reviews for this place yet</string>
+
 </resources>
