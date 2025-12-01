@@ -9,6 +9,7 @@
     import androidx.activity.viewModels
     import androidx.activity.result.contract.ActivityResultContracts
     import androidx.compose.foundation.layout.padding
+    import androidx.compose.foundation.layout.fillMaxSize
     import androidx.compose.material3.FloatingActionButton
     import androidx.compose.material3.Icon
     import androidx.compose.material3.MaterialTheme
@@ -125,8 +126,18 @@
                         }
                     }
                 ) { paddingValues ->
+                    // For Map screen, don't apply padding to fill the whole screen
+                    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                    val mapScreenRoutes = setOf(Screen.Map.route)
+                    
+                    val modifier = if (currentRoute in mapScreenRoutes) {
+                        Modifier.fillMaxSize()
+                    } else {
+                        Modifier.padding(paddingValues)
+                    }
+                    
                     AppNavHost(
-                        modifier = Modifier.padding(paddingValues),
+                        modifier = modifier,
                         navController = navController,
                     )
                 }

@@ -1,6 +1,8 @@
 package com.hiddendanang.app.ui.screen.map
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.ui.screen.map.components.MapViewContent
 import com.hiddendanang.app.utils.LocationPermission
@@ -11,7 +13,7 @@ fun MapScreen(
 ) {
     LocationPermission(
         onGranted = {
-            MapViewContent( destination)
+            MapViewContent(destination, modifier = Modifier.fillMaxSize())
         }
     )
 }

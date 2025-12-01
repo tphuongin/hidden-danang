@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -28,12 +29,14 @@ import com.hiddendanang.app.utils.LocationService
 import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.exceptions.InvalidLatLngBoundsException
 import org.maplibre.android.geometry.LatLngBounds
+import androidx.compose.foundation.layout.fillMaxSize
 
 @Composable
 fun MapViewContent(
     destinationLocation: Location?,
     goongVM: GoongViewModel = viewModel(),
-    nearbyPlaces: List<Place> = emptyList()
+    nearbyPlaces: List<Place> = emptyList(),
+    modifier: Modifier = Modifier.fillMaxSize()
 ) {
     val context = LocalContext.current
     val mapKey = stringResource(R.string.map_key)
@@ -186,7 +189,8 @@ fun MapViewContent(
                     android.util.Log.w("MapViewContent", "Skipping map rendering as direction is null.")
                 }
             }
-        }
+        },
+        modifier = modifier
     )
 }
 
@@ -358,15 +362,7 @@ private fun renderMap(map: MapLibreMap, direction: DirectionResponse) {
         }
         map.addPolyline(polylineOptions)
 
-        // Place markers for start and end locations
-        val startLocation = route.legs?.firstOrNull()?.startLocation
-        val endLocation = route.legs?.lastOrNull()?.endLocation
-        startLocation?.let {
-            map.addMarker(MarkerOptions().position(LatLng(it.lat!!, it.lng!!)).title("Start"))
-        }
-        endLocation?.let {
-            map.addMarker(MarkerOptions().position(LatLng(it.lat!!, it.lng!!)).title("End"))
-        }
+        // Note: Markers are already added via addMarkers() function above, no need to add them again here
     } else {
         Log.w("MapViewContent", "No route found in direction response.")
     }
@@ -434,10 +430,12 @@ private fun addMarkers(
         val o = SymbolOptions()
             .withLatLng(LatLng(origin.lat!!, origin.lng!!))
             .withIconImage("origin-icon")
+            .withIconSize(1.8f) // Larger size
 
         val d = SymbolOptions()
             .withLatLng(LatLng(destination.lat!!, destination.lng!!))
             .withIconImage("dest-icon")
+            .withIconSize(1.8f) // Larger size
 
         symbolManager.create(o)
         symbolManager.create(d)
