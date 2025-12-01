@@ -83,7 +83,8 @@ fun AppNavHost(
             else null
 
             MapScreen(
-                destination = destination
+                destination = destination,
+                navController = navController
             )
         }
         composable(Screen.Admin.route) {
