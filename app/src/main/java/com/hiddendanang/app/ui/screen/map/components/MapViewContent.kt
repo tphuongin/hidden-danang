@@ -29,6 +29,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
+import com.hiddendanang.app.ui.theme.Dimens
 
 @Composable
 fun MapViewContent(
@@ -223,14 +224,17 @@ fun MapViewContent(
             androidx.compose.foundation.layout.Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f))
+                    .background(Color.Black.copy(alpha = 0.4f))
                     .clickable { selectedPlace = null },
                 contentAlignment = Alignment.Center
             ) {
                 Surface(
                     modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .clickable(enabled = false) { }
+                        .fillMaxWidth(0.85f)
+                        .clickable(enabled = false) { },
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(Dimens.CornerXLarge),
+                    shadowElevation = Dimens.ElevationXLarge,
+                    tonalElevation = Dimens.ElevationMedium
                 ) {
                         val isFavoriteState = dataViewModel.isFavorite(place.id).collectAsState()
                         val isFavorite = isFavoriteState.value
