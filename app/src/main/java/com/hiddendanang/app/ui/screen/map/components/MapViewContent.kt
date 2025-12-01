@@ -1,5 +1,6 @@
 package com.hiddendanang.app.ui.screen.map.components
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -156,7 +157,7 @@ fun MapViewContent(
         if (direction != null) {
             android.util.Log.d("MapViewContent", "Rendering map with updated direction state.")
             mapView.getMapAsync { map ->
-                renderMapInternal(map, direction!!)
+                renderMapInternal(context, map, direction!!)
             }
         } else {
             android.util.Log.w("MapViewContent", "Skipping map rendering as direction is null.")
@@ -232,7 +233,7 @@ fun MapViewContent(
 
                             // Trigger map rendering with direction
                             if (direction != null) {
-                                renderMapInternal(map, direction!!)
+                                renderMapInternal(context, map, direction!!)
                             }
                         } else {
                             Log.e("MapViewContent", "Failed to load Goong map style. Default style applied.")
@@ -245,7 +246,7 @@ fun MapViewContent(
             mapView.getMapAsync { map ->
                 if (direction != null) {
                     Log.d("MapViewContent", "DirectionResponse: $direction")
-                    renderMapInternal(map, direction!!)
+                    renderMapInternal(context, map, direction!!)
                 } else {
                     Log.w("MapViewContent", "Skipping map rendering as direction is null.")
                 }
@@ -349,7 +350,7 @@ private fun addNearbyPlacesMarkersInternal(
 
 
 // Update renderMap function to accept MapLibreMap instance
-private fun renderMapInternal(map: MapLibreMap, direction: DirectionResponse) {
+private fun renderMapInternal(context: Context, map: MapLibreMap, direction: DirectionResponse) {
     // Delegate to RouteRenderer.kt
-    renderMap(map, direction)
+    renderMap(context, map, direction)
 }
