@@ -89,4 +89,8 @@
     <string name = "all_review">All reviews</string>
     <string name = "no_review">There are no reviews for this place yet</string>
 
+    <!-- Tooltip Hints -->
+    <string name="hint_homepage_explore">Ready to discover? Swipe, tap, and let the adventure begin!</string>
+    <string name="hint_map_no_direction">See what\'s interesting near you, tap to explore</string>
+
 </resources>
