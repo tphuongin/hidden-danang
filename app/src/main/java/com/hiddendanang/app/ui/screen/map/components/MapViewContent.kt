@@ -23,6 +23,7 @@ import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
 import org.maplibre.android.annotations.PolylineOptions
 import androidx.core.graphics.createBitmap
+import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.utils.LocationService
 import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.exceptions.InvalidLatLngBoundsException
@@ -31,54 +32,92 @@ import org.maplibre.android.geometry.LatLngBounds
 @Composable
 fun MapViewContent(
     destinationLocation: Location?,
-    goongVM: GoongViewModel = viewModel()
+    goongVM: GoongViewModel = viewModel(),
+    nearbyPlaces: List<Place> = emptyList()
 ) {
     val context = LocalContext.current
-    val locationService = LocationService(context)
     val mapKey = stringResource(R.string.map_key)
-    val coroutine = rememberCoroutineScope()
 
     // Set default origin location to Đại học Bách Khoa - Đại học Đà Nẵng
-    val originLocation = Location(16.0736606, 108.149869)
+    val defaultOriginLocation = Location(16.0736606, 108.149869)
     // Parse the currentLocation string into a Location object
-//    val originLocation = goongVM.currentLocation.collectAsState().value?.split(",")?.let {
-//        if (it.size == 2) {
-//            val lat = it[0].toDoubleOrNull()
-//            val lng = it[1].toDoubleOrNull()
-//            if (lat != null && lng != null) {
-//                Location(lat, lng)
-//            } else {
-//                null
-//            }
-//        } else {
-//            null
-//        }
-//    } ?: defaultOriginLocation // Use default location if current location is null
+    val originLocation = goongVM.currentLocation.collectAsState().value?.split(",")?.let {
+        if (it.size == 2) {
+            val lat = it[0].toDoubleOrNull()
+            val lng = it[1].toDoubleOrNull()
+            if (lat != null && lng != null) {
+                Location(lat, lng)
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    } ?: defaultOriginLocation // Use default location if current location is null
 
     val direction by goongVM.directionsResponse.collectAsState()
 
-    // Log direction state for debugging
-    LaunchedEffect(direction) {
-        android.util.Log.d("MapViewContent", "Direction state updated: $direction")
+    // Fetch current location when component is first created
+    LaunchedEffect(Unit) {
+        goongVM.fetchCurrentLocation()
     }
 
-    // Gọi Goong Direction API khi có đủ origin + destination
-    val mapView = remember { MapView(context) } // Ensure mapView is defined in the correct scope
+    // Fetch nearby places when location changes
+    LaunchedEffect(originLocation) {
+        if (destinationLocation == null && originLocation.lat != null && originLocation.lng != null) {
+            goongVM.fetchNearbyPlaces(originLocation.lat!!, originLocation.lng!!)
+        }
+    }
 
-    LaunchedEffect(destinationLocation, originLocation) {
-        goongVM.fetchCurrentLocation()
+    // Get nearby places from ViewModel
+    val mapNearbyPlaces by goongVM.nearbyPlaces.collectAsState()
+
+    // Gọi Goong Direction API khi có đủ origin + destination
+    val mapView = remember { MapView(context) }
+
+    LaunchedEffect(destinationLocation, originLocation, nearbyPlaces, mapNearbyPlaces) {
         if (destinationLocation == null) {
-            android.util.Log.d("MapViewContent", "No destination provided. Displaying Da Nang city bounds.")
             mapView.getMapAsync { map ->
-                val daNangBounds = LatLngBounds.Builder()
-                    .include(LatLng(16.047079, 108.206230)) // Approximate center of Da Nang
-                    .include(LatLng(16.153, 108.151)) // Northern boundary
-                    .include(LatLng(15.975, 108.250)) // Southern boundary
-                    .build()
-                map.moveCamera(CameraUpdateFactory.newLatLngBounds(daNangBounds, 150)) // Adjusted padding for better view
+                // Display nearby places markers from ViewModel (auto-fetched)
+                val placesToShow = mapNearbyPlaces.ifEmpty { nearbyPlaces }
+                android.util.Log.d("MapViewContent", "Displaying ${placesToShow.size} nearby places.")
+
+                if (placesToShow.isNotEmpty()) {
+                    android.util.Log.d("MapViewContent", "Displaying ${placesToShow.size} nearby places.")
+                    addNearbyPlacesMarkers(map, mapView, placesToShow, originLocation)
+                    
+                    // Build bounds including origin and all nearby places
+                    val boundsBuilder = LatLngBounds.Builder()
+                    boundsBuilder.include(LatLng(originLocation.lat!!, originLocation.lng!!))
+                    placesToShow.forEach { place ->
+                        place.coordinates.let {
+                            boundsBuilder.include(LatLng(it.latitude, it.longitude))
+                        }
+                    }
+                    
+                    try {
+                        val bounds = boundsBuilder.build()
+                        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
+                    } catch (e: Exception) {
+                        android.util.Log.e("MapViewContent", "Failed to set bounds: ${e.message}")
+                        val daNangBounds = LatLngBounds.Builder()
+                            .include(LatLng(16.047079, 108.206230))
+                            .include(LatLng(16.153, 108.151))
+                            .include(LatLng(15.975, 108.250))
+                            .build()
+                        map.moveCamera(CameraUpdateFactory.newLatLngBounds(daNangBounds, 150))
+                    }
+                } else {
+                    // If no nearby places, display Da Nang bounds
+                    val daNangBounds = LatLngBounds.Builder()
+                        .include(LatLng(16.047079, 108.206230))
+                        .include(LatLng(16.153, 108.151))
+                        .include(LatLng(15.975, 108.250))
+                        .build()
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(daNangBounds, 150))
+                }
             }
-        } else if (originLocation != null &&
-            destinationLocation.lat != null && destinationLocation.lng != null) {
+        } else if (destinationLocation.lat != null && destinationLocation.lng != null) {
             goongVM.fetchDirections(
                 "${originLocation.lat},${originLocation.lng}",
                 "${destinationLocation.lat},${destinationLocation.lng}"
@@ -149,6 +188,126 @@ fun MapViewContent(
             }
         }
     )
+}
+
+// Add nearby places markers
+private fun addNearbyPlacesMarkers(
+    map: MapLibreMap,
+    mapView: MapView,
+    nearbyPlaces: List<Place>,
+    currentLocation: Location
+) {
+    map.getStyle { style ->
+        val symbolManager = SymbolManager(mapView, map, style)
+        symbolManager.iconAllowOverlap = true
+
+        // Add custom images for markers
+        try {
+            // Try to add custom images, fallback if not found
+            try {
+                style.addImage(
+                    "current-location-icon",
+                    vectorToBitmap(mapView.context, R.drawable.start, 80, 80)
+                )
+                android.util.Log.d("MapViewContent", "✅ Current location icon added")
+            } catch (e: Exception) {
+                android.util.Log.w("MapViewContent", "⚠️ Failed to add current-location-icon: ${e.message}, using default")
+                // Create a simple red circle if drawable not found
+                style.addImage("current-location-icon", createSimpleMarkerBitmap(mapView.context, android.graphics.Color.RED, 100))
+            }
+            
+            try {
+                style.addImage(
+                    "nearby-place-icon",
+                    vectorToBitmap(mapView.context, R.drawable.location, 80, 80)
+                )
+                android.util.Log.d("MapViewContent", "✅ Nearby place icon added")
+            } catch (e: Exception) {
+                android.util.Log.w("MapViewContent", "⚠️ Failed to add nearby-place-icon: ${e.message}, using default")
+                // Create a simple blue circle if drawable not found
+                style.addImage("nearby-place-icon", createSimpleMarkerBitmap(mapView.context, android.graphics.Color.BLUE, 100))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MapViewContent", "❌ Error adding images to style: ${e.message}")
+        }
+
+        // Add marker for current location
+        try {
+            val currentSymbol = SymbolOptions()
+                .withLatLng(LatLng(currentLocation.lat!!, currentLocation.lng!!))
+                .withIconImage("current-location-icon")
+                .withIconSize(1.5f) // Make it slightly larger
+            symbolManager.create(currentSymbol)
+            android.util.Log.d("MapViewContent", "✅ Added current location marker at lat=${currentLocation.lat}, lng=${currentLocation.lng}")
+        } catch (e: Exception) {
+            android.util.Log.e("MapViewContent", "❌ Error adding current location marker: ${e.message}")
+        }
+
+        // Add markers for nearby places with pulse animation
+        nearbyPlaces.forEachIndexed { index, place ->
+            try {
+                place.coordinates.let { location ->
+                    val nearbySymbol = SymbolOptions()
+                        .withLatLng(LatLng(location.latitude, location.longitude))
+                        .withIconImage("nearby-place-icon")
+                        .withIconSize(1.2f) // Base size
+                    val marker = symbolManager.create(nearbySymbol)
+                    
+                    // Add pulse animation with delay for each marker
+                    val delay = index * 200L // Stagger animations
+                    addPulseAnimation(symbolManager, marker, delay)
+                    
+                    android.util.Log.d("MapViewContent", "✅ Added marker for: ${place.name} at lat=${location.latitude}, lng=${location.longitude}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MapViewContent", "❌ Error adding marker for ${place.name}: ${e.message}")
+            }
+        }
+    }
+}
+
+private fun addPulseAnimation(symbolManager: SymbolManager, symbol: org.maplibre.android.plugins.annotation.Symbol, delayMs: Long) {
+    val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    
+    val pulseRunnable = object : Runnable {
+        var isExpanded = false
+        
+        override fun run() {
+            isExpanded = !isExpanded
+            val newSize = if (isExpanded) 1.4f else 1.2f
+            symbol.iconSize = newSize
+            symbolManager.update(symbol)
+            
+            // Repeat animation every 800ms
+            handler.postDelayed(this, 800)
+        }
+    }
+    
+    // Start animation after delay
+    handler.postDelayed(pulseRunnable, delayMs)
+}
+
+private fun createSimpleMarkerBitmap(context: android.content.Context, color: Int, size: Int): android.graphics.Bitmap {
+    val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bitmap)
+    
+    // Draw border (white outline for contrast)
+    val borderPaint = android.graphics.Paint().apply {
+        this.color = android.graphics.Color.WHITE
+        style = android.graphics.Paint.Style.STROKE
+        strokeWidth = 4f
+        isAntiAlias = true
+    }
+    canvas.drawCircle(size / 2f, size / 2f, (size / 2f) - 3, borderPaint)
+    
+    // Draw filled circle
+    val paint = android.graphics.Paint().apply {
+        this.color = color
+        isAntiAlias = true
+    }
+    canvas.drawCircle(size / 2f, size / 2f, (size / 2f) - 6, paint)
+    
+    return bitmap
 }
 
 // Update renderMap function to accept MapLibreMap instance

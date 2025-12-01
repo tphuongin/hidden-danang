@@ -33,6 +33,9 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.hiddendanang.app.ui.theme.Dimens
 import kotlinx.coroutines.tasks.await
 
@@ -51,9 +54,23 @@ class LocationService(private val context: Context) {
             return null
         }
         return try {
-            val location: Location? = fusedLocationClient.lastLocation.await()
+            // Use getCurrentLocation API instead of lastLocation for real-time location
+            val location: Location? = fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                object : CancellationToken() {
+                    override fun onCanceledRequested(callback: OnTokenCanceledListener) = this
+                    override fun isCancellationRequested() = false
+                }
+            ).await()
+            
             location?.let {
                 "${it.latitude},${it.longitude}"
+            } ?: run {
+                // Fallback to lastLocation if getCurrentLocation returns null
+                val lastLocation: Location? = fusedLocationClient.lastLocation.await()
+                lastLocation?.let {
+                    "${it.latitude},${it.longitude}"
+                }
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
