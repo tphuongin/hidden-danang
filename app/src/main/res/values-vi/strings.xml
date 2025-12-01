@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Hidden Da Nang</string>
 
     //HomePage Screen
@@ -87,4 +88,7 @@
     <string name="hint_homepage_explore">Sẵn sàng khám phá chưa? Vuốt, chạm và bắt đầu hành trình nào!</string>
     <string name="hint_map_no_direction">Bạn chưa biết đi đâu? Hãy thử khám phá xung quanh, chạm để tìm điều bất ngờ!</string>
 
+<!--    search-->
+    <string name="search_hint_empty">Nhập từ khóa để tìm địa điểm.</string>
+    <string name="search_no_result">Không tìm thấy địa điểm nào. Hãy thử từ khóa khác!</string>
 </resources>

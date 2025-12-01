@@ -196,6 +196,31 @@ fun MapViewContent(
                                     destDrawableId = R.drawable.location
                                 )
 
+                                // Add direction marker if direction is available
+                                if (direction != null && direction!!.routes?.isNotEmpty() == true) {
+                                    val firstStep = direction!!.routes?.firstOrNull()?.legs?.firstOrNull()?.steps?.firstOrNull()
+                                    if (firstStep != null) {
+                                        map.getStyle { style ->
+                                            try {
+                                                style.addImage(
+                                                    "direction-icon",
+                                                    vectorToBitmap(context, R.drawable.location, 80, 80)
+                                                )
+                                                val directionSymbol = org.maplibre.android.plugins.annotation.SymbolOptions()
+                                                    .withLatLng(org.maplibre.android.geometry.LatLng(
+                                                        firstStep.startLocation?.lat!!, firstStep.startLocation.lng!!))
+                                                    .withIconImage("direction-icon")
+                                                    .withIconSize(1.8f)
+                                                val symbolManager = org.maplibre.android.plugins.annotation.SymbolManager(this, map, style)
+                                                symbolManager.iconAllowOverlap = true
+                                                symbolManager.create(directionSymbol)
+                                            } catch (e: Exception) {
+                                                android.util.Log.e("MapViewContent", "Error adding direction marker: ${e.message}")
+                                            }
+                                        }
+                                    }
+                                }
+
                                 moveCameraToBounds(
                                     map,
                                     originLocation.lat!!,

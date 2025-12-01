@@ -93,4 +93,8 @@
     <string name="hint_homepage_explore">Ready to discover? Swipe, tap, and let the adventure begin!</string>
     <string name="hint_map_no_direction">See what\'s interesting near you, tap to explore</string>
 
+    //search
+    <string name="search_hint_empty">Type a keyword to search for places.</string>
+    <string name="search_no_result">No places found. Try another keyword!</string>
+
 </resources>
