@@ -3,6 +3,7 @@ package com.hiddendanang.app.ui.screen.map.components
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +21,7 @@ import org.maplibre.android.maps.MapView
 import org.maplibre.android.geometry.LatLngBounds
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import com.hiddendanang.app.data.model.Place
 import org.maplibre.android.plugins.annotation.SymbolManager
 import androidx.compose.material3.Surface
@@ -30,6 +32,8 @@ import androidx.navigation.NavHostController
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.theme.Dimens
+
+private var tooltipMapShownOnce = false
 
 @Composable
 fun MapViewContent(
@@ -159,6 +163,18 @@ fun MapViewContent(
         }
     }
 
+    var showTooltip by remember { mutableStateOf(false) }
+    if (!tooltipMapShownOnce && direction == null) {
+        showTooltip = true
+        tooltipMapShownOnce = true
+    }
+    androidx.compose.runtime.LaunchedEffect(showTooltip) {
+        if (showTooltip) {
+            kotlinx.coroutines.delay(11500L)
+            showTooltip = false
+        }
+    }
+
     AndroidView(
         factory = { ctx ->
             mapView.apply {
@@ -268,6 +284,20 @@ fun MapViewContent(
 
                 }
             }
+        }
+    }
+
+    Box(modifier = modifier) {
+        if (showTooltip) {
+            com.hiddendanang.app.ui.components.TooltipHint(
+                text = stringResource(com.hiddendanang.app.R.string.hint_map_no_direction),
+                visible = true,
+                onDismiss = { showTooltip = false },
+                autoDismissDelayMs = 7000L,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = com.hiddendanang.app.ui.theme.Dimens.PaddingXLarge)
+            )
         }
     }
 }

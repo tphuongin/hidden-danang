@@ -10,7 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.hiddendanang.app.ui.screen.home.components.SearchBar
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.hiddendanang.app.R
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
+import com.hiddendanang.app.ui.components.TooltipHint
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
 import com.hiddendanang.app.viewmodel.FavoritesViewModel
@@ -27,6 +32,8 @@ import com.hiddendanang.app.ui.screen.home.components.HomePageTitle
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.HomeViewModel
 
+private var tooltipShownOnce = false
+
 @Composable
 fun HomePageScreen(navController: NavHostController) {
     val viewModel: HomeViewModel = viewModel()
@@ -34,6 +41,23 @@ fun HomePageScreen(navController: NavHostController) {
     val favoritesViewModel: FavoritesViewModel = viewModel()
     val favoriteIds by favoritesViewModel.favoriteIds.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    
+    // State for tooltip visibility
+    // Only show tooltip once per app launch
+    var showTooltip by remember { mutableStateOf(false) }
+    // Use a static flag to block repeated tooltips
+    if (!tooltipShownOnce) {
+        showTooltip = true
+        tooltipShownOnce = true
+    }
+    // Hide tooltip after auto-dismiss
+    androidx.compose.runtime.LaunchedEffect(showTooltip) {
+        if (showTooltip) {
+            kotlinx.coroutines.delay(11500L) // animation duration + fade out
+            showTooltip = false
+        }
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +124,6 @@ fun HomePageScreen(navController: NavHostController) {
                     )
                 }
             }
-
             items(uiState.places.chunked(2)) { rowItems ->
                 Row(
                     modifier = Modifier
@@ -123,10 +146,20 @@ fun HomePageScreen(navController: NavHostController) {
                 }
             }
         }
+        if (showTooltip) {
+            TooltipHint(
+                text = stringResource(R.string.hint_homepage_explore),
+                visible = true,
+                onDismiss = { showTooltip = false },
+                autoDismissDelayMs = 7000L,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = Dimens.PaddingXLarge)
+            )
+        }
         if (uiState.isLoading) {
             FullScreenLoading()
         }
-
         uiState.error?.let { message ->
             ErrorDialog(message = message, onDismiss = { viewModel.errorShown() })
         }

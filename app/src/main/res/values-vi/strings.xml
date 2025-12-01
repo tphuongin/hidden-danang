@@ -82,4 +82,9 @@
 
     <string name = "all_review">Tất cả đánh giá</string>
     <string name = "no_review">Chưa có đánh giá cho địa điểm này</string>
+
+    <!-- Tooltip Hints -->
+    <string name="hint_homepage_explore">Sẵn sàng khám phá chưa? Vuốt, chạm và bắt đầu hành trình nào!</string>
+    <string name="hint_map_no_direction">Bạn chưa biết đi đâu? Hãy thử khám phá xung quanh, chạm để tìm điều bất ngờ!</string>
+
 </resources>

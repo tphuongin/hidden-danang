@@ -93,6 +93,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.room.ktx)
     implementation(libs.androidx.runtime)
+    implementation(libs.androidx.compose.foundation.foundation)
+    implementation(libs.ui.graphics)
     kapt("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
