@@ -9,11 +9,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Search
 import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
@@ -59,15 +62,83 @@ fun SearchScreen(
                 items = uiState.searchResults,
                 key = { place -> place.id }
             ) { place ->
-                // Hiển thị từng mục đề xuất
-                ListItem(
-                    headlineContent = { Text(place.name) },
-                    supportingContent = { Text(place.address.formatted_address, maxLines = 1) },
-                    modifier = Modifier.clickable {
-                        // Bấm vào đề xuất -> đi đến chi tiết
-                        navToDetailScreen(navController, place.id)
+                // ...existing code...
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { navToDetailScreen(navController, place.id) }
+                        .padding(vertical = Dimens.PaddingSmall),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(Dimens.CornerXLarge),
+                    shadowElevation = Dimens.ElevationMedium,
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = Dimens.ElevationLow
+                ) {
+                    Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
+                        Text(
+                            text = place.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = place.address.formatted_address,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            maxLines = 1
+                        )
                     }
-                )
+                }
+            }
+
+            // Hiển thị trạng thái trống khi chưa nhập hoặc không có kết quả
+            if (uiState.searchQuery.isBlank()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 64.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Lucide.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                modifier = Modifier.size(64.dp)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = stringResource(R.string.search_hint_empty),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                }
+            } else if (uiState.searchResults.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 64.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Lucide.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                modifier = Modifier.size(64.dp)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = stringResource(R.string.search_no_result),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                }
             }
         }
     }

@@ -38,7 +38,7 @@ fun addMarkers(
             )
             style.addImage(
                 "dest-icon",
-                vectorToBitmap(mapView.context, destDrawableId, 80, 80)
+                vectorToBitmap(mapView.context, destDrawableId, 120, 120)
             )
 
             val originSymbol = SymbolOptions()
@@ -49,7 +49,7 @@ fun addMarkers(
             val destSymbol = SymbolOptions()
                 .withLatLng(LatLng(destination.lat!!, destination.lng!!))
                 .withIconImage("dest-icon")
-                .withIconSize(1.8f)
+                .withIconSize(2.2f)
 
             symbolManager.create(originSymbol)
             symbolManager.create(destSymbol)
