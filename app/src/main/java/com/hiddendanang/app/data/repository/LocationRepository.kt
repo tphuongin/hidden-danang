@@ -77,29 +77,80 @@ class LocationRepository {
     }
     suspend fun getNearbyPlaces(currentPlaceGeohash: String, limit: Long = 10): Result<List<Place>> {
         if (currentPlaceGeohash.isEmpty()) {
-            return Result.success(emptyList()) // Trả về rỗng nếu không có geohash
+            android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces: geohash is empty")
+            return Result.success(emptyList())
         }
 
         return try {
-            // Lấy tiền tố geohash (ví dụ: "w7gx6y" -> "w7gx6")
-            val geohashPrefix = currentPlaceGeohash.dropLast(1)
+            android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces: searching by geohash=$currentPlaceGeohash")
+            
+            // First, try to get places with exact or nearby geohash prefix (5 chars)
+            val geohashPrefix = currentPlaceGeohash.take(5)
+            android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces: searching for geohashPrefix=$geohashPrefix")
 
-            // Tạo query "bắt đầu bằng"
-            // Tìm tất cả doc có geohash từ "w7gx6" đến "w7gx6~"
             val query = remoteDataSource.getPlacesCollection()
                 .whereGreaterThanOrEqualTo("coordinates.geohash", geohashPrefix)
-                .whereLessThanOrEqualTo("coordinates.geohash", geohashPrefix + "\uf8ff") // \uf8ff là ký tự Unicode cao nhất
+                .whereLessThanOrEqualTo("coordinates.geohash", geohashPrefix + "\uf8ff")
                 .limit(limit)
 
             val snapshot = query.get().await()
-            val places = snapshot.documents.mapNotNull { doc ->
-                doc.toObject<Place>()?.copy(id = doc.id)
+            
+            if (snapshot.documents.isNotEmpty()) {
+                android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces: found ${snapshot.documents.size} documents by geohash prefix")
+                val places = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject<Place>()?.copy(id = doc.id)
+                }
+                return Result.success(places)
             }
-
-            Result.success(places)
+            
+            // If no results with geohash, fetch ALL places and filter by distance (3km radius)
+            android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces: geohash prefix returned 0, falling back to distance-based search")
+            
+            val allPlacesSnapshot = remoteDataSource.getPlacesCollection().get().await()
+            android.util.Log.d("🗺️ MAP_NEARBY", "📊 Total places: ${allPlacesSnapshot.documents.size}")
+            
+            // Get center point from first place's geohash (aproximate), or use hardcoded Da Nang center
+            var centerLat = 16.0736606
+            var centerLng = 108.149869
+            
+            val places = allPlacesSnapshot.documents.mapNotNull { doc ->
+                val place = doc.toObject<Place>()?.copy(id = doc.id)
+                place
+            }
+            
+            // Filter places within 3km radius using Haversine formula
+            val radiusKm = 3.0
+            val nearbyPlaces = places.filter { place ->
+                if (place.coordinates == null) {
+                    false
+                } else {
+                    val distance = haversineDistance(
+                        centerLat, centerLng,
+                        place.coordinates!!.latitude, place.coordinates!!.longitude
+                    )
+                    android.util.Log.d("🗺️ MAP_NEARBY", "  ${place.name}: distance=${String.format("%.2f", distance)}km, geohash=${place.coordinates!!.geohash}")
+                    distance <= radiusKm
+                }
+            }.take(limit.toInt())
+            
+            android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces: found ${nearbyPlaces.size} places within ${radiusKm}km radius")
+            Result.success(nearbyPlaces)
         } catch (e: Exception) {
+            android.util.Log.e("🗺️ MAP_NEARBY", "getNearbyPlaces error: ${e.message}")
+            e.printStackTrace()
             Result.failure(e)
         }
+    }
+    
+    private fun haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val R = 6371.0 // Earth radius in km
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.asin(Math.sqrt(a))
+        return R * c
     }
     suspend fun addPlace(place: Place): Result<Unit> {
         return try {

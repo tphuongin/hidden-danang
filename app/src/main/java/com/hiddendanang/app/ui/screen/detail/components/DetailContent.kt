@@ -58,8 +58,6 @@ fun DetailContent(
     onWriteReviewClicked: () -> Unit,
     onRequestLocationPermission: () -> Unit = {}
 ) {
-    val goongViewModel: GoongViewModel = viewModel()
-    val context = LocalContext.current
     val listState = rememberLazyListState()
 
     LaunchedEffect(place.id) {
