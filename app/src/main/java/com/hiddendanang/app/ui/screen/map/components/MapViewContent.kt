@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hiddendanang.app.ui.components.place.PlaceCard
+import com.hiddendanang.app.ui.components.Loading
 import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.theme.Dimens
 
@@ -50,6 +51,9 @@ fun MapViewContent(
 
     // State for selected place popup
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
+    
+    // State for map loading
+    var isMapLoading by remember { mutableStateOf(true) }
 
     // Parse the currentLocation string into a Location object
     val currentLocationStr = goongVM.currentLocation.collectAsState().value
@@ -80,7 +84,7 @@ fun MapViewContent(
     // Fetch nearby places when location changes
     LaunchedEffect(originLocation) {
         if (destinationLocation == null && originLocation != null && originLocation.lat != null && originLocation.lng != null) {
-            goongVM.fetchNearbyPlaces(originLocation.lat!!, originLocation.lng!!)
+            goongVM.fetchNearbyPlaces(originLocation.lat, originLocation.lng)
         }
     }
 
@@ -95,13 +99,13 @@ fun MapViewContent(
             mapView.getMapAsync { map ->
                 // Display nearby places markers from ViewModel (auto-fetched)
                 val placesToShow = mapNearbyPlaces.ifEmpty { nearbyPlaces }
-                android.util.Log.d("MapViewContent", "Displaying ${placesToShow.size} nearby places.")
 
                 if (originLocation != null && placesToShow.isNotEmpty()) {
-                    android.util.Log.d("MapViewContent", "Displaying ${placesToShow.size} nearby places.")
                     addNearbyPlacesMarkersInternal(map, mapView, placesToShow, originLocation) { clickedPlace ->
                         selectedPlace = clickedPlace
                     }
+                    // Hide loading when nearby places are displayed
+                    isMapLoading = false
                     
                     // Build bounds including origin and all nearby places
                     val boundsBuilder = LatLngBounds.Builder()
@@ -124,15 +128,7 @@ fun MapViewContent(
                             .build()
                         map.moveCamera(CameraUpdateFactory.newLatLngBounds(daNangBounds, 150))
                     }
-                } else if (originLocation == null) {
-                    // If location not fetched yet, display Da Nang default bounds
-                    val daNangBounds = LatLngBounds.Builder()
-                        .include(LatLng(16.047079, 108.206230))
-                        .include(LatLng(16.153, 108.151))
-                        .include(LatLng(15.975, 108.250))
-                        .build()
-                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(daNangBounds, 150))
-                }
+                } 
             }
         } else if (destinationLocation.lat != null && destinationLocation.lng != null) {
             if (originLocation != null) {
@@ -140,6 +136,8 @@ fun MapViewContent(
                     "${originLocation.lat},${originLocation.lng}",
                     "${destinationLocation.lat},${destinationLocation.lng}"
                 )
+                // Hide loading for direction case
+                isMapLoading = false
             }
         } else {
             android.util.Log.w("MapViewContent", "Origin or destination location is invalid.")
@@ -165,7 +163,7 @@ fun MapViewContent(
     }
 
     var showTooltip by remember { mutableStateOf(false) }
-    if (!tooltipMapShownOnce && direction == null) {
+    if (!tooltipMapShownOnce && direction == null && destinationLocation == null && !isMapLoading) {
         showTooltip = true
         tooltipMapShownOnce = true
     }
@@ -180,6 +178,9 @@ fun MapViewContent(
         factory = { ctx ->
             mapView.apply {
                 getMapAsync { map ->
+                    // Set initial camera position to Da Nang before loading style
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(16.0736606, 108.149869), 12.0))
+                    
                     map.setStyle(
                         "https://tiles.goong.io/assets/goong_map_web.json?api_key=$mapKey"
                     ) { style ->
@@ -314,7 +315,7 @@ fun MapViewContent(
     }
 
     Box(modifier = modifier) {
-        if (showTooltip) {
+        if (showTooltip && destinationLocation == null && !isMapLoading) {
             com.hiddendanang.app.ui.components.TooltipHint(
                 text = stringResource(com.hiddendanang.app.R.string.hint_map_no_direction),
                 visible = true,
@@ -324,6 +325,17 @@ fun MapViewContent(
                     .align(Alignment.BottomCenter)
                     .padding(bottom = com.hiddendanang.app.ui.theme.Dimens.PaddingXLarge)
             )
+        }
+        
+        // Show loading animation when map is loading
+        if (isMapLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.95f))
+            ) {
+                Loading(modifier = Modifier.fillMaxSize())
+            }
         }
     }
 }
