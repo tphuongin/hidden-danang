@@ -98,4 +98,16 @@
     <string name="search_hint_empty">Type a keyword to search for places.</string>
     <string name="search_no_result">No places found. Try another keyword!</string>
 
+    <!-- Location Permission -->
+    <string name="location_permission_title">Location Permission Needed</string>
+    <string name="location_permission_message">We use your location to show your position on the map. Please allow location access.</string>
+    <string name="location_permission_required_title">Location Permission Required</string>
+    <string name="location_permission_required_message">Please allow location access to use the map feature.</string>
+    <string name="location_permission_button">Allow</string>
+    <string name="location_permission_grant_button">Grant Permission</string>
+
+    <!-- Share -->
+    <string name="share">Share</string>
+    <string name="share_place">Check out %1$s on Hidden Đà Nẵng!</string>
+
 </resources>

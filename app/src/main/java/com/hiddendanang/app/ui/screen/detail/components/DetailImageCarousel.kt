@@ -28,7 +28,8 @@ fun DetailImageCarousel(
     navController: NavHostController,
     images: List<ImageDetail>,
     isFavorite: Boolean,
-    onToggleFavorite: () -> Unit
+    onToggleFavorite: () -> Unit,
+    placeName: String = "Hidden Đà Nẵng"
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
     val coroutineScope = rememberCoroutineScope()
@@ -75,6 +76,7 @@ fun DetailImageCarousel(
             navController = navController,
             isFavorite = isFavorite,
             onToggleFavorite = onToggleFavorite,
+            placeName = placeName,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(Dimens.PaddingLarge)

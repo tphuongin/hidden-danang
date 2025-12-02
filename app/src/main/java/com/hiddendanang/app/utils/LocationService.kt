@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import com.composables.icons.lucide.Locate
@@ -132,9 +133,9 @@ fun LocationPermission(
 
         permissionState.status.shouldShowRationale -> {
             PermissionRationaleUI(
-                title = "Location Permission Needed",
-                message = "We use your location to show your position on the map. Please allow location access.",
-                buttonText = "Allow",
+                title = stringResource(id = com.hiddendanang.app.R.string.location_permission_title),
+                message = stringResource(id = com.hiddendanang.app.R.string.location_permission_message),
+                buttonText = stringResource(id = com.hiddendanang.app.R.string.location_permission_button),
                 onButtonClick = {
                     permissionState.launchPermissionRequest()
                 }
@@ -143,9 +144,9 @@ fun LocationPermission(
 
         else -> {
             PermissionRationaleUI(
-                title = "Location Permission Required",
-                message = "Please allow location access to use the map feature.",
-                buttonText = "Grant Permission",
+                title = stringResource(id = com.hiddendanang.app.R.string.location_permission_required_title),
+                message = stringResource(id = com.hiddendanang.app.R.string.location_permission_required_message),
+                buttonText = stringResource(id = com.hiddendanang.app.R.string.location_permission_grant_button),
                 onButtonClick = {
                     permissionState.launchPermissionRequest()
                 }

@@ -90,7 +90,8 @@ fun DetailContent(
                     navController = navController,
                     images = place.images,
                     isFavorite = isFavorite,
-                    onToggleFavorite = onToggleFavorite
+                    onToggleFavorite = onToggleFavorite,
+                    placeName = place.name
                 )
             }
 
