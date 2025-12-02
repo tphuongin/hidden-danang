@@ -110,4 +110,23 @@
     <string name="share">Share</string>
     <string name="share_place">Check out %1$s on Hidden Đà Nẵng!</string>
 
+    <!-- Review -->
+    <string name="no_reviews">No reviews yet</string>
+    <string name="open_24_7">Open 24/7</string>
+    <string name="closed">Closed</string>
+    <string name="anonymous">Anonymous</string>
+
+    <!-- Admin & Settings -->
+    <string name="admin_dashboard">Admin Dashboard</string>
+    <string name="add_new_place">Add New Place</string>
+    <string name="submit_for_review">Place submitted for review!</string>
+    <string name="images_min_3">Images (Min 3)</string>
+    <string name="tap_to_select_images">Tap to select images</string>
+    <string name="place_name">Place Name</string>
+    <string name="category">Category</string>
+    <string name="joined">• Joined %1$s</string>
+    <string name="address_label">Address</string>
+    <string name="district_label">District</string>
+    <string name="description_label">Description</string>
+
 </resources>

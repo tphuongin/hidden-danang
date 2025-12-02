@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.*
+import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.screen.auth.ErrorDialog
 import com.hiddendanang.app.ui.screen.auth.FullScreenLoading
 import com.hiddendanang.app.ui.theme.Dimens
@@ -46,7 +47,7 @@ fun AddPlaceScreen(
 
     LaunchedEffect(uiState.success) {
         if (uiState.success) {
-            Toast.makeText(context, "Place submitted for review!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.submit_for_review), Toast.LENGTH_SHORT).show()
             viewModel.resetSuccess()
             navController.popBackStack()
         }
@@ -55,7 +56,7 @@ fun AddPlaceScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Add New Place", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.add_new_place), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Lucide.ArrowLeft, "Back")
@@ -111,7 +112,7 @@ fun AddPlaceContent(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
         // --- Images Section ---
-        Text("Images (Min 3)", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.images_min_3), style = MaterialTheme.typography.titleMedium)
         
         if (uiState.selectedImages.isNotEmpty()) {
             LazyRow(
@@ -176,7 +177,7 @@ fun AddPlaceContent(
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
-                    Text("Tap to select images", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.tap_to_select_images), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
@@ -185,7 +186,7 @@ fun AddPlaceContent(
         OutlinedTextField(
             value = uiState.name,
             onValueChange = viewModel::onNameChange,
-            label = { Text("Place Name") },
+            label = { Text(stringResource(R.string.place_name)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -200,7 +201,7 @@ fun AddPlaceContent(
                 value = categories.find { it.first == uiState.categoryId }?.second ?: "Select Category",
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Category") },
+                label = { Text(stringResource(R.string.category)) },
                 trailingIcon = { Icon(Lucide.ChevronDown, null) },
                 modifier = Modifier.menuAnchor().fillMaxWidth()
             )
@@ -223,21 +224,21 @@ fun AddPlaceContent(
         OutlinedTextField(
             value = uiState.address,
             onValueChange = viewModel::onAddressChange,
-            label = { Text("Address") },
+            label = { Text(stringResource(R.string.address_label)) },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = uiState.district,
             onValueChange = viewModel::onDistrictChange,
-            label = { Text("District") },
+            label = { Text(stringResource(R.string.district_label)) },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = uiState.description,
             onValueChange = viewModel::onDescriptionChange,
-            label = { Text("Description") },
+            label = { Text(stringResource(R.string.description_label)) },
             modifier = Modifier.fillMaxWidth(),
             minLines = 3
         )

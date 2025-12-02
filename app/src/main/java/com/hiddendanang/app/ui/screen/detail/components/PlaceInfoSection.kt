@@ -118,8 +118,8 @@ fun PlaceInfoSection(place: Place, currentLocationLat: Double? = null, currentLo
         val hoursText = if (place.opening_hours != null) {
              val today = place.opening_hours.mon 
              if (today != null) {
-                 if (today.open == "00:00" && today.close == "23:59") "Mở cửa 24/7"
-                 else if (today.isClosed) "Đóng cửa"
+                 if (today.open == "00:00" && today.close == "23:59") stringResource(R.string.open_24_7)
+                 else if (today.isClosed) stringResource(R.string.closed)
                  else "${today.open} - ${today.close}"
              } else stringResource(R.string.being_updated)
         } else stringResource(R.string.being_updated)

@@ -12,6 +12,7 @@ import com.hiddendanang.app.data.repository.FavoritesRepository
 import com.hiddendanang.app.data.repository.LocationRepository
 import com.hiddendanang.app.data.repository.AuthRepository
 import com.hiddendanang.app.data.repository.ReviewRepository
+import com.hiddendanang.app.utils.AppConstants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -187,7 +188,7 @@ class DetailViewModel(
         // 1. Lấy thông tin cần thiết (để đảm bảo không bị null)
         val currentUser = authRepository.getCurrentUser()
         val currentUserId = currentUser?.uid ?: return
-        val currentUserName = currentUser.displayName ?: "Ẩn danh"
+        val currentUserName = currentUser.displayName ?: AppConstants.DEFAULT_USER_NAME
         val placeId = _uiState.value.place?.id ?: return
         val currentUserPhotoUrl = currentUser.photoUrl?.toString() ?: ""
 
