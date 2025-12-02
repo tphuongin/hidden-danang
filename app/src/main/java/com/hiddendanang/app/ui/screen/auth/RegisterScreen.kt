@@ -10,13 +10,19 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.composables.icons.lucide.Eye
 import com.composables.icons.lucide.EyeOff
+import com.hiddendanang.app.R
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.AuthUiState
@@ -221,10 +227,14 @@ fun FullScreenLoading() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
+            .background(Color.White.copy(alpha = 0.95f))
             .clickable(enabled = false, onClick = {}), // Chặn click
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+        )
     }
 }
