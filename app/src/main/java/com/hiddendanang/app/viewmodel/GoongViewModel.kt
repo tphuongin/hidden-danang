@@ -39,11 +39,9 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val response = repository.getDirections(origin, destination, apiKey)
                 _directionsResponse.value = response
-                Log.d("GoongViewModel", "Directions fetched successfully: $response")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi khi lấy chỉ đường: ${e.message}"
-                Log.e("GoongViewModel", "Error fetching directions: ${e.message}")
             }
         }
     }
@@ -56,23 +54,18 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
                     val location = locationService.getCurrentLocation()
                     if (location != null) {
                         _currentLocation.value = location
-                        Log.d("GoongViewModel", "Fetched current location: ${_currentLocation.value}")
                     } else {
                         _errorMessage.value = "Không thể lấy vị trí hiện tại"
-                        Log.w("GoongViewModel", "Location is null")
                     }
                 } else {
                     _errorMessage.value = "Không có quyền truy cập vị trí"
-                    Log.w("GoongViewModel", "Location permission not granted")
                 }
             } catch (e: SecurityException) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi bảo mật khi lấy vị trí: ${e.message}"
-                Log.e("GoongViewModel", "SecurityException: ${e.message}")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi lấy vị trí: ${e.message}"
-                Log.e("GoongViewModel", "Exception: ${e.message}")
             }
         }
     }
@@ -88,23 +81,18 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 // Generate geohash from coordinates
                 val geohash = generateGeohash(latitude, longitude)
-                android.util.Log.d("🗺️ MAP_NEARBY", "Fetching nearby places for geohash: $geohash (lat: $latitude, lng: $longitude)")
-                
+
                 val result = locationRepository.getNearbyPlaces(geohash)
-                android.util.Log.d("🗺️ MAP_NEARBY", "getNearbyPlaces result: isSuccess=${result.isSuccess}, exception=${result.exceptionOrNull()?.message}")
-                
+
                 if (result.isSuccess) {
                     val places = result.getOrNull() ?: emptyList()
                     _nearbyPlaces.value = places
-                    Log.d("🗺️ MAP_NEARBY", "✅ Fetched ${places.size} nearby places: ${places.map { it.name }}")
                 } else {
                     _errorMessage.value = "Không thể lấy địa điểm gần đó: ${result.exceptionOrNull()?.message}"
-                    Log.e("🗺️ MAP_NEARBY", "❌ Error fetching nearby places: ${result.exceptionOrNull()?.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 _errorMessage.value = "Lỗi khi lấy địa điểm gần: ${e.message}"
-                Log.e("🗺️ MAP_NEARBY", "❌ Exception: ${e.message}")
             }
         }
     }
@@ -115,10 +103,8 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
         
         try {
             val geohash = encodeGeohash(latitude, longitude, 6)
-            android.util.Log.d("🗺️ MAP_NEARBY", "✅ Generated geohash: $geohash (6 chars)")
             return geohash
         } catch (e: Exception) {
-            android.util.Log.e("🗺️ MAP_NEARBY", "❌ Error in generateGeohash: ${e.message}")
             return ""
         }
     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.Lucide
@@ -27,12 +28,14 @@ import com.composables.icons.lucide.Heart
 import com.composables.icons.lucide.Share2
 import com.hiddendanang.app.R
 import com.hiddendanang.app.ui.theme.Dimens
+import android.content.Intent
 
 @Composable
 fun DetailTopBar(
     navController: NavHostController,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    placeName: String = "Hidden Đà Nẵng",
     modifier: Modifier = Modifier
 ) {
     val heartScale by animateFloatAsState(
@@ -40,6 +43,7 @@ fun DetailTopBar(
         animationSpec = tween(durationMillis = 200),
         label = ""
     )
+    val context = LocalContext.current
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -67,7 +71,14 @@ fun DetailTopBar(
             horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
         ) {
             IconButton(
-                onClick = {},
+                onClick = {
+                    val shareText = context.getString(R.string.share_place, placeName)
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share)))
+                },
                 modifier = Modifier
                     .size(Dimens.ButtonMedium)
                     .background(
@@ -77,7 +88,7 @@ fun DetailTopBar(
             ) {
                 Icon(
                     imageVector = Lucide.Share2,
-                    contentDescription = "Share"
+                    contentDescription = stringResource(R.string.share)
                 )
             }
 // Favorite Button

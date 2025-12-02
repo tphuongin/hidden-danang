@@ -92,4 +92,17 @@
 <!--    search-->
     <string name="search_hint_empty">Nhập từ khóa để tìm địa điểm.</string>
     <string name="search_no_result">Không tìm thấy địa điểm nào. Hãy thử từ khóa khác!</string>
+
+    <!-- Location Permission -->
+    <string name="location_permission_title">Cần quyền truy cập vị trí</string>
+    <string name="location_permission_message">Chúng tôi sử dụng vị trí của bạn để hiển thị vị trí trên bản đồ. Vui lòng cho phép truy cập vị trí.</string>
+    <string name="location_permission_required_title">Yêu cầu quyền truy cập vị trí</string>
+    <string name="location_permission_required_message">Vui lòng cho phép truy cập vị trí để sử dụng tính năng bản đồ.</string>
+    <string name="location_permission_button">Cho phép</string>
+    <string name="location_permission_grant_button">Cấp quyền</string>
+
+    <!-- Share -->
+    <string name="share">Chia sẻ</string>
+    <string name="share_place">Hãy xem %1$s trên Hidden Đà Nẵng!</string>
+
 </resources>
