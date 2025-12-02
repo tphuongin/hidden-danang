@@ -23,6 +23,7 @@ import org.maplibre.android.geometry.LatLngBounds
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import com.hiddendanang.app.data.model.Place
 import org.maplibre.android.plugins.annotation.SymbolManager
 import androidx.compose.material3.Surface
@@ -332,7 +333,7 @@ fun MapViewContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.95f))
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
             ) {
                 Loading(modifier = Modifier.fillMaxSize())
             }

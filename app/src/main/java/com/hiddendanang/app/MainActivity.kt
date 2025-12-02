@@ -126,18 +126,8 @@
                         }
                     }
                 ) { paddingValues ->
-                    // For Map screen, don't apply padding to fill the whole screen
-                    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-                    val mapScreenRoutes = setOf(Screen.Map.route)
-                    
-                    val modifier = if (currentRoute in mapScreenRoutes) {
-                        Modifier.fillMaxSize()
-                    } else {
-                        Modifier.padding(paddingValues)
-                    }
-                    
                     AppNavHost(
-                        modifier = modifier,
+                        modifier = Modifier.padding(paddingValues),
                         navController = navController,
                     )
                 }
