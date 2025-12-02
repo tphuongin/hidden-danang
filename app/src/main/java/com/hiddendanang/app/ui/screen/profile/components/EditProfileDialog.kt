@@ -103,7 +103,7 @@ fun EditProfileDialog(
 
                     // Hiển thị loading xoay tròn ngay trên avatar khi đang upload
                     if (isUploading) {
-                        CircularProgressIndicator(modifier = Modifier.size(30.dp), color = Color.White)
+                        CircularProgressIndicator(modifier = Modifier.size(30.dp), color = MaterialTheme.colorScheme.primary)
                     }
                 }
 

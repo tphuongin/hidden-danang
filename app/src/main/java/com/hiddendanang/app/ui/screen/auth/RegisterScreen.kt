@@ -227,7 +227,7 @@ fun FullScreenLoading() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White.copy(alpha = 0.95f))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
             .clickable(enabled = false, onClick = {}), // Chặn click
         contentAlignment = Alignment.Center
     ) {
