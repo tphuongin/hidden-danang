@@ -86,7 +86,7 @@ fun ProfileHeader(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "• Tham gia $formattedDate",
+                        text = stringResource(R.string.joined, formattedDate),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = Dimens.PaddingNano)

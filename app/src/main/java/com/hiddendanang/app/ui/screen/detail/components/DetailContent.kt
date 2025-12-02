@@ -220,7 +220,7 @@ private fun ReviewActionsSection(
     ) {
         if (uiState.allReviews.isEmpty()) {
             Text(
-                text = "Chưa có đánh giá nào",
+                text = stringResource(R.string.no_reviews),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 16.dp)

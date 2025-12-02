@@ -105,4 +105,23 @@
     <string name="share">Chia sẻ</string>
     <string name="share_place">Hãy xem %1$s trên Hidden Đà Nẵng!</string>
 
+    <!-- Review -->
+    <string name="no_reviews">Chưa có đánh giá nào</string>
+    <string name="open_24_7">Mở cửa 24/7</string>
+    <string name="closed">Đóng cửa</string>
+    <string name="anonymous">Ẩn danh</string>
+
+    <!-- Admin & Settings -->
+    <string name="admin_dashboard">Bảng điều khiển quản trị</string>
+    <string name="add_new_place">Thêm địa điểm mới</string>
+    <string name="submit_for_review">Địa điểm được gửi để xem xét!</string>
+    <string name="images_min_3">Hình ảnh (Tối thiểu 3)</string>
+    <string name="tap_to_select_images">Nhấn để chọn hình ảnh</string>
+    <string name="place_name">Tên địa điểm</string>
+    <string name="category">Danh mục</string>
+    <string name="joined">• Tham gia %1$s</string>
+    <string name="address_label">Địa chỉ</string>
+    <string name="district_label">Quận/Huyện</string>
+    <string name="description_label">Mô tả</string>
+
 </resources>

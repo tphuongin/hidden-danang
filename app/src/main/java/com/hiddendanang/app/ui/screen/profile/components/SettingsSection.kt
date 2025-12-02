@@ -100,7 +100,7 @@ fun SettingsSection(
     val reviewManagementText = stringResource(R.string.review_management)
     val accountSettingText = stringResource(R.string.account_setting)
     val languageText = stringResource(R.string.language)
-    val adminDashboardText = "Admin Dashboard" // Tạm hardcode hoặc thêm vào strings.xml
+    val adminDashboardText = stringResource(R.string.admin_dashboard)
 
     // Xây dựng danh sách settings
     val settings = mutableListOf<SettingItem>()

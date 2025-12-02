@@ -95,8 +95,7 @@ fun DetailTopBar(
             Box(
                 modifier = Modifier
                     .background(
-                        color = if (isFavorite) Color.Red
-                        else MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
+                        color = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
                         shape = CircleShape
                     )
                     .size(Dimens.ButtonMedium)
@@ -106,8 +105,7 @@ fun DetailTopBar(
                 Icon(
                     imageVector = Lucide.Heart,
                     contentDescription = stringResource(R.string.favorite),
-                    tint = if (isFavorite) MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onSurface,
+                    tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.graphicsLayer(
                         scaleX = heartScale,
                         scaleY = heartScale
