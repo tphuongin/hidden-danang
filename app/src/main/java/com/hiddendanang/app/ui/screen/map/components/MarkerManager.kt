@@ -1,6 +1,5 @@
 package com.hiddendanang.app.ui.screen.map.components
 
-import android.util.Log
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
@@ -46,7 +45,7 @@ fun addMarkers(
             symbolManager.create(destSymbol)
 
         } catch (e: Exception) {
-            Log.e("MarkerManager", "❌ Error adding markers: ${e.message}")
+            // Error adding markers
         }
     }
 }
@@ -91,7 +90,7 @@ fun addNearbyPlacesMarkers(
                 )
             }
         } catch (e: Exception) {
-            Log.e("MarkerManager", "❌ Error adding images to style: ${e.message}")
+            // Error adding images to style
         }
 
         // Add marker for current location
@@ -102,7 +101,7 @@ fun addNearbyPlacesMarkers(
                 .withIconSize(1.5f)
             symbolManager.create(currentSymbol)
         } catch (e: Exception) {
-            Log.e("MarkerManager", "❌ Error adding current location marker: ${e.message}")
+            // Error adding current location marker
         }
 
         // Add markers for nearby places with pulse animation and click listener
@@ -131,7 +130,7 @@ fun addNearbyPlacesMarkers(
 
                 }
             } catch (e: Exception) {
-                Log.e("MarkerManager", "❌ Error adding marker for ${place.name}: ${e.message}")
+                // Error adding marker for place
             }
         }
     }

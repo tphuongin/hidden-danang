@@ -2,7 +2,6 @@
 package com.hiddendanang.app.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.R
@@ -75,8 +74,6 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun fetchNearbyPlaces(latitude: Double, longitude: Double) {
-        android.util.Log.d("🗺️ MAP_NEARBY", "fetchNearbyPlaces called with lat: $latitude, lng: $longitude")
-        
         viewModelScope.launch {
             try {
                 // Generate geohash from coordinates
@@ -103,7 +100,6 @@ class GoongViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun generateGeohash(latitude: Double, longitude: Double): String {
         // Proper geohash algorithm to match Firestore format (e.g., "w7gx6y")
-        android.util.Log.d("🗺️ MAP_NEARBY", "generateGeohash input - lat: $latitude, lng: $longitude")
         
         try {
             val geohash = encodeGeohash(latitude, longitude, 6)

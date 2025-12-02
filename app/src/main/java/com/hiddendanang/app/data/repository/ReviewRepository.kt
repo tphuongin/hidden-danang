@@ -1,6 +1,5 @@
 package com.hiddendanang.app.data.repository
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -110,11 +109,10 @@ class ReviewRepository(
 
             }.await()
 
-            Log.d("ReviewRepository", "✅ Submit review & Update stats thành công!")
             Result.success(Unit)
 
         } catch (e: Exception) {
-            Log.e("ReviewRepository", "❌ Lỗi Transaction: ${e.message}")
+            // Error in transaction
             e.printStackTrace()
             Result.failure(e)
         }

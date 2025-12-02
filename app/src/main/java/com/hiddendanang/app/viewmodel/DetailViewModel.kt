@@ -1,6 +1,5 @@
 package com.hiddendanang.app.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,7 +92,7 @@ class DetailViewModel(
             launch {
                 reviewRepository.getAllReviewsStreamForPlace(placeId)
                     .catch { e ->
-                        Log.e("DetailViewModel", "Lỗi lấy reviews: ${e.message}")
+                        // Error fetching reviews
                     }
                     .collect { reviews ->
                         _uiState.update { it.copy(allReviews = reviews) }
@@ -104,7 +103,7 @@ class DetailViewModel(
             launch {
                 reviewRepository.getUserReviewStream(placeId)
                     .catch { e ->
-                        Log.e("DetailViewModel", "Lỗi lấy user review: ${e.message}")
+                        // Error fetching user review
                     }
                     .collect { userReview ->
                         _uiState.update { it.copy(userReview = userReview) }

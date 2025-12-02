@@ -2,7 +2,6 @@ package com.hiddendanang.app.ui.screen.profile.components
 
 import android.content.Context
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -167,7 +166,6 @@ fun SettingsSection(
         showDialog = showLanguageDialog,
         onDismiss = { showLanguageDialog = false },
         onLanguageSelected = { selectedLanguageCode ->
-            Log.d("SettingsSection", "Selected language code: $selectedLanguageCode")
             updateAppLocale(context, selectedLanguageCode)
             onLanguage(selectedLanguageCode)
         }

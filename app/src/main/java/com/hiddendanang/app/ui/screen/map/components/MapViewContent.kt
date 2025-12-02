@@ -1,7 +1,6 @@
 package com.hiddendanang.app.ui.screen.map.components
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -121,7 +120,7 @@ fun MapViewContent(
                         val bounds = boundsBuilder.build()
                         map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
                     } catch (e: Exception) {
-                        android.util.Log.e("MapViewContent", "Failed to set bounds: ${e.message}")
+                        // Failed to set bounds, use default Da Nang view
                         val daNangBounds = LatLngBounds.Builder()
                             .include(LatLng(16.047079, 108.206230))
                             .include(LatLng(16.153, 108.151))
@@ -140,26 +139,18 @@ fun MapViewContent(
                 // Hide loading for direction case
                 isMapLoading = false
             }
-        } else {
-            android.util.Log.w("MapViewContent", "Origin or destination location is invalid.")
         }
     }
 
-    // Log the current location for debugging
-    LaunchedEffect(originLocation) {
-        android.util.Log.d("MapViewContent", "Current origin location: $originLocation")
-    }
+
 
 
     // Observe direction state and trigger rendering when updated
     LaunchedEffect(direction) {
         if (direction != null) {
-            android.util.Log.d("MapViewContent", "Rendering map with updated direction state.")
             mapView.getMapAsync { map ->
                 renderMapInternal(context, map, direction!!)
             }
-        } else {
-            android.util.Log.w("MapViewContent", "Skipping map rendering as direction is null.")
         }
     }
 
@@ -186,7 +177,7 @@ fun MapViewContent(
                         "https://tiles.goong.io/assets/goong_map_web.json?api_key=$mapKey"
                     ) { style ->
                         if (style.isFullyLoaded) {
-                            Log.d("MapViewContent", "Goong map style loaded successfully.")
+                            // Map style loaded
 
                             // Only add markers if location has been fetched from GPS and destination is selected
                             if (originLocation != null && destinationLocation != null) {
@@ -218,7 +209,7 @@ fun MapViewContent(
                                                 symbolManager.iconAllowOverlap = true
                                                 symbolManager.create(directionSymbol)
                                             } catch (e: Exception) {
-                                                android.util.Log.e("MapViewContent", "Error adding direction marker: ${e.message}")
+                                                // Error adding direction marker
                                             }
                                         }
                                     }
@@ -238,7 +229,7 @@ fun MapViewContent(
                                 renderMapInternal(context, map, direction!!)
                             }
                         } else {
-                            Log.e("MapViewContent", "Failed to load Goong map style. Default style applied.")
+                            // Failed to load style, using default
                         }
                     }
                 }
@@ -247,10 +238,10 @@ fun MapViewContent(
         update = { mapView ->
             mapView.getMapAsync { map ->
                 if (direction != null) {
-                    Log.d("MapViewContent", "DirectionResponse: $direction")
+                    // Direction response received
                     renderMapInternal(context, map, direction!!)
                 } else {
-                    Log.w("MapViewContent", "Skipping map rendering as direction is null.")
+                    // Skipping map rendering
                 }
             }
         },
@@ -288,24 +279,20 @@ fun MapViewContent(
                             isFavorite = isFavorite,
                             onClick = { placeId ->
                                 try {
-                                    Log.d("MapViewContent", "Popup card clicked for place: $placeId")
                                     if (navController != null) {
-                                        Log.d("MapViewContent", "Navigating to detail-place/$placeId")
                                         navController.navigate("detail-place/$placeId")
                                         selectedPlace = null
-                                    } else {
-                                        Log.e("MapViewContent", "NavController is null, cannot navigate")
                                     }
                                 } catch (e: Exception) {
-                                    Log.e("MapViewContent", "Error navigating to detail: ${e.message}", e)
+                                    // Error navigating
                                 }
                             },
                             onFavoriteToggle = {
                                 try {
-                                    Log.d("MapViewContent", "Toggle favorite for place: ${place.id}")
+                                    // Toggle favorite
                                     dataViewModel.toggleFavorite(place.id)
                                 } catch (e: Exception) {
-                                    Log.e("MapViewContent", "Error toggling favorite: ${e.message}", e)
+                                    // Error toggling favorite
                                 }
                             }
                         )

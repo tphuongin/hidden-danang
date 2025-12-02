@@ -40,7 +40,6 @@ import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.utils.LocationService
 import java.text.NumberFormat
 import java.util.Locale
-import android.util.Log
 
 @Composable
 fun PlaceTitleAndRating(place: Place) {
@@ -140,15 +139,12 @@ fun PlaceInfoSection(place: Place, currentLocationLat: Double? = null, currentLo
 
         // Distance Logic - tính khoảng cách từ vị trí hiện tại sử dụng hàm từ LocationService
         val distanceText = if (currentLocationLat != null && currentLocationLng != null) {
-            Log.d("PlaceInfoSection", "Distance Calculation: currentLat=$currentLocationLat, currentLng=$currentLocationLng, placeLat=${place.coordinates.latitude}, placeLng=${place.coordinates.longitude}")
             val distance = locationService.calculateDistance(
                 currentLocationLat, currentLocationLng,
                 place.coordinates.latitude, place.coordinates.longitude
             )
-            Log.d("PlaceInfoSection", "Calculated distance: $distance km")
             "~${String.format("%.1f", distance)} km"
         } else {
-            Log.d("PlaceInfoSection", "Distance not calculated: currentLocationLat=$currentLocationLat, currentLocationLng=$currentLocationLng")
             stringResource(R.string.being_updated)
         }
         

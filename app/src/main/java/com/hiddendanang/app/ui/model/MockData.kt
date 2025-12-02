@@ -1,6 +1,5 @@
 package com.hiddendanang.app.ui.model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -315,13 +314,11 @@ class DataViewModel : ViewModel() {
     fun loginUser(email: String, password: String): User? {
         return _mockUsers.value.find { it.email == email }?.also { user ->
             _currentUser.value = user
-            Log.d("PlaceViewModel", "User logged in: ${user.name}")
         }
     }
 
     fun logoutUser() {
         _currentUser.value = null
-        Log.d("PlaceViewModel", "User logged out")
     }
 
     fun getCurrentUserStats(): Triple<Int, Int, Int> {
@@ -335,14 +332,11 @@ class DataViewModel : ViewModel() {
 
     // Place Management Functions (giữ nguyên)
     fun getPlaceById(id: String) {
-        Log.d("PlaceViewModel", "Getting place by id: $id")
         val place = _places.value.find { it.id == id }
         if (place != null) {
             val placeWithFavorite = place.copy(isFavorite = place.id in _favoritePlaceIds.value)
             _selectedPlace.value = placeWithFavorite
-            Log.d("PlaceViewModel", "Found place: ${placeWithFavorite.name}, favorite: ${placeWithFavorite.isFavorite}")
         } else {
-            Log.e("PlaceViewModel", "Place not found with id: $id")
             _selectedPlace.value = null
         }
     }
@@ -362,10 +356,8 @@ class DataViewModel : ViewModel() {
             val currentFavorites = _favoritePlaceIds.value.toMutableSet()
             if (placeId in currentFavorites) {
                 currentFavorites.remove(placeId)
-                Log.d("PlaceViewModel", "Removed from favorites: $placeId")
             } else {
                 currentFavorites.add(placeId)
-                Log.d("PlaceViewModel", "Added to favorites: $placeId")
             }
             _favoritePlaceIds.value = currentFavorites
 
@@ -379,7 +371,6 @@ class DataViewModel : ViewModel() {
     }
 
     fun loadFavoritePlaces() {
-        Log.d("PlaceViewModel", "Loading favorite places, current count: ${_favoritePlaceIds.value.size}")
     }
 
     fun removeFromFavorites(placeId: String) {
@@ -387,7 +378,6 @@ class DataViewModel : ViewModel() {
             val currentFavorites = _favoritePlaceIds.value.toMutableSet()
             currentFavorites.remove(placeId)
             _favoritePlaceIds.value = currentFavorites
-            Log.d("PlaceViewModel", "Removed from favorites: $placeId")
         }
     }
 
