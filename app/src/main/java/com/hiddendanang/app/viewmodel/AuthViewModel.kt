@@ -32,6 +32,15 @@ class AuthViewModel : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
 
+    init {
+        // Listen realtime changes from Firebase Auth
+        viewModelScope.launch {
+            authRepository.currentUserStream.collect { firebaseUser ->
+                _isLoggedIn.value = firebaseUser != null
+            }
+        }
+    }
+
     fun login(email: String, password: String) {
         // Kiểm tra đầu vào đơn giản
         if (email.isBlank() || password.isBlank()) {
@@ -110,15 +119,21 @@ class AuthViewModel : ViewModel() {
                     _uiState.value = AuthUiState.Success
                 },
                 onFailure = { e ->
-                    _uiState.value = AuthUiState.Error(e.message ?: "Không thể tải thông tin người dùng")
+                    _uiState.value =
+                        AuthUiState.Error(e.message ?: "Không thể tải thông tin người dùng")
                 }
             )
         }
     }
 
 
-
     fun resetState() {
         _uiState.value = AuthUiState.Idle
+    }
+
+    fun logout() {
+        authRepository.logout()
+        _isLoggedIn.value = false
+        _user.value = null
     }
 }
