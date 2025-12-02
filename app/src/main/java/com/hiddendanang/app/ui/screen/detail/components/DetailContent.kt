@@ -38,7 +38,7 @@ import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.data.model.goongmodel.Location
 import com.hiddendanang.app.navigation.Screen
 import com.hiddendanang.app.ui.components.place.PlaceCard
-import com.hiddendanang.app.ui.model.DataViewModel
+//import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.screen.home.navToDetailScreen
 import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.DetailViewModel
