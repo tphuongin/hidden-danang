@@ -1,4 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.HiddenDaNang" parent="android:Theme.Material.Light.NoActionBar" />
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.HiddenDaNang" parent="Theme.Material3.DayNight">
+        <!-- Customize your light theme here. -->
+    </style>
+
+    <style name="Theme.HiddenDaNang" parent="Base.Theme.HiddenDaNang" />
+
+    <!-- Splash screen theme -->
+    <style name="Theme.HiddenDaNang.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <!-- Set the icon to transparent to hide it -->
+        <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+        <item name="windowSplashScreenAnimationDuration">200</item>
+        <item name="postSplashScreenTheme">@style/Theme.HiddenDaNang</item>
+    </style>
 </resources>

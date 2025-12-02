@@ -1,3 +1,127 @@
 <resources>
+
     <string name="app_name">Hidden Da Nang</string>
+
+    //HomePage Screen
+    <string name="featured_location">Địa điểm nổi bật</string>
+    <string name="discover_more">Khám phá thêm</string>
+    <string name="app_description">Khám phá những góc ẩn tuyệt đẹp của thành phố</string>
+    <string name="search">Tìm kiếm địa điểm…</string>
+    <string name="search_des">Tìm kiếm</string>
+
+    //Profile Screen
+    <string name="display_mode">Chế độ hiển thị</string>
+    <string name="welcome">Chào mừng bạn đến với Hidden Đà Nẵng!</string>
+    <string name="welcome_description">Đăng nhập để khám phá thêm địa điểm thú vị nhé!</string>
+    <string name="login_now">Đăng nhập ngay</string>
+    <string name="post_new_location">Đăng địa điểm mới</string>
+    <string name="review_management">Quản lý review</string>
+    <string name="account_setting">Cài đặt tài khoản</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="or">Hoặc</string>
+    <string name="register">Tạo tài khoản mới</string>
+    <string name="register_new_account">Đăng ký tài khoản mới</string>
+    <string name="register_des">Đăng ký để lưu lại địa điểm yêu thích và đánh giá của bạn</string>
+    <string name="register_des2">Khám phá Đà Nẵng với trải nghiệm cá nhân hóa</string>
+    <string name="favorites">Yêu thích</string>
+    <string name="reviews">Đánh giá</string>
+    <string name="visited">Đã đến</string>
+    <string name="logout_title">Đăng xuất</string>
+    <string name="logout_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</string>
+    <string name="select_language">Chọn ngôn ngữ</string>
+    <string name="cancel">Hủy</string>
+
+    //Favorite Screen
+    <string name="my_favorite">Địa điểm yêu thích của tôi</string>
+    <string name="favorite">Yêu thích</string>
+    <string name="no_favorite">Chưa có địa điểm yêu thích</string>
+    <string name="no_favorite_description">Bạn chưa lưu địa điểm nào. Hãy khám phá và thêm những nơi bạn yêu thích!</string>
+    
+    //Detail Screen
+    <string name="explore_nearby_place">Khám phá gần đây</string>
+    <string name="address">Địa chỉ</string>
+    <string name="opening_hours">Giờ mở cửa</string>
+    <string name="price_range">Giá trung bình</string>
+    <string name="distance">Khoảng scách</string>
+    <string name="being_updated">Đang cập nhật</string>
+    <string name="introduce">Giới thiệu</string>
+    <string name="view_directions">Xem đường đi</string>
+    <string name="see_all_reviews">Xem tất cả đánh giá</string>
+    <string name="write_your_comment">Viết đánh giá của bạn</string>
+    <string name="review">Đánh giá</string>
+
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">Trang chủ</string>
+    <string name="bottom_nav_map">Bản đồ</string>
+    <string name="bottom_nav_favorite">Yêu thích</string>
+    <string name="bottom_nav_profile">Cá nhân</string>
+
+    <!-- Interactive Map Screen -->
+    <string name="map_directions_to">Chỉ đường đến %1$s</string>
+    <string name="map_directions">Chỉ đường</string>
+    <string name="back_button_description">Quay lại</string>
+
+    <!-- MapCard Component -->
+    <string name="map_card_static_map_description">Bản đồ tĩnh với tuyến đường đến địa điểm</string>
+    <string name="map_card_location_error_description">Biểu tượng lỗi vị trí</string>
+    <string name="map_card_load_error_title">Không thể tải bản đồ</string>
+    <string name="map_card_load_error_retry">Nhấn để thử lại</string>
+    <string name="map_card_permission_required_description">Biểu tượng yêu cầu quyền vị trí</string>
+    <string name="map_card_permission_required_title">Bật quyền vị trí để xem chỉ đường</string>
+    <string name="map_card_permission_required_action">Nhấn để cấp quyền</string>
+    <string name="map_card_loading">Đang tải bản đồ...</string>
+    <string name="map_card_place_image_description">Hình ảnh minh họa địa điểm</string>
+    <string name="map_card_route_pin_description">Biểu tượng ghim tuyến đường</string>
+
+    <!-- ReviewForm-->
+    <string name="review_form_title_new">Viết đánh giá mới</string>
+    <string name="review_form_title_edit">Chỉnh sửa đánh giá</string>
+    <string name="review_form_rating_star_description">Xếp hạng %d sao</string>
+    <string name="review_form_comment_label">Bình luận của bạn</string>
+    <string name="review_form_comment_placeholder">Chia sẻ trải nghiệm của bạn...</string>
+    <string name="review_form_button_cancel">Hủy</string>
+    <string name="review_form_button_submit">Gửi</string>
+
+    <string name = "all_review">Tất cả đánh giá</string>
+    <string name = "no_review">Chưa có đánh giá cho địa điểm này</string>
+
+    <!-- Tooltip Hints -->
+    <string name="hint_homepage_explore">Sẵn sàng khám phá chưa? Vuốt, chạm và bắt đầu hành trình nào!</string>
+    <string name="hint_map_no_direction">Bạn chưa biết đi đâu? Hãy thử khám phá xung quanh, chạm để tìm điều bất ngờ!</string>
+
+<!--    search-->
+    <string name="search_hint_empty">Nhập từ khóa để tìm địa điểm.</string>
+    <string name="search_no_result">Không tìm thấy địa điểm nào. Hãy thử từ khóa khác!</string>
+
+    <!-- Location Permission -->
+    <string name="location_permission_title">Cần quyền truy cập vị trí</string>
+    <string name="location_permission_message">Chúng tôi sử dụng vị trí của bạn để hiển thị vị trí trên bản đồ. Vui lòng cho phép truy cập vị trí.</string>
+    <string name="location_permission_required_title">Yêu cầu quyền truy cập vị trí</string>
+    <string name="location_permission_required_message">Vui lòng cho phép truy cập vị trí để sử dụng tính năng bản đồ.</string>
+    <string name="location_permission_button">Cho phép</string>
+    <string name="location_permission_grant_button">Cấp quyền</string>
+
+    <!-- Share -->
+    <string name="share">Chia sẻ</string>
+    <string name="share_place">Hãy xem %1$s trên Hidden Đà Nẵng!</string>
+
+    <!-- Review -->
+    <string name="no_reviews">Chưa có đánh giá nào</string>
+    <string name="open_24_7">Mở cửa 24/7</string>
+    <string name="closed">Đóng cửa</string>
+    <string name="anonymous">Ẩn danh</string>
+
+    <!-- Admin & Settings -->
+    <string name="admin_dashboard">Bảng điều khiển quản trị</string>
+    <string name="add_new_place">Thêm địa điểm mới</string>
+    <string name="submit_for_review">Địa điểm được gửi để xem xét!</string>
+    <string name="images_min_3">Hình ảnh (Tối thiểu 3)</string>
+    <string name="tap_to_select_images">Nhấn để chọn hình ảnh</string>
+    <string name="place_name">Tên địa điểm</string>
+    <string name="category">Danh mục</string>
+    <string name="joined">• Tham gia %1$s</string>
+    <string name="address_label">Địa chỉ</string>
+    <string name="district_label">Quận/Huyện</string>
+    <string name="description_label">Mô tả</string>
+
 </resources>
