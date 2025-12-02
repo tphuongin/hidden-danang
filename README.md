@@ -107,7 +107,7 @@ app/
 ### Place Discovery
 
 - Search places by location or category
-- View detailed place information (price range, operating hours, contact)
+- View detailed place information (price range, operating hours)
 - See photos and ratings
 - Read user reviews
 
