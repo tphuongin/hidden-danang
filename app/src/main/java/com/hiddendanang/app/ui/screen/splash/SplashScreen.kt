@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -26,13 +27,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.hiddendanang.app.R
 import com.hiddendanang.app.navigation.Screen
+import com.hiddendanang.app.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
+    val authViewModel: AuthViewModel = viewModel()
+    
+    // Collect isLoggedIn state
+    val isLoggedIn = authViewModel.isLoggedIn.collectAsState().value
+    
     // Animations
     val logoScale = remember { Animatable(0.8f) }
     val logoAlpha = remember { Animatable(0f) }
@@ -59,12 +67,11 @@ fun SplashScreen(navController: NavHostController) {
         // Dừng nhẹ trước khi chuyển màn
         delay(1500)
 
-        val isLoggedIn = false // Tạm thời, giả sử chưa đăng nhập
-
+        // Navigate based on isLoggedIn
         val route = if (isLoggedIn) {
-            Screen.HomePage.route // Nếu đã đăng nhập, vào Home
+            Screen.HomePage.route
         } else {
-            Screen.Register.route // Nếu chưa, vào Đăng Ký (hoặc Login)
+            Screen.Register.route
         }
 
         navController.navigate(route) {
