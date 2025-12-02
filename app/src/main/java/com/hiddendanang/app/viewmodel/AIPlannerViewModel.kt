@@ -29,6 +29,11 @@ class AIPlannerViewModel : ViewModel() {
     private var generativeModel: GenerativeModel? = null
     private var chatSession: com.google.ai.client.generativeai.Chat? = null
 
+    init {
+        Log.d("AIPlannerViewModel", "API Key loaded: ${apiKey.take(10)}...${apiKey.takeLast(10)}")
+        Log.d("AIPlannerViewModel", "API Key length: ${apiKey.length}")
+    }
+
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
 
