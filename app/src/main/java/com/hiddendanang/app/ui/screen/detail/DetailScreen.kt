@@ -29,8 +29,6 @@ fun DetailScreen(
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
     val onWriteReviewClicked = {
-        Log.d("DETAIL_SCREEN", "isLoggedIn status: $isLoggedIn")
-         //[1] Lấy trạng thái đăng nhập từ ViewModel (Giả định AuthViewModel cung cấp trạng thái)
         if (isLoggedIn) {
             viewModel.showReviewForm()
         } else {

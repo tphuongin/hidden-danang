@@ -63,9 +63,6 @@ class DetailViewModel(
             if (!forceReload && placeId == _uiState.value.place?.id && !_uiState.value.isLoading) {
                 return@launch
             }
-            if (placeId == _uiState.value.place?.id && !_uiState.value.isLoading) {
-                return@launch
-            }
 
             _uiState.update { it.copy(isLoading = true, error = null) }
             // Luồng 2: Lấy chi tiết địa điểm
@@ -216,6 +213,8 @@ class DetailViewModel(
             result.onSuccess {
                 _uiState.update { it.copy(isLoading = false, error = null) }
                 hideReviewForm() // Ẩn form sau khi gửi thành công
+                // Refresh place data to update rating
+                listenToDataChanges(placeId, forceReload = true)
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
