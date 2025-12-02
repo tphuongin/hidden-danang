@@ -1,5 +1,6 @@
 package com.hiddendanang.app.ui.screen.detail.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,8 +37,10 @@ import com.composables.icons.lucide.Waypoints
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.utils.LocationService
 import java.text.NumberFormat
 import java.util.Locale
+import android.util.Log
 
 @Composable
 fun PlaceTitleAndRating(place: Place) {
@@ -96,43 +99,60 @@ fun PlaceTitleAndRating(place: Place) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun PlaceInfoSection(place: Place) {
+fun PlaceInfoSection(place: Place, currentLocationLat: Double? = null, currentLocationLng: Double? = null) {
+    val context = LocalContext.current
+    val locationService = LocationService(context)
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
         // Address
-        InfoItem(Lucide.MapPinHouse, R.string.address, place.address.formatted_address)
+        val addressDisplay = place.address.formatted_address.ifEmpty {
+            stringResource(R.string.being_updated)
+        }
+        InfoItem(Lucide.MapPinHouse, R.string.address, addressDisplay)
         
         // Opening Hours Logic
         val hoursText = if (place.opening_hours != null) {
-             // Lấy lịch thứ 2 làm chuẩn hiển thị
              val today = place.opening_hours.mon 
              if (today != null) {
-                 if (today.open == "00:00" && today.close == "23:59") "Open 24/7"
+                 if (today.open == "00:00" && today.close == "23:59") "Mở cửa 24/7"
+                 else if (today.isClosed) "Đóng cửa"
                  else "${today.open} - ${today.close}"
-             } else "No Info"
-        } else "No Info"
+             } else stringResource(R.string.being_updated)
+        } else stringResource(R.string.being_updated)
         
         InfoItem(Lucide.Clock3, R.string.opening_hours, hoursText)
 
-        // Price Logic
-        val priceText = if (place.price_range != null) {
+        // Price Logic - hiển thị "Đang cập nhật" vì price_range = null và price_indicator rỗng
+        val priceText = if (place.price_range != null && (place.price_range.min > 0 || place.price_range.max > 0)) {
              val format = NumberFormat.getNumberInstance(Locale("vi", "VN"))
              try {
-                 "${format.format(place.price_range.min)} - ${format.format(place.price_range.max)} ${place.price_range.currency}"
+                 "${format.format(place.price_range.min.toInt())} - ${format.format(place.price_range.max.toInt())} ${place.price_range.currency}"
              } catch (e: Exception) {
-                 place.price_indicator // Fallback nếu format lỗi
+                 stringResource(R.string.being_updated)
              }
-        } else place.price_indicator // Fallback nếu null
+        } else stringResource(R.string.being_updated)
         
         InfoItem(Lucide.Wallet, R.string.price_range, priceText)
 
-        InfoItem(
-            Lucide.Waypoints,
-            R.string.distance,
-            "~1.5km" // Placeholder for distance
-        )
+        // Distance Logic - tính khoảng cách từ vị trí hiện tại sử dụng hàm từ LocationService
+        val distanceText = if (currentLocationLat != null && currentLocationLng != null) {
+            Log.d("PlaceInfoSection", "Distance Calculation: currentLat=$currentLocationLat, currentLng=$currentLocationLng, placeLat=${place.coordinates.latitude}, placeLng=${place.coordinates.longitude}")
+            val distance = locationService.calculateDistance(
+                currentLocationLat, currentLocationLng,
+                place.coordinates.latitude, place.coordinates.longitude
+            )
+            Log.d("PlaceInfoSection", "Calculated distance: $distance km")
+            "~${String.format("%.1f", distance)} km"
+        } else {
+            Log.d("PlaceInfoSection", "Distance not calculated: currentLocationLat=$currentLocationLat, currentLocationLng=$currentLocationLng")
+            stringResource(R.string.being_updated)
+        }
+        
+        InfoItem(Lucide.Waypoints, R.string.distance, distanceText)
     }
 }
 

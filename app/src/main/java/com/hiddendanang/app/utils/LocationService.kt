@@ -38,6 +38,10 @@ import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.hiddendanang.app.ui.theme.Dimens
 import kotlinx.coroutines.tasks.await
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class LocationService(private val context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -92,6 +96,20 @@ class LocationService(private val context: Context) {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun calculateDistance(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+        val R = 6371.0 // Bán kính Trái Đất (km)
+        
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLng = Math.toRadians(lng2 - lng1)
+        
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                sin(dLng / 2) * sin(dLng / 2)
+        
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        
+        return R * c
+    }
 }
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
