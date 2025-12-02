@@ -126,8 +126,18 @@
                         }
                     }
                 ) { paddingValues ->
+                    // For Map screen, only apply bottom padding (for bottombar)
+                    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                    val mapScreenRoutes = setOf(Screen.Map.route)
+                    
+                    val modifier = if (currentRoute in mapScreenRoutes) {
+                        Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                    } else {
+                        Modifier.padding(paddingValues)
+                    }
+                    
                     AppNavHost(
-                        modifier = Modifier.padding(paddingValues),
+                        modifier = modifier,
                         navController = navController,
                     )
                 }
