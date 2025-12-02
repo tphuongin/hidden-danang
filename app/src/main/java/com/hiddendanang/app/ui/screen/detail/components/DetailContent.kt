@@ -44,7 +44,6 @@ import com.hiddendanang.app.ui.theme.Dimens
 import com.hiddendanang.app.viewmodel.DetailViewModel
 import com.hiddendanang.app.viewmodel.GoongViewModel
 import com.hiddendanang.app.utils.LocationService
-import android.util.Log
 
 @Composable
 fun DetailContent(
@@ -66,8 +65,6 @@ fun DetailContent(
     val currentLocationStr = goongVM.currentLocation.collectAsState().value
     val currentLocationLat = currentLocationStr?.split(",")?.getOrNull(0)?.toDoubleOrNull()
     val currentLocationLng = currentLocationStr?.split(",")?.getOrNull(1)?.toDoubleOrNull()
-    
-    Log.d("DetailContent", "Current Location: currentLocationStr=$currentLocationStr, lat=$currentLocationLat, lng=$currentLocationLng")
     
     // Fetch current location when DetailContent is displayed
     LaunchedEffect(Unit) {

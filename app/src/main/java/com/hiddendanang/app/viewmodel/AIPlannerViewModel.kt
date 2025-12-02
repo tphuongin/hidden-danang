@@ -1,6 +1,5 @@
 package com.hiddendanang.app.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
@@ -30,8 +29,7 @@ class AIPlannerViewModel : ViewModel() {
     private var chatSession: com.google.ai.client.generativeai.Chat? = null
 
     init {
-        Log.d("AIPlannerViewModel", "API Key loaded: ${apiKey.take(10)}...${apiKey.takeLast(10)}")
-        Log.d("AIPlannerViewModel", "API Key length: ${apiKey.length}")
+        // Initialize Generative Model with API key
     }
 
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
@@ -180,7 +178,7 @@ class AIPlannerViewModel : ViewModel() {
                 chatRepository.addMessage(sessionId, aiMessage)
                 
             } catch (e: Exception) {
-                Log.e("AIPlanner", "Error calling Gemini", e)
+                // Error calling Gemini API
                 val errorMessage = ChatMessage(
                     role = "model",
                     content = "Lỗi kết nối: ${e.localizedMessage}",

@@ -1,6 +1,5 @@
 package com.hiddendanang.app.di
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.GeoPoint
@@ -13,24 +12,19 @@ class DebugSeeder {
     suspend fun checkFirestoreConnection(): Boolean {
         return try {
             placesCollection.get(Source.SERVER).await()
-            Log.d("FirebaseCheck", "  Kết nối Firebase Firestore thành công.")
             true
         } catch (e: Exception) {
-            Log.e("FirebaseCheck", "  Kết nối Firebase thất bại: ${e.message}")
             e.printStackTrace()
             false
         }
     }
 
     suspend fun seedAllPlaces(): Int {
-        Log.i("Seeder", "Bắt đầu Seed Data cho Collection 'places'...")
-
         val batch = firestore.batch()
 
         val placesData = getMockPlacesData()
 
         if (placesData.isEmpty()) {
-            Log.w("Seeder", "Không có dữ liệu mẫu để Seed.")
 
         }
 
@@ -43,9 +37,8 @@ class DebugSeeder {
 
         return try {
             batch.commit().await()
-            Log.i("Seeder", " Seed Data thành công! Đã thêm ${placesData.size} địa điểm.")
+            placesData.size
         } catch (e: Exception) {
-            Log.e("Seeder", " Lỗi khi Seed Data: ${e.message}")
             0
         }
     }

@@ -3,7 +3,6 @@ package com.hiddendanang.app.ui.screen.map.components
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
@@ -43,7 +42,6 @@ fun renderMap(context: Context, map: MapLibreMap, direction: DirectionResponse) 
             try {
                 it.build()
             } catch (e: Exception) {
-                Log.e("RouteRenderer", "Failed to create LatLngBounds: ${e.message}")
                 null
             }
         }
@@ -52,7 +50,7 @@ fun renderMap(context: Context, map: MapLibreMap, direction: DirectionResponse) 
         if (cameraBounds != null) {
             map.moveCamera(org.maplibre.android.camera.CameraUpdateFactory.newLatLngBounds(cameraBounds, 150))
         } else {
-            Log.w("RouteRenderer", "Skipping camera movement due to invalid bounds.")
+            // Cannot move camera with invalid bounds
         }
 
         // Draw polyline for the route
@@ -99,7 +97,7 @@ fun renderMap(context: Context, map: MapLibreMap, direction: DirectionResponse) 
             }
         }
     } else {
-        Log.w("RouteRenderer", "No route found in direction response.")
+        // No route found in direction response
     }
 }
 
@@ -135,8 +133,6 @@ fun moveCameraToBounds(
     val bounds = createLatLngBoundsSafely(originLat, originLng, destLat, destLng)
     if (bounds != null) {
         map.animateCamera(org.maplibre.android.camera.CameraUpdateFactory.newLatLngBounds(bounds, 20))
-    } else {
-        Log.w("RouteRenderer", "Failed to create bounds for camera movement")
     }
 }
 
@@ -185,7 +181,6 @@ fun createLatLngBoundsSafely(originLat: Double, originLng: Double, destLat: Doub
             .include(LatLng(destLat, destLng))
             .build()
     } catch (e: Exception) {
-        Log.e("RouteRenderer", "Failed to create LatLngBounds: ${e.message}")
         null
     }
 }

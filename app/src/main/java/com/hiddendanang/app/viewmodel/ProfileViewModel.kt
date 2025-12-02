@@ -1,6 +1,5 @@
 package com.hiddendanang.app.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hiddendanang.app.data.model.User
@@ -67,7 +66,6 @@ class ProfileViewModel : ViewModel() {
     private suspend fun saveThemeToFirestore(theme: AppThemeMode) {
         val uid = authRepository.getCurrentUser()?.uid ?: return
         try {
-            Log.d("HiddenDaNang", "Syncing theme to Firestore: $theme")
             authRepository.updateUserProfile(
                 uid = uid,
                 theme = theme.name // Chuyển enum thành String: "LIGHT", "DARK"...
@@ -103,8 +101,7 @@ class ProfileViewModel : ViewModel() {
                     }
                 }
                 .catch { e ->
-                    // Xử lý lỗi nếu không thể get profile
-                    Log.e("ProfileViewModel", "Error loading user profile", e)
+                    // Handle error if unable to get profile
                     _uiState.update { it.copy(isLoading = false, error = e.message) }
                 }
                 .collect { userProfile ->

@@ -118,7 +118,6 @@ fun safeLatLngBounds(lat1: Double, lng1: Double, lat2: Double, lng2: Double): La
             .include(LatLng(lat2, lng2))
             .build()
     } catch (e: Exception) {
-        android.util.Log.e("MapUtilities", "Failed to create LatLngBounds: ${e.message}")
         null
     }
 }
