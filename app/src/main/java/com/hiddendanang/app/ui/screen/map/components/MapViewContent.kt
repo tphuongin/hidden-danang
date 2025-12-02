@@ -316,6 +316,23 @@ fun MapViewContent(
     }
 
     Box(modifier = modifier) {
+        // Show RouteInfoPanel when direction is available
+        if (direction != null && originLocation != null && destinationLocation != null) {
+            RouteInfoPanel(
+                direction = direction,
+                originLat = originLocation.lat!!,
+                originLng = originLocation.lng!!,
+                destLat = destinationLocation.lat!!,
+                destLng = destinationLocation.lng!!,
+                destinationName = selectedPlace?.name ?: "Destination",
+                onClose = {
+                    // Reset direction and selected place
+                    selectedPlace = null
+                    goongVM.clearDirections()
+                }
+            )
+        }
+
         if (showTooltip && destinationLocation == null && !isMapLoading) {
             com.hiddendanang.app.ui.components.TooltipHint(
                 text = stringResource(com.hiddendanang.app.R.string.hint_map_no_direction),
