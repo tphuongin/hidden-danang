@@ -32,7 +32,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Star
 import com.hiddendanang.app.R
 import com.hiddendanang.app.data.model.Place
-import com.hiddendanang.app.ui.model.DataViewModel
+//import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.theme.Dimens
 
 @Composable

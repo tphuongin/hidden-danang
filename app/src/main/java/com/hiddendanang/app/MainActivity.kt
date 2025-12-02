@@ -34,7 +34,6 @@
     import androidx.navigation.compose.currentBackStackEntryAsState
     import com.hiddendanang.app.data.repository.AuthRepository
     import com.hiddendanang.app.data.repository.LocationRepository
-    import com.hiddendanang.app.di.DebugSeeder
     import com.hiddendanang.app.navigation.Screen
     import com.hiddendanang.app.ui.MainViewModel
     import kotlinx.coroutines.CoroutineScope

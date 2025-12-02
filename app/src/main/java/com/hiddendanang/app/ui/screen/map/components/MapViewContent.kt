@@ -32,8 +32,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hiddendanang.app.ui.components.place.PlaceCard
 import com.hiddendanang.app.ui.components.Loading
-import com.hiddendanang.app.ui.model.DataViewModel
 import com.hiddendanang.app.ui.theme.Dimens
+import com.hiddendanang.app.viewmodel.FavoritesViewModel
 
 private var tooltipMapShownOnce = false
 
@@ -47,7 +47,7 @@ fun MapViewContent(
 ) {
     val context = LocalContext.current
     val mapKey = stringResource(R.string.map_key)
-    val dataViewModel: DataViewModel = viewModel()
+    val favoriteViewModel: FavoritesViewModel = viewModel()
 
     // State for selected place popup
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
@@ -271,8 +271,8 @@ fun MapViewContent(
                     shadowElevation = Dimens.ElevationXLarge,
                     tonalElevation = Dimens.ElevationMedium
                 ) {
-                        val isFavoriteState = dataViewModel.isFavorite(place.id).collectAsState()
-                        val isFavorite = isFavoriteState.value
+                        val favoriteIds by favoriteViewModel.favoriteIds.collectAsState()
+                        val isFavorite = place.id in favoriteIds
                         
                         PlaceCard(
                             place = place,
@@ -290,7 +290,7 @@ fun MapViewContent(
                             onFavoriteToggle = {
                                 try {
                                     // Toggle favorite
-                                    dataViewModel.toggleFavorite(place.id)
+                                    favoriteViewModel.toggleFavorite(place)
                                 } catch (e: Exception) {
                                     // Error toggling favorite
                                 }
