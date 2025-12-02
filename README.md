@@ -220,7 +220,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Team
 
-- **Developer**: Phuong In
+- **Developer**: Phuong, Nhat, Ky
 - **Project**: Hidden Danang - Discover Local Gems
 
 ## 📧 Contact & Support
