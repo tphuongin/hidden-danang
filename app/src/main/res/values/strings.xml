@@ -1,3 +1,132 @@
 <resources>
     <string name="app_name">Hidden Da Nang</string>
+
+    //HomePage Screen
+    <string name="featured_location">Featured places</string>
+    <string name="discover_more">Explore more hidden gems</string>
+    <string name="app_description">Explore the city’s most beautiful hidden corners.</string>
+    <string name="search">Search places…</string>
+    <string name="search_des">Search</string>
+
+    //Profile screen
+    <string name="display_mode">Display mode</string>
+    <string name="welcome">Welcome to Hidden Da Nang!</string>
+    <string name="welcome_description">Log in to discover more interesting places!</string>
+    <string name="login_now">Login now</string>
+    <string name="post_new_location">Post a new location</string>
+    <string name="review_management">Review management</string>
+    <string name="account_setting">Account settings</string>
+    <string name="language">Language</string>
+    <string name="or">Or</string>
+    <string name="register_new_account">Create a new account</string>
+    <string name="register_des">Sign up to save your favorite places and share your reviews</string>
+    <string name="register">Register</string>
+    <string name="register_des2">Explore Da Nang with a personalized experience</string>
+    <string name="favorites">Favorites</string>
+    <string name="reviews">Reviews</string>
+    <string name="visited">Visited</string>
+    <string name="logout_title">Log out</string>
+    <string name="logout_message">Are you sure you want to log out of your account?</string>
+    <string name="select_language">Select language</string>
+    <string name="cancel">Cancel</string>
+
+    // Favorite Screen
+    <string name="my_favorite">My Favorite Places</string>
+    <string name="favorite">Favorite</string>
+    <string name="no_favorite">No favorite places</string>
+    <string name="no_favorite_description">You haven\'t saved any places yet. Explore and add your favorites!</string>
+
+    //Detail Screen
+    <string name="explore_nearby_place">Recent discoveries</string>
+    <string name="address">Address</string>
+    <string name="opening_hours">Opening hours</string>
+    <string name="price_range">Price range</string>
+    <string name="distance">Distance</string>
+    <string name="being_updated">Being updated</string>
+    <string name="introduce">Introduce</string>
+    <string name="view_directions">View Directions</string>
+    <string name="see_all_reviews">See all reviews</string>
+    <string name="write_your_comment">Write your comment</string>
+    <string name="review">Review</string>
+
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_map">Map</string>
+    <string name="bottom_nav_favorite">Favorite</string>
+    <string name="bottom_nav_profile">Profile</string>
+
+    <!-- Interactive Map Screen -->
+    <string name="map_directions_to">Directions to %1$s</string>
+    <string name="map_directions">Directions</string>
+    <string name="back_button_description">Back</string>
+
+    <!-- MapCard Component -->
+    <string name="map_card_static_map_description">Static Map with route to the location</string>
+    <string name="map_card_location_error_description">Location error icon</string>
+    <string name="map_card_load_error_title">Failed to load map</string>
+    <string name="map_card_load_error_retry">Tap to retry</string>
+    <string name="map_card_permission_required_description">Location permission required icon</string>
+    <string name="map_card_permission_required_title">Enable location to see directions</string>
+    <string name="map_card_permission_required_action">Tap to grant permission</string>
+    <string name="map_card_loading">Loading map...</string>
+    <string name="map_card_place_image_description">Placeholder image of the place</string>
+    <string name="map_card_route_pin_description">Route pin icon</string>
+
+<!--    Key Api-->
+    <string name="goong_api_key" translatable="false">wl9WcliOz8fo9XP6nchMVFpoDUqYSk0YbPf78gGc</string>
+    <string name="goong_base_url" translatable="false">https://rsapi.goong.io/</string>
+
+<!-- ReviewForm-->
+    <string name="review_form_title_new">Write a New Review</string>
+    <string name="review_form_title_edit">Edit Your Review</string>
+    <string name="review_form_rating_star_description">Rate %d stars</string>
+    <string name="review_form_comment_label">Your Comment</string>
+    <string name="review_form_comment_placeholder">Share your experience...</string>
+    <string name="review_form_button_cancel">Cancel</string>
+    <string name="review_form_button_submit">Submit</string>
+
+    <string name="map_key" translatable="false">ZNnBPwWGxOjMOPDWc6vCIHMlzAxvgGXzvuqK8yUB</string>
+
+    <string name = "all_review">All reviews</string>
+    <string name = "no_review">There are no reviews for this place yet</string>
+
+    <!-- Tooltip Hints -->
+    <string name="hint_homepage_explore">Ready to discover? Swipe, tap, and let the adventure begin!</string>
+    <string name="hint_map_no_direction">See what\'s interesting near you, tap to explore</string>
+
+    //search
+    <string name="search_hint_empty">Type a keyword to search for places.</string>
+    <string name="search_no_result">No places found. Try another keyword!</string>
+
+    <!-- Location Permission -->
+    <string name="location_permission_title">Location Permission Needed</string>
+    <string name="location_permission_message">We use your location to show your position on the map. Please allow location access.</string>
+    <string name="location_permission_required_title">Location Permission Required</string>
+    <string name="location_permission_required_message">Please allow location access to use the map feature.</string>
+    <string name="location_permission_button">Allow</string>
+    <string name="location_permission_grant_button">Grant Permission</string>
+
+    <!-- Share -->
+    <string name="share">Share</string>
+    <string name="share_place">Check out %1$s on Hidden Đà Nẵng!</string>
+
+    <!-- Review -->
+    <string name="no_reviews">No reviews yet</string>
+    <string name="open_24_7">Open 24/7</string>
+    <string name="closed">Closed</string>
+    <string name="anonymous">Anonymous</string>
+
+    <!-- Admin & Settings -->
+    <string name="admin_dashboard">Admin Dashboard</string>
+    <string name="add_new_place">Add New Place</string>
+    <string name="submit_for_review">Place submitted for review!</string>
+    <string name="images_min_3">Images (Min 3)</string>
+    <string name="tap_to_select_images">Tap to select images</string>
+    <string name="place_name">Place Name</string>
+    <string name="category">Category</string>
+    <string name="joined">• Joined %1$s</string>
+    <string name="address_label">Address</string>
+    <string name="district_label">District</string>
+    <string name="description_label">Description</string>
+
 </resources>
